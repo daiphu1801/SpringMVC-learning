@@ -1,0 +1,8 @@
+com/examp/springmvc/model/User.class
+com/examp/springmvc/mapper/UserMapper.class
+com/examp/springmvc/service/UserService.class
+com/examp/springmvc/controller/UserController.class
+com/examp/springmvc/config/WebConfig.class
+com/examp/springmvc/config/MyBatisConfig.class
+com/examp/springmvc/config/RootConfig.class
+com/examp/springmvc/config/WebAppInitializer.class
