@@ -73,7 +73,7 @@
                 </a>
 
                 <form
-                        action="${pageContext.request.contextPath}/users/${user.id}/delete"
+                        action="${pageContext.request.contextPath}/users/delete/${user.id}"
                         method="post"
                         style="display:inline">
 

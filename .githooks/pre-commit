@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+set -eu
+
+echo "========================================"
+echo "Running pre-commit checks..."
+echo "========================================"
+
+echo "[1/2] Checking code format with Spotless..."
+mvn -q spotless:check
+
+echo "[2/2] Checking coding conventions with Checkstyle..."
+mvn -q checkstyle:check
+
+echo "========================================"
+echo "Pre-commit checks passed."
+echo "========================================"

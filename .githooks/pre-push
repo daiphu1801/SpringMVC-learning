@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+
+set -eu
+
+REMOTE_NAME="${1:-unknown}"
+REMOTE_URL="${2:-unknown}"
+
+echo "========================================"
+echo "Running pre-push checks..."
+echo "Remote: $REMOTE_NAME"
+echo "URL: $REMOTE_URL"
+echo "========================================"
+
+mvn clean verify
+
+echo "========================================"
+echo "Pre-push checks passed."
+echo "Push is allowed."
+echo "========================================"

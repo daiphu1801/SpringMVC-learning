@@ -1,0 +1,39 @@
+#!/usr/bin/env sh
+
+set -eu
+
+COMMIT_MSG_FILE="$1"
+COMMIT_MSG=$(head -n 1 "$COMMIT_MSG_FILE")
+
+PATTERN='^(feat|fix|refactor|test|style|docs|build|ci|chore|create|update)(\([a-z0-9-]+\))?: .{3,}$'
+
+# Cho phép các commit do Git tự tạo.
+case "$COMMIT_MSG" in
+    Merge\ *|Revert\ *|fixup!\ *|squash!\ *)
+        exit 0
+        ;;
+esac
+
+if ! printf '%s\n' "$COMMIT_MSG" | grep -Eq "$PATTERN"; then
+    echo ""
+    echo "Invalid commit message:"
+    echo "  $COMMIT_MSG"
+    echo ""
+    echo "Required format:"
+    echo "  type: description"
+    echo "  type(scope): description"
+    echo ""
+    echo "Allowed types:"
+    echo "  feat, fix, refactor, test, style, docs,"
+    echo "  build, ci, chore, create, update"
+    echo ""
+    echo "Examples:"
+    echo "  feat: add employee creation feature"
+    echo "  fix(service): handle employee not found"
+    echo "  test: add employee service tests"
+    echo ""
+
+    exit 1
+fi
+
+exit 0
