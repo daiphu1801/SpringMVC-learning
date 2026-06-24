@@ -2,6 +2,7 @@ package com.examp.springmvc.controller;
 
 import com.examp.springmvc.model.User;
 import com.examp.springmvc.service.UserService;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,13 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
     public UserController(UserService userService) {
-
         this.userService = userService;
     }
 

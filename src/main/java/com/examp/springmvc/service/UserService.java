@@ -3,10 +3,13 @@ package com.examp.springmvc.service;
 import com.examp.springmvc.mapper.UserMapper;
 import com.examp.springmvc.model.User;
 import java.util.List;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@SuppressFBWarnings("EI_EXPOSE_REP2")
 public class UserService {
 
     private final UserMapper userMapper;

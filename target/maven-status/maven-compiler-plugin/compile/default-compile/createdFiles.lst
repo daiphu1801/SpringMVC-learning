@@ -1,4 +1,5 @@
 com/examp/springmvc/model/User.class
+com/examp/springmvc/controller/HomeController.class
 com/examp/springmvc/mapper/UserMapper.class
 com/examp/springmvc/service/UserService.class
 com/examp/springmvc/controller/UserController.class
