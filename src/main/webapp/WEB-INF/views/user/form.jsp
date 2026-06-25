@@ -25,115 +25,148 @@
       </c:otherwise>
     </c:choose>
   </title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 </head>
 
 <body>
 
-<c:choose>
-  <c:when test="${empty user.id}">
-    <h1>Thêm người dùng</h1>
+<div class="container">
+  <c:choose>
+    <c:when test="${empty user.id}">
+      <h1>Thêm người dùng</h1>
 
-    <c:set
-            var="formAction"
-            value="${pageContext.request.contextPath}/users"/>
-  </c:when>
+      <c:set
+              var="formAction"
+              value="${pageContext.request.contextPath}/users"/>
+    </c:when>
 
-  <c:otherwise>
-    <h1>Cập nhật người dùng</h1>
+    <c:otherwise>
+      <h1>Cập nhật người dùng</h1>
 
-    <c:set
-            var="formAction"
-            value="${pageContext.request.contextPath}/users/${user.id}"/>
-  </c:otherwise>
-</c:choose>
+      <c:set
+              var="formAction"
+              value="${pageContext.request.contextPath}/users/${user.id}"/>
+    </c:otherwise>
+  </c:choose>
 
-<form:form
-        modelAttribute="user"
-        action="${formAction}"
-        method="post">
+  <form:form
+          modelAttribute="user"
+          action="${formAction}"
+          method="post"
+          style="margin-top: 30px;">
 
-  <div>
-    <label for="username">Tên đăng nhập</label>
+    <div class="form-group">
+      <label for="username">Tên đăng nhập</label>
 
-    <form:input
-            id="username"
-            path="username"/>
+      <form:input
+              id="username"
+              path="username"
+              class="form-control"
+              placeholder="Nhập tên đăng nhập..."/>
 
-    <form:errors
-            path="username"/>
-  </div>
+      <form:errors
+              path="username"
+              element="span"
+              cssClass="form-error"/>
+    </div>
 
-  <br>
+    <div class="form-group">
+      <label for="fullName">Họ và tên</label>
 
-  <div>
-    <label for="fullName">Họ và tên</label>
+      <form:input
+              id="fullName"
+              path="fullName"
+              class="form-control"
+              placeholder="Nhập họ và tên..."/>
 
-    <form:input
-            id="fullName"
-            path="fullName"/>
+      <form:errors
+              path="fullName"
+              element="span"
+              cssClass="form-error"/>
+    </div>
 
-    <form:errors
-            path="fullName"/>
-  </div>
+    <div class="form-group">
+      <label for="email">Email</label>
 
-  <br>
+      <form:input
+              id="email"
+              path="email"
+              type="email"
+              class="form-control"
+              placeholder="Nhập địa chỉ email..."/>
 
-  <div>
-    <label for="email">Email</label>
+      <form:errors
+              path="email"
+              element="span"
+              cssClass="form-error"/>
+    </div>
 
-    <form:input
-            id="email"
-            path="email"
-            type="email"/>
+    <div class="form-group">
+      <label for="phone">Số điện thoại</label>
 
-    <form:errors
-            path="email"/>
-  </div>
+      <form:input
+              id="phone"
+              path="phone"
+              class="form-control"
+              placeholder="Nhập số điện thoại..."/>
 
-  <br>
+      <form:errors
+              path="phone"
+              element="span"
+              cssClass="form-error"/>
+    </div>
 
-  <div>
-    <label for="phone">Số điện thoại</label>
+    <div class="form-group">
+      <label for="status">Trạng thái</label>
 
-    <form:input
-            id="phone"
-            path="phone"/>
+      <form:select
+              id="status"
+              path="status"
+              class="form-control">
 
-    <form:errors
-            path="phone"/>
-  </div>
+        <form:option
+                value="ACTIVE"
+                label="Hoạt động"/>
 
-  <br>
+        <form:option
+                value="INACTIVE"
+                label="Không hoạt động"/>
 
-  <div>
-    <label for="status">Trạng thái</label>
+      </form:select>
+    </div>
 
-    <form:select
-            id="status"
-            path="status">
+    <div class="form-group">
+      <label for="role">Vai trò</label>
+      <form:select id="role" path="role" class="form-control">
+        <form:option value="USER" label="User (Người dùng thường)"/>
+        <form:option value="ADMIN" label="Admin (Quản trị viên)"/>
+      </form:select>
+      <form:errors path="role" element="span" cssClass="form-error"/>
+    </div>
 
-      <form:option
-              value="ACTIVE"
-              label="Hoạt động"/>
+    <div class="form-group">
+      <label for="password">
+        Mật khẩu
+        <c:if test="${not empty user.id}">
+          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">(Để trống nếu không thay đổi)</span>
+        </c:if>
+      </label>
+      <form:password id="password" path="password" class="form-control" placeholder="Nhập mật khẩu..." showPassword="false" required="${empty user.id ? 'true' : 'false'}"/>
+      <form:errors path="password" element="span" cssClass="form-error"/>
+    </div>
 
-      <form:option
-              value="INACTIVE"
-              label="Không hoạt động"/>
+    <div class="form-actions">
+      <button type="submit" class="btn">
+        Lưu người dùng
+      </button>
 
-    </form:select>
-  </div>
+      <a href="${pageContext.request.contextPath}/users" class="btn btn-secondary">
+        Quay lại
+      </a>
+    </div>
 
-  <br>
-
-  <button type="submit">
-    Lưu
-  </button>
-
-  <a href="${pageContext.request.contextPath}/users">
-    Quay lại
-  </a>
-
-</form:form>
+  </form:form>
+</div>
 
 </body>
 </html>

@@ -1,3 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle version="13.6.0">
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebConfig.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/RootConfig.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/SecurityInterceptor.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/domain/DomainEvent.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/DeleteUserUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/DeleteUserCommand.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/DeleteUserInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/CreateUserInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/AddAddressCommand.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/UpdateUserUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/RemoveAddressUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/CreateUserUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/RemoveAddressInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/AddAddressUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/AddAddressInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/UpdateUserInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/CreateUserCommand.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/command/UpdateUserCommand.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/GetUserAddressesUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/FindUserByIdUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/FindAllUsersInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/UserDTO.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/FindAllUsersUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/GetUserAddressesInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/FindUserByIdInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/query/AddressDTO.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/presentation/UserQueryController.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/presentation/UserAddressController.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/presentation/UserCommandController.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/persistence/UserAddressDbEntity.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/persistence/UserDbEntity.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/persistence/UserPersistenceAdapter.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/persistence/UserDataAccessMapper.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/eventlistener/UserEventListener.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/mapper/UserCommandMapper.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/mapper/UserQueryMapper.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/infrastructure/mapper/UserAddressMapper.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/ports/output/UserPersistencePort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/User.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/Password.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/Email.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/Address.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/event/UserAddressRemovedEvent.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/event/UserRegisteredEvent.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/event/UserAddressAddedEvent.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/usecase/LogoutUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/usecase/LoginUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/usecase/RegisterUseCase.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/RegisterInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/LoginInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/RegisterCommand.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/LogoutInputPort.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/presentation/AuthController.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/infrastructure/security/BCryptPasswordHasher.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptor.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/domain/PasswordHasher.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/command/UserCommandUseCasesTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/command/AddAddressUseCaseTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/command/RemoveAddressUseCaseTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/query/UserQueryUseCasesTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/presentation/UserQueryControllerTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/presentation/UserCommandControllerTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/model/EmailTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/model/PasswordTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/model/UserAddressTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/model/UserTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/model/AddressTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/domain/event/UserRegisteredEventTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/application/usecase/LoginUseCaseTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/application/usecase/RegisterUseCaseTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/presentation/AuthControllerTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptorTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/infrastructure/security/BCryptPasswordHasherTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/resources/application.properties">
+</file>
 </checkstyle>

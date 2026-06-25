@@ -1,4 +1,4 @@
-package com.examp.springmvc.shared.infrastructure;
+package com.examp.springmvc.shared.infrastructure.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,7 +18,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @PropertySource("classpath:application.properties")
-@MapperScan("com.examp.springmvc.user.infrastructure.persistence.mybatis")
+@MapperScan("com.examp.springmvc.user.infrastructure.mapper")
 public class MyBatisConfig {
 
     private final Environment environment;

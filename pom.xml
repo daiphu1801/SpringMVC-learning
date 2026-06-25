@@ -144,6 +144,13 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- jbcrypt for password hashing -->
+    <dependency>
+      <groupId>org.mindrot</groupId>
+      <artifactId>jbcrypt</artifactId>
+      <version>0.4</version>
+    </dependency>
+
     <!-- ===================== -->
     <!-- TESTING               -->
     <!-- ===================== -->
@@ -217,7 +224,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
-      <version>7.0.2</version>
+      <version>${spring.version}</version>
       <scope>compile</scope>
     </dependency>
 

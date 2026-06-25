@@ -9,92 +9,119 @@
 <head>
     <meta charset="UTF-8">
     <title>Danh sách người dùng</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
 </head>
 
 <body>
 
-<h1>Danh sách người dùng</h1>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+        <span style="font-size: 0.95rem; color: var(--text-main);">
+            Xin chào, <strong><c:out value="${sessionScope.currentUser.fullName}"/></strong> 
+            (<span style="color: var(--primary); font-weight: 500; font-size: 0.85rem;"><c:out value="${sessionScope.currentUser.role}"/></span>)
+            | <a href="${pageContext.request.contextPath}/users/addresses" style="color: var(--primary); text-decoration: none; font-weight: 500; margin-left: 5px;">Sổ địa chỉ</a>
+        </span>
+        <a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; box-shadow: none;">
+            Đăng xuất
+        </a>
+    </div>
 
-<p>
-    <a href="${pageContext.request.contextPath}/users/create">
-        Thêm người dùng
-    </a>
-</p>
+    <h1>Danh sách người dùng</h1>
 
-<table border="1" cellpadding="8" cellspacing="0">
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Username</th>
-        <th>Họ tên</th>
-        <th>Email</th>
-        <th>Số điện thoại</th>
-        <th>Trạng thái</th>
-        <th>Ngày tạo</th>
-        <th>Thao tác</th>
-    </tr>
-    </thead>
-
-    <tbody>
-
-    <c:forEach var="user" items="${users}">
-        <tr>
-            <td>
-                <c:out value="${user.id}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.username}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.fullName}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.email}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.phone}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.status}"/>
-            </td>
-
-            <td>
-                <c:out value="${user.createdAt}"/>
-            </td>
-
-            <td>
-                <a href="${pageContext.request.contextPath}/users/edit/${user.id}">
-                    Sửa
-                </a>
-
-                <form
-                        action="${pageContext.request.contextPath}/users/delete/${user.id}"
-                        method="post"
-                        style="display:inline">
-
-                    <button type="submit">
-                        Xóa
-                    </button>
-                </form>
-            </td>
-        </tr>
-    </c:forEach>
-
-    <c:if test="${empty users}">
-        <tr>
-            <td colspan="8">
-                Chưa có dữ liệu
-            </td>
-        </tr>
+    <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+        <div class="btn-container">
+            <a href="${pageContext.request.contextPath}/users/create" class="btn">
+                Thêm người dùng
+            </a>
+        </div>
     </c:if>
 
-    </tbody>
-</table>
+    <div class="table-wrapper">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+
+            <tbody>
+
+            <c:forEach var="user" items="${users}">
+                <tr>
+                    <td>
+                        <c:out value="${user.id}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${user.username}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${user.fullName}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${user.email}"/>
+                    </td>
+
+                    <td>
+                        <c:out value="${user.phone}"/>
+                    </td>
+
+                    <td>
+                        <span class="badge ${user.status == 'ACTIVE' ? 'badge-active' : 'badge-inactive'}">
+                            <c:choose>
+                                <c:when test="${user.status == 'ACTIVE'}">Hoạt động</c:when>
+                                <c:otherwise>Không hoạt động</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="action-links">
+                            <c:choose>
+                                <c:when test="${sessionScope.currentUser.role == 'ADMIN'}">
+                                    <a href="${pageContext.request.contextPath}/users/edit/${user.id}" class="action-link-edit">
+                                        Sửa
+                                    </a>
+
+                                    <form
+                                            action="${pageContext.request.contextPath}/users/delete/${user.id}"
+                                            method="post"
+                                            style="display:inline">
+
+                                        <button type="submit" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                            Xóa
+                                        </button>
+                                    </form>
+                                </c:when>
+                                <c:otherwise>
+                                    <span style="color: var(--text-muted); font-size: 0.85rem;">Không có quyền</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </td>
+                </tr>
+            </c:forEach>
+
+            <c:if test="${empty users}">
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--text-muted);">
+                        Chưa có dữ liệu người dùng
+                    </td>
+                </tr>
+            </c:if>
+
+            </tbody>
+        </table>
+    </div>
+</div>
 
 </body>
 </html>

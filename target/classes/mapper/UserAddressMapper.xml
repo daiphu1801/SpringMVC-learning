@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.examp.springmvc.user.infrastructure.mapper.UserAddressMapper">
+
+    <resultMap id="addressResultMap" type="com.examp.springmvc.user.infrastructure.persistence.UserAddressDbEntity">
+        <id property="id" column="ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="receiverName" column="RECEIVER_NAME"/>
+        <result property="receiverPhone" column="RECEIVER_PHONE"/>
+        <result property="province" column="PROVINCE"/>
+        <result property="district" column="DISTRICT"/>
+        <result property="ward" column="WARD"/>
+        <result property="streetDetail" column="STREET_DETAIL"/>
+        <result property="isDefault" column="IS_DEFAULT" javaType="boolean" jdbcType="NUMERIC"/>
+    </resultMap>
+
+    <sql id="addressColumns">
+        ID,
+        USER_ID,
+        RECEIVER_NAME,
+        RECEIVER_PHONE,
+        PROVINCE,
+        DISTRICT,
+        WARD,
+        STREET_DETAIL,
+        IS_DEFAULT
+    </sql>
+
+    <select id="findByUserId" resultMap="addressResultMap">
+        SELECT <include refid="addressColumns"/>
+        FROM APP_USER_ADDRESSES
+        WHERE USER_ID = #{userId, jdbcType=NUMERIC}
+        ORDER BY IS_DEFAULT DESC, ID ASC
+    </select>
+
+    <insert id="insert" parameterType="com.examp.springmvc.user.infrastructure.persistence.UserAddressDbEntity" 
+            useGeneratedKeys="true" keyProperty="id" keyColumn="ID">
+        INSERT INTO APP_USER_ADDRESSES (
+            USER_ID,
+            RECEIVER_NAME,
+            RECEIVER_PHONE,
+            PROVINCE,
+            DISTRICT,
+            WARD,
+            STREET_DETAIL,
+            IS_DEFAULT
+        ) VALUES (
+            #{userId, jdbcType=NUMERIC},
+            #{receiverName, jdbcType=VARCHAR},
+            #{receiverPhone, jdbcType=VARCHAR},
+            #{province, jdbcType=VARCHAR},
+            #{district, jdbcType=VARCHAR},
+            #{ward, jdbcType=VARCHAR},
+            #{streetDetail, jdbcType=VARCHAR},
+            #{isDefault, jdbcType=NUMERIC}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.examp.springmvc.user.infrastructure.persistence.UserAddressDbEntity">
+        UPDATE APP_USER_ADDRESSES
+        SET
+            RECEIVER_NAME = #{receiverName, jdbcType=VARCHAR},
+            RECEIVER_PHONE = #{receiverPhone, jdbcType=VARCHAR},
+            PROVINCE = #{province, jdbcType=VARCHAR},
+            DISTRICT = #{district, jdbcType=VARCHAR},
+            WARD = #{ward, jdbcType=VARCHAR},
+            STREET_DETAIL = #{streetDetail, jdbcType=VARCHAR},
+            IS_DEFAULT = #{isDefault, jdbcType=NUMERIC}
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM APP_USER_ADDRESSES
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </delete>
+
+    <delete id="deleteByUserIdExceptIds">
+        DELETE FROM APP_USER_ADDRESSES
+        WHERE USER_ID = #{userId, jdbcType=NUMERIC}
+        <if test="ids != null and ids.size() > 0">
+            AND ID NOT IN
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item, jdbcType=NUMERIC}
+            </foreach>
+        </if>
+    </delete>
+
+</mapper>

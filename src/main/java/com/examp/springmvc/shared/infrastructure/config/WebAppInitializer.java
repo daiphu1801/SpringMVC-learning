@@ -1,4 +1,4 @@
-package com.examp.springmvc.shared.infrastructure;
+package com.examp.springmvc.shared.infrastructure.config;
 
 import jakarta.servlet.Filter;
 import org.springframework.web.filter.CharacterEncodingFilter;
