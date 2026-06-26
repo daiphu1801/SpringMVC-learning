@@ -1,19 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%@ taglib prefix="c"
-           uri="jakarta.tags.core" %>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Đăng ký tài khoản</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
-
-<body>
-
+<t:layout title="Đăng ký tài khoản" showHeader="false">
 <div class="container login-container">
     <div class="login-header">
         <h1>Đăng ký</h1>
@@ -67,6 +56,4 @@
         </div>
     </form>
 </div>
-
-</body>
-</html>
+</t:layout>

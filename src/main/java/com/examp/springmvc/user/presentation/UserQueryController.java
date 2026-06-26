@@ -1,7 +1,7 @@
 package com.examp.springmvc.user.presentation;
 
-import com.examp.springmvc.user.application.query.FindAllUsersInputPort;
-import com.examp.springmvc.user.application.query.FindUserByIdInputPort;
+import com.examp.springmvc.user.application.usermanagement.query.FindAllUsersInputPort;
+import com.examp.springmvc.user.application.usermanagement.query.FindUserByIdInputPort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,8 +29,8 @@ public class UserQueryController {
 
     @GetMapping("/create")
     public String showCreateForm(Model model) {
-        com.examp.springmvc.user.application.command.CreateUserCommand command =
-                new com.examp.springmvc.user.application.command.CreateUserCommand();
+        com.examp.springmvc.user.application.usermanagement.command.CreateUserCommand command =
+                new com.examp.springmvc.user.application.usermanagement.command.CreateUserCommand();
         command.setStatus("ACTIVE");
         model.addAttribute("user", command);
         return "user/form";

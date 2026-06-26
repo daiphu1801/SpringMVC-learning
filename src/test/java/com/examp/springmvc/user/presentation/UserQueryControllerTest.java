@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
-import com.examp.springmvc.user.application.query.FindAllUsersInputPort;
-import com.examp.springmvc.user.application.query.FindUserByIdInputPort;
-import com.examp.springmvc.user.application.query.UserDTO;
+import com.examp.springmvc.user.application.usermanagement.query.FindAllUsersInputPort;
+import com.examp.springmvc.user.application.usermanagement.query.FindUserByIdInputPort;
+import com.examp.springmvc.user.application.usermanagement.query.UserDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

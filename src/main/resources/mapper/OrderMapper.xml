@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.examp.springmvc.order.infrastructure.mapper.OrderMapper">
+
+    <resultMap id="OrderResultMap" type="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity">
+        <id     property="id"              column="ID"/>
+        <result property="userId"          column="USER_ID"/>
+        <result property="status"          column="STATUS"/>
+        <result property="totalAmount"     column="TOTAL_AMOUNT"/>
+        <result property="receiverName"    column="RECEIVER_NAME"/>
+        <result property="receiverPhone"   column="RECEIVER_PHONE"/>
+        <result property="shippingAddress" column="SHIPPING_ADDRESS"/>
+        <result property="note"            column="NOTE"/>
+        <result property="paymentMethod"   column="PAYMENT_METHOD"/>
+        <result property="paymentStatus"   column="PAYMENT_STATUS"/>
+        <result property="createdAt"       column="CREATED_AT"/>
+        <result property="updatedAt"       column="UPDATED_AT"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity"
+            useGeneratedKeys="false">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT APP_ORDER_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO APP_ORDERS (
+            ID, USER_ID, STATUS, TOTAL_AMOUNT,
+            RECEIVER_NAME, RECEIVER_PHONE, SHIPPING_ADDRESS, NOTE,
+            PAYMENT_METHOD, PAYMENT_STATUS,
+            CREATED_AT, UPDATED_AT
+        ) VALUES (
+            #{id}, #{userId}, #{status}, #{totalAmount},
+            #{receiverName}, #{receiverPhone}, #{shippingAddress}, #{note},
+            #{paymentMethod}, #{paymentStatus},
+            #{createdAt}, #{updatedAt}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity">
+        UPDATE APP_ORDERS SET
+            STATUS         = #{status},
+            PAYMENT_STATUS = #{paymentStatus},
+            UPDATED_AT     = #{updatedAt}
+        WHERE ID = #{id}
+    </update>
+
+    <select id="findById" parameterType="Long" resultMap="OrderResultMap">
+        SELECT * FROM APP_ORDERS WHERE ID = #{id}
+    </select>
+
+    <select id="findByUserId" parameterType="Long" resultMap="OrderResultMap">
+        SELECT * FROM APP_ORDERS WHERE USER_ID = #{userId} ORDER BY CREATED_AT DESC
+    </select>
+
+    <select id="findAll" resultMap="OrderResultMap">
+        SELECT * FROM APP_ORDERS ORDER BY CREATED_AT DESC
+    </select>
+
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM APP_ORDERS WHERE ID = #{id}
+    </delete>
+
+</mapper>

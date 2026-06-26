@@ -1,35 +1,18 @@
-<%@ page contentType="text/html;charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%--@elvariable id="user" type="com.examp.springmvc.model.User"--%>
+<c:choose>
+  <c:when test="${empty user.id}">
+    <c:set var="pageTitle" value="Thêm người dùng" />
+  </c:when>
+  <c:otherwise>
+    <c:set var="pageTitle" value="Cập nhật người dùng" />
+  </c:otherwise>
+</c:choose>
 
-<%@ taglib prefix="c"
-           uri="jakarta.tags.core" %>
-
-<%@ taglib prefix="form"
-           uri="http://www.springframework.org/tags/form" %>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-
-  <title>
-    <c:choose>
-      <c:when test="${empty user.id}">
-        Thêm người dùng
-      </c:when>
-
-      <c:otherwise>
-        Cập nhật người dùng
-      </c:otherwise>
-    </c:choose>
-  </title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
-
-<body>
-
+<t:layout title="${pageTitle}">
 <div class="container">
   <c:choose>
     <c:when test="${empty user.id}">
@@ -167,6 +150,4 @@
 
   </form:form>
 </div>
-
-</body>
-</html>
+</t:layout>

@@ -1,10 +1,10 @@
 package com.examp.springmvc.user.presentation;
 
-import com.examp.springmvc.user.application.command.AddAddressCommand;
-import com.examp.springmvc.user.application.command.AddAddressInputPort;
-import com.examp.springmvc.user.application.command.RemoveAddressInputPort;
-import com.examp.springmvc.user.application.query.AddressDTO;
-import com.examp.springmvc.user.application.query.GetUserAddressesInputPort;
+import com.examp.springmvc.user.application.address.command.AddAddressCommand;
+import com.examp.springmvc.user.application.address.command.AddAddressInputPort;
+import com.examp.springmvc.user.application.address.command.RemoveAddressInputPort;
+import com.examp.springmvc.user.application.address.query.AddressDTO;
+import com.examp.springmvc.user.application.address.query.GetUserAddressesInputPort;
 import com.examp.springmvc.user.domain.model.User;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;

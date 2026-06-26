@@ -6,7 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -17,13 +20,19 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 @EnableWebMvc
-@PropertySource("classpath:application.properties")
-@ComponentScan(
-        basePackages = {
-            "com.examp.springmvc.user.presentation",
-            "com.examp.springmvc.auth.presentation",
-            "com.examp.springmvc.auth.infrastructure.security"
-        })
+@PropertySources({
+    @PropertySource("classpath:application.properties"),
+    @PropertySource(
+            value = "classpath:application-local.properties",
+            ignoreResourceNotFound = true)
+})
+@ComponentScan(basePackages = {
+        "com.examp.springmvc.user.presentation",
+        "com.examp.springmvc.auth.presentation",
+        "com.examp.springmvc.catalog.presentation",
+        "com.examp.springmvc.order.presentation",
+        "com.examp.springmvc.auth.infrastructure.security"
+})
 public class WebConfig implements WebMvcConfigurer {
 
     private final Environment environment;
@@ -61,5 +70,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(securityInterceptor);
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver() {
+        return new StandardServletMultipartResolver();
     }
 }

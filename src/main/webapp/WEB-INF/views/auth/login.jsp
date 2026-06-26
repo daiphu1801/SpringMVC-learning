@@ -1,19 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%@ taglib prefix="c"
-           uri="jakarta.tags.core" %>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Đăng nhập hệ thống</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
-
-<body>
-
+<t:layout title="Đăng nhập hệ thống" showHeader="false">
 <div class="container login-container">
     <div class="login-header">
         <h1>Đăng nhập</h1>
@@ -44,10 +33,14 @@
                    placeholder="Nhập mật khẩu" required>
         </div>
 
-        <div style="margin-top: 10px; margin-bottom: 20px; font-size: 0.9rem; color: var(--text-muted);">
-            Tài khoản mẫu: <br>
-            - Quản trị viên: <strong>admin</strong> / <strong>password123</strong> <br>
-            - Người dùng: (các tài khoản sẵn có) / <strong>password123</strong>
+        <div style="margin-top: 10px; margin-bottom: 20px; padding: 12px 16px; background: rgba(127,132,255,0.08); border: 1px dashed var(--primary); border-radius: 10px; font-size: 0.85rem; color: var(--text-muted);">
+            <div style="font-weight: 600; color: var(--primary); margin-bottom: 6px;">🔑 Tài khoản mẫu</div>
+            <div>Quản trị viên: <strong>adminnn</strong> / <strong>123456</strong></div>
+            <button type="button" id="btn-demo-fill"
+                    onclick="document.getElementById('username').value='adminnn';document.getElementById('password').value='123456';"
+                    style="margin-top: 8px; padding: 4px 12px; font-size: 0.8rem; border: 1px solid var(--primary); background: transparent; color: var(--primary); border-radius: 6px; cursor: pointer;">
+                ⚡ Điền nhanh
+            </button>
         </div>
 
         <button type="submit" class="btn btn-full">Đăng nhập</button>
@@ -59,6 +52,4 @@
         </div>
     </form>
 </div>
-
-</body>
-</html>
+</t:layout>

@@ -11,14 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@PropertySource("classpath:application.properties")
-@MapperScan("com.examp.springmvc.user.infrastructure.mapper")
+@PropertySources({
+    @PropertySource("classpath:application.properties"),
+    @PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
+})
+@MapperScan({
+    "com.examp.springmvc.user.infrastructure.mapper",
+    "com.examp.springmvc.catalog.infrastructure.mapper",
+    "com.examp.springmvc.order.infrastructure.mapper"
+})
 public class MyBatisConfig {
 
     private final Environment environment;

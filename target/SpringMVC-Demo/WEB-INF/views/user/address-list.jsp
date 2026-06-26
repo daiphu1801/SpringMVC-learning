@@ -1,138 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Sổ địa chỉ người dùng</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-    <style>
-        .address-layout {
-            display: flex;
-            gap: 30px;
-            margin-top: 20px;
-        }
-        .address-form-section {
-            flex: 1.2;
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        }
-        .address-cards-section {
-            flex: 1.8;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .address-card {
-            background: var(--white);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 20px;
-            position: relative;
-            transition: all var(--transition-speed) ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-        }
-        .address-card:hover {
-            transform: translateY(-2px);
-            border-color: var(--primary-light);
-            box-shadow: 0 8px 24px rgba(159, 161, 255, 0.15);
-        }
-        .address-card.default-address {
-            border-left: 5px solid var(--primary);
-        }
-        .address-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .receiver-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-main);
-        }
-        .address-badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 500;
-        }
-        .badge-default {
-            background-color: var(--success-bg);
-            color: var(--success-text);
-        }
-        .address-details {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            margin-bottom: 8px;
-        }
-        .address-phone {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 15px;
-        }
-        .address-actions {
-            display: flex;
-            justify-content: flex-end;
-            border-top: 1px solid var(--border-color);
-            padding-top: 12px;
-        }
-        .form-group-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .form-group-checkbox input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
-        .alert {
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 0.95rem;
-        }
-        .alert-danger {
-            background-color: var(--danger-bg);
-            color: var(--danger-text);
-            border: 1px solid rgba(139, 0, 0, 0.1);
-        }
-        .alert-success {
-            background-color: var(--success-bg);
-            color: var(--success-text);
-            border: 1px solid rgba(30, 78, 44, 0.1);
-        }
-        @media (max-width: 850px) {
-            .address-layout {
-                flex-direction: column;
-            }
-        }
-    </style>
-</head>
-<body>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
+<t:layout title="Sổ địa chỉ người dùng">
+<jsp:attribute name="head">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/address-list.css">
+</jsp:attribute>
+<jsp:body>
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
-        <span style="font-size: 0.95rem; color: var(--text-main);">
-            Xin chào, <strong><c:out value="${sessionScope.currentUser.fullName}"/></strong> 
-            (<span style="color: var(--primary); font-weight: 500; font-size: 0.85rem;"><c:out value="${sessionScope.currentUser.role}"/></span>)
-        </span>
-        <div>
-            <a href="${pageContext.request.contextPath}/users" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; box-shadow: none; margin-right: 10px;">
-                Quản lý User
-            </a>
-            <a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; box-shadow: none;">
-                Đăng xuất
-            </a>
-        </div>
-    </div>
-
     <h1>Sổ địa chỉ của tôi</h1>
     <p style="color: var(--text-muted); margin-bottom: 20px;">Lưu trữ tối đa 5 địa chỉ giao hàng nhận hàng.</p>
 
@@ -232,6 +107,5 @@
         
     </div>
 </div>
-
-</body>
-</html>
+</jsp:body>
+</t:layout>

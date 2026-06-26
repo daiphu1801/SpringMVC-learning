@@ -1,0 +1,76 @@
+# =========================================================================
+# API Keys, Secrets & Private Configuration Files (CRITICAL FOR SECURITY)
+# =========================================================================
+.env
+.env.local
+.env.*.local
+*.local
+*secret*
+*apikey*
+credentials*
+config-private*
+
+# Spring Boot & Application Config overrides
+**/src/main/resources/application-local.properties
+**/src/main/resources/application-local.yml
+**/src/main/resources/application-local.yaml
+**/src/main/resources/config-local.*
+
+# =========================================================================
+# Maven Build Outputs
+# =========================================================================
+target/
+*.war
+*.ear
+*.jar
+*.zip
+*.tar.gz
+*.rar
+
+# =========================================================================
+# IDE & Editor Files
+# =========================================================================
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.settings/
+.project
+.classpath
+.factorypath
+.metadata/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+
+# =========================================================================
+# Logs and Temporary Files
+# =========================================================================
+*.log
+logs/
+temp/
+tmp/
+.checkstyle/
+.spotbugs/
+
+# =========================================================================
+# System and OS Files
+# =========================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

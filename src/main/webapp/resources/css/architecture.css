@@ -1,0 +1,298 @@
+:root {
+    --primary-gradient: linear-gradient(135deg, #7F84FF, #9FA1FF);
+    --secondary-gradient: linear-gradient(135deg, #AEE2FF, #EAF8FF);
+    --dark-blue: #1E293B;
+    --light-bg: #F8FAFC;
+    --layer-presentation: #E0F2FE;
+    --layer-presentation-text: #0369A1;
+    --layer-application: #FEF3C7;
+    --layer-application-text: #B45309;
+    --layer-domain: #DCFCE7;
+    --layer-domain-text: #15803D;
+    --layer-infra: #F1F5F9;
+    --layer-infra-text: #475569;
+}
+
+.doc-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(159, 161, 255, 0.08);
+    border: 1px solid rgba(159, 161, 255, 0.1);
+}
+
+.header-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.header-section h1 {
+    font-size: 2.5rem;
+    color: var(--dark-blue);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.header-section h1::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 2px;
+    transform: translateX(-50%);
+}
+
+.header-section p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.nav-links {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+/* Tabs styling */
+.tabs {
+    display: flex;
+    gap: 10px;
+    background: #F1F5F9;
+    padding: 6px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    text-align: center;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: var(--white);
+    color: #7F84FF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Architecture Grid Layout */
+.arch-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+    .arch-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Layers Visual Box */
+.layers-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    background: #F8FAFC;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.layer-card {
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.layer-card:hover {
+    transform: scale(1.02);
+}
+
+.layer-card.presentation {
+    background-color: var(--layer-presentation);
+    color: var(--layer-presentation-text);
+    border-color: #bae6fd;
+}
+.layer-card.application {
+    background-color: var(--layer-application);
+    color: var(--layer-application-text);
+    border-color: #fde68a;
+}
+.layer-card.domain {
+    background-color: var(--layer-domain);
+    color: var(--layer-domain-text);
+    border-color: #bbf7d0;
+}
+.layer-card.infrastructure {
+    background-color: var(--layer-infra);
+    color: var(--layer-infra-text);
+    border-color: #cbd5e1;
+}
+
+.layer-card h3 {
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.layer-card span {
+    font-size: 0.8rem;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.layer-card p {
+    font-size: 0.9rem;
+    opacity: 0.85;
+}
+
+/* Detail side panel */
+.detail-panel {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.01);
+}
+
+.detail-panel h3 {
+    color: var(--dark-blue);
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.detail-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.detail-list li {
+    position: relative;
+    padding-left: 20px;
+    font-size: 0.95rem;
+}
+
+.detail-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    color: #7F84FF;
+}
+
+/* DDD visual components */
+.ddd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .ddd-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.ddd-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    transition: all 0.3s;
+}
+
+.ddd-card:hover {
+    border-color: #7F84FF;
+    box-shadow: 0 10px 20px rgba(159, 161, 255, 0.1);
+}
+
+.ddd-card h3 {
+    font-size: 1.15rem;
+    color: var(--dark-blue);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #F1F5F9;
+}
+
+.ddd-badge {
+    background: #EEF2F6;
+    color: #475569;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+/* Package Directory View */
+.dir-tree {
+    font-family: 'Courier New', Courier, monospace;
+    background: #1E293B;
+    color: #E2E8F0;
+    padding: 25px;
+    border-radius: 16px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: 0.9rem;
+}
+
+.dir-tree span.folder {
+    color: #FCD34D;
+    font-weight: bold;
+}
+
+.dir-tree span.file {
+    color: #38BDF8;
+}
+
+.dir-tree span.comment {
+    color: #64748B;
+    font-style: italic;
+}

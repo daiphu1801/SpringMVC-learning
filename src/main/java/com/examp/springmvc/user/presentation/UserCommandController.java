@@ -1,11 +1,11 @@
 package com.examp.springmvc.user.presentation;
 
-import com.examp.springmvc.user.application.command.CreateUserCommand;
-import com.examp.springmvc.user.application.command.CreateUserInputPort;
-import com.examp.springmvc.user.application.command.DeleteUserCommand;
-import com.examp.springmvc.user.application.command.DeleteUserInputPort;
-import com.examp.springmvc.user.application.command.UpdateUserCommand;
-import com.examp.springmvc.user.application.command.UpdateUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.CreateUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.CreateUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.DeleteUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.DeleteUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.UpdateUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.UpdateUserInputPort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;

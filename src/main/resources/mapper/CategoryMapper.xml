@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.examp.springmvc.catalog.infrastructure.mapper.CategoryMapper">
+
+    <resultMap id="categoryResultMap" type="com.examp.springmvc.catalog.infrastructure.persistence.CategoryDbEntity">
+        <id property="id" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="code" column="CODE"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <sql id="categoryColumns">
+        ID, NAME, CODE, DESCRIPTION, CREATED_AT, UPDATED_AT
+    </sql>
+
+    <insert id="insert" parameterType="com.examp.springmvc.catalog.infrastructure.persistence.CategoryDbEntity">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT APP_CATEGORY_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO APP_CATEGORIES (
+            ID, NAME, CODE, DESCRIPTION, CREATED_AT, UPDATED_AT
+        ) VALUES (
+            #{id, jdbcType=NUMERIC},
+            #{name, jdbcType=VARCHAR},
+            #{code, jdbcType=VARCHAR},
+            #{description, jdbcType=VARCHAR},
+            SYSTIMESTAMP,
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <update id="update" parameterType="com.examp.springmvc.catalog.infrastructure.persistence.CategoryDbEntity">
+        UPDATE APP_CATEGORIES
+        SET
+            NAME = #{name, jdbcType=VARCHAR},
+            CODE = #{code, jdbcType=VARCHAR},
+            DESCRIPTION = #{description, jdbcType=VARCHAR},
+            UPDATED_AT = SYSTIMESTAMP
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </update>
+
+    <select id="findById" parameterType="long" resultMap="categoryResultMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM APP_CATEGORIES
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </select>
+
+    <select id="findByCode" parameterType="string" resultMap="categoryResultMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM APP_CATEGORIES
+        WHERE CODE = #{code, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAll" resultMap="categoryResultMap">
+        SELECT <include refid="categoryColumns"/>
+        FROM APP_CATEGORIES
+        ORDER BY NAME ASC
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM APP_CATEGORIES
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </delete>
+
+</mapper>

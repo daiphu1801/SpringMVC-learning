@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.examp.springmvc.catalog.infrastructure.mapper.ProductMapper">
+
+    <resultMap id="productResultMap" type="com.examp.springmvc.catalog.infrastructure.persistence.ProductDbEntity">
+        <id property="id" column="ID"/>
+        <result property="categoryId" column="CATEGORY_ID"/>
+        <result property="categoryName" column="CATEGORY_NAME"/>
+        <result property="sku" column="SKU"/>
+        <result property="name" column="NAME"/>
+        <result property="description" column="DESCRIPTION"/>
+        <result property="price" column="PRICE"/>
+        <result property="status" column="STATUS"/>
+        <result property="imageUrl" column="IMAGE_URL"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.examp.springmvc.catalog.infrastructure.persistence.ProductDbEntity">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT APP_PRODUCT_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO APP_PRODUCTS (
+            ID, CATEGORY_ID, SKU, NAME, DESCRIPTION, PRICE, STATUS, IMAGE_URL, CREATED_AT, UPDATED_AT
+        ) VALUES (
+            #{id, jdbcType=NUMERIC},
+            #{categoryId, jdbcType=NUMERIC},
+            #{sku, jdbcType=VARCHAR},
+            #{name, jdbcType=VARCHAR},
+            #{description, jdbcType=VARCHAR},
+            #{price, jdbcType=NUMERIC},
+            #{status, jdbcType=VARCHAR},
+            #{imageUrl, jdbcType=VARCHAR},
+            SYSTIMESTAMP,
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <update id="update" parameterType="com.examp.springmvc.catalog.infrastructure.persistence.ProductDbEntity">
+        UPDATE APP_PRODUCTS
+        SET
+            CATEGORY_ID = #{categoryId, jdbcType=NUMERIC},
+            SKU = #{sku, jdbcType=VARCHAR},
+            NAME = #{name, jdbcType=VARCHAR},
+            DESCRIPTION = #{description, jdbcType=VARCHAR},
+            PRICE = #{price, jdbcType=NUMERIC},
+            STATUS = #{status, jdbcType=VARCHAR},
+            IMAGE_URL = #{imageUrl, jdbcType=VARCHAR},
+            UPDATED_AT = SYSTIMESTAMP
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </update>
+
+    <select id="findById" parameterType="long" resultMap="productResultMap">
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        FROM APP_PRODUCTS p
+        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        WHERE p.ID = #{id, jdbcType=NUMERIC}
+    </select>
+
+    <select id="findBySku" parameterType="string" resultMap="productResultMap">
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        FROM APP_PRODUCTS p
+        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        WHERE p.SKU = #{sku, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findAll" resultMap="productResultMap">
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        FROM APP_PRODUCTS p
+        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        ORDER BY p.ID DESC
+    </select>
+
+    <select id="findByCategoryId" parameterType="long" resultMap="productResultMap">
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        FROM APP_PRODUCTS p
+        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        WHERE p.CATEGORY_ID = #{categoryId, jdbcType=NUMERIC}
+        ORDER BY p.ID DESC
+    </select>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM APP_PRODUCTS
+        WHERE ID = #{id, jdbcType=NUMERIC}
+    </delete>
+
+</mapper>

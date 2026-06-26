@@ -1,31 +1,9 @@
-<%@ page contentType="text/html;charset=UTF-8"
-         pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%@ taglib prefix="c"
-           uri="jakarta.tags.core" %>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Danh sách người dùng</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
-
-<body>
-
+<t:layout title="Danh sách người dùng">
 <div class="container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
-        <span style="font-size: 0.95rem; color: var(--text-main);">
-            Xin chào, <strong><c:out value="${sessionScope.currentUser.fullName}"/></strong> 
-            (<span style="color: var(--primary); font-weight: 500; font-size: 0.85rem;"><c:out value="${sessionScope.currentUser.role}"/></span>)
-            | <a href="${pageContext.request.contextPath}/users/addresses" style="color: var(--primary); text-decoration: none; font-weight: 500; margin-left: 5px;">Sổ địa chỉ</a>
-        </span>
-        <a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.85rem; box-shadow: none;">
-            Đăng xuất
-        </a>
-    </div>
-
     <h1>Danh sách người dùng</h1>
 
     <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
@@ -122,6 +100,4 @@
         </table>
     </div>
 </div>
-
-</body>
-</html>
+</t:layout>

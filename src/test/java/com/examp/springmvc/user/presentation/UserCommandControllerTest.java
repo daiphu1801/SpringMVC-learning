@@ -6,12 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.examp.springmvc.user.application.command.CreateUserCommand;
-import com.examp.springmvc.user.application.command.CreateUserInputPort;
-import com.examp.springmvc.user.application.command.DeleteUserCommand;
-import com.examp.springmvc.user.application.command.DeleteUserInputPort;
-import com.examp.springmvc.user.application.command.UpdateUserCommand;
-import com.examp.springmvc.user.application.command.UpdateUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.CreateUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.CreateUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.DeleteUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.DeleteUserInputPort;
+import com.examp.springmvc.user.application.usermanagement.command.UpdateUserCommand;
+import com.examp.springmvc.user.application.usermanagement.command.UpdateUserInputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

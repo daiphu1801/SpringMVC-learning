@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.examp.springmvc.order.infrastructure.mapper.OrderItemMapper">
+
+    <resultMap id="OrderItemResultMap" type="com.examp.springmvc.order.infrastructure.persistence.OrderItemDbEntity">
+        <id     property="id"          column="ID"/>
+        <result property="orderId"     column="ORDER_ID"/>
+        <result property="productId"   column="PRODUCT_ID"/>
+        <result property="productName" column="PRODUCT_NAME"/>
+        <result property="productSku"  column="PRODUCT_SKU"/>
+        <result property="unitPrice"   column="UNIT_PRICE"/>
+        <result property="quantity"    column="QUANTITY"/>
+        <result property="subtotal"    column="SUBTOTAL"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.examp.springmvc.order.infrastructure.persistence.OrderItemDbEntity"
+            useGeneratedKeys="false">
+        <selectKey keyProperty="id" resultType="Long" order="BEFORE">
+            SELECT APP_ORDER_ITEM_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO APP_ORDER_ITEMS (
+            ID, ORDER_ID, PRODUCT_ID, PRODUCT_NAME, PRODUCT_SKU,
+            UNIT_PRICE, QUANTITY, SUBTOTAL
+        ) VALUES (
+            #{id}, #{orderId}, #{productId}, #{productName}, #{productSku},
+            #{unitPrice}, #{quantity}, #{subtotal}
+        )
+    </insert>
+
+    <select id="findByOrderId" parameterType="Long" resultMap="OrderItemResultMap">
+        SELECT * FROM APP_ORDER_ITEMS WHERE ORDER_ID = #{orderId}
+    </select>
+
+    <delete id="deleteByOrderId" parameterType="Long">
+        DELETE FROM APP_ORDER_ITEMS WHERE ORDER_ID = #{orderId}
+    </delete>
+
+</mapper>

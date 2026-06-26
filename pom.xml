@@ -40,6 +40,8 @@
     <mybatis-spring.version>3.0.5</mybatis-spring.version>
     <hikari.version>7.0.2</hikari.version>
     <oracle-jdbc.version>23.26.2.0.0</oracle-jdbc.version>
+    <cloudinary.version>1.36.0</cloudinary.version>
+    <angus-mail.version>2.0.3</angus-mail.version>
 
     <!--Check conventing code-->
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -95,6 +97,13 @@
       <version>${oracle-jdbc.version}</version>
     </dependency>
 
+    <!-- Cloudinary for image storage -->
+    <dependency>
+      <groupId>com.cloudinary</groupId>
+      <artifactId>cloudinary-http44</artifactId>
+      <version>${cloudinary.version}</version>
+    </dependency>
+
     <!-- Servlet API do Tomcat cung cấp -->
     <dependency>
       <groupId>jakarta.servlet</groupId>
@@ -119,36 +128,26 @@
     </dependency>
 
 
-    <!-- ===================== -->
-    <!-- SERVLET / JSP         -->
-    <!-- ===================== -->
-
-    <dependency>
-      <groupId>jakarta.servlet</groupId>
-      <artifactId>jakarta.servlet-api</artifactId>
-      <version>6.0.0</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>jakarta.servlet.jsp.jstl</groupId>
-      <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-
-    <!-- JSTL implementation -->
-    <dependency>
-      <groupId>org.glassfish.web</groupId>
-      <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-      <version>3.0.1</version>
-      <scope>runtime</scope>
-    </dependency>
 
     <!-- jbcrypt for password hashing -->
     <dependency>
       <groupId>org.mindrot</groupId>
       <artifactId>jbcrypt</artifactId>
       <version>0.4</version>
+    </dependency>
+
+    <!-- Spring Context Support (JavaMailSender) -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <!-- Jakarta Mail API (Angus Mail — Spring 6 / Jakarta EE 10 compatible) -->
+    <dependency>
+      <groupId>org.eclipse.angus</groupId>
+      <artifactId>angus-mail</artifactId>
+      <version>${angus-mail.version}</version>
     </dependency>
 
     <!-- ===================== -->

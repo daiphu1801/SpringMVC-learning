@@ -19,7 +19,8 @@ public class SecurityInterceptor implements HandlerInterceptor {
         if (path.startsWith("/resources/")
                 || path.equals("/login")
                 || path.equals("/logout")
-                || path.equals("/register")) {
+                || path.equals("/register")
+                || path.equals("/architecture")) {
             return true;
         }
 
@@ -43,6 +44,11 @@ public class SecurityInterceptor implements HandlerInterceptor {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền thực hiện hành động này.");
                 return false;
             }
+        }
+
+        if (path.startsWith("/admin") && !currentUser.isAdmin()) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang quản trị.");
+            return false;
         }
 
         return true;

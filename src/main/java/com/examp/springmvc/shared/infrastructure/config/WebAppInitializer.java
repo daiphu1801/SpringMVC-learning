@@ -30,4 +30,14 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 
         return new Filter[] {encodingFilter};
     }
+
+    @Override
+    protected void customizeRegistration(jakarta.servlet.ServletRegistration.Dynamic registration) {
+        registration.setMultipartConfig(new jakarta.servlet.MultipartConfigElement(
+                "", // location (empty string means default/temp)
+                10 * 1024 * 1024, // maxFileSize (10MB)
+                20 * 1024 * 1024, // maxRequestSize (20MB)
+                0 // fileSizeThreshold
+                ));
+    }
 }
