@@ -6,6 +6,7 @@ WORKDIR /build
 
 # Cache Maven dependencies
 COPY pom.xml .
+COPY config ./config
 RUN mvn dependency:go-offline -B
 
 # Copy source code and build the package
