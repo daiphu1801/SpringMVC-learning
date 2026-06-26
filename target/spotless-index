@@ -2,7 +2,6 @@ gZuoyKCRHCnhGEfOdIUeRSqCXwqQ9wzfvxQvzkV0gP0=
 .githooks/commit-msg 2026-06-24T08:16:57.754988463Z
 .githooks/pre-commit 2026-06-24T08:15:15.877132778Z
 .githooks/pre-push 2026-06-24T08:17:42.979512098Z
-.gitignore 2026-06-26T09:20:19.047237333Z
 pom.xml 2026-06-26T09:35:52.203869359Z
 src/main/java/com/examp/springmvc/auth/application/ports/input/LoginInputPort.java 2026-06-25T08:19:28.778455378Z
 src/main/java/com/examp/springmvc/auth/application/ports/input/LogoutInputPort.java 2026-06-25T08:19:59.399669293Z
@@ -83,6 +82,7 @@ src/main/java/com/examp/springmvc/shared/infrastructure/config/MailConfig.java 2
 src/main/java/com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.java 2026-06-26T10:01:29.837083240Z
 src/main/java/com/examp/springmvc/shared/infrastructure/config/RootConfig.java 2026-06-26T10:04:18.369572347Z
 src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java 2026-06-26T08:35:53.652476500Z
+src/main/java/com/examp/springmvc/shared/infrastructure/config/WebConfig.java 2026-06-26T10:28:42.536886074Z
 src/main/java/com/examp/springmvc/user/application/address/command/AddAddressCommand.java 2026-06-26T01:24:34.015163970Z
 src/main/java/com/examp/springmvc/user/application/address/command/AddAddressInputPort.java 2026-06-26T01:24:34.015836822Z
 src/main/java/com/examp/springmvc/user/application/address/command/AddAddressUseCase.java 2026-06-26T01:24:34.015721957Z

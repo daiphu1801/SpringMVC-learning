@@ -22,17 +22,16 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @EnableWebMvc
 @PropertySources({
     @PropertySource("classpath:application.properties"),
-    @PropertySource(
-            value = "classpath:application-local.properties",
-            ignoreResourceNotFound = true)
+    @PropertySource(value = "classpath:application-local.properties", ignoreResourceNotFound = true)
 })
-@ComponentScan(basePackages = {
-        "com.examp.springmvc.user.presentation",
-        "com.examp.springmvc.auth.presentation",
-        "com.examp.springmvc.catalog.presentation",
-        "com.examp.springmvc.order.presentation",
-        "com.examp.springmvc.auth.infrastructure.security"
-})
+@ComponentScan(
+        basePackages = {
+            "com.examp.springmvc.user.presentation",
+            "com.examp.springmvc.auth.presentation",
+            "com.examp.springmvc.catalog.presentation",
+            "com.examp.springmvc.order.presentation",
+            "com.examp.springmvc.auth.infrastructure.security"
+        })
 public class WebConfig implements WebMvcConfigurer {
 
     private final Environment environment;
