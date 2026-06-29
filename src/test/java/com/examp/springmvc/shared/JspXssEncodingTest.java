@@ -1,6 +1,7 @@
 package com.examp.springmvc.shared;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 public class JspXssEncodingTest {
 
@@ -68,8 +68,8 @@ public class JspXssEncodingTest {
                     String expression = matcher.group(1).trim();
 
                     if (!isSafeContext(line, expression, fullMatch)) {
-                        violations.add(String.format("File: %s:%d - Unsafe expression: %s",
-                                file.getPath(), lineNumber, line.trim()));
+                        violations.add(String.format(
+                                "File: %s:%d - Unsafe expression: %s", file.getPath(), lineNumber, line.trim()));
                     }
                 }
             }
@@ -78,9 +78,7 @@ public class JspXssEncodingTest {
 
     private boolean isSafeContext(String line, String expression, String fullMatch) {
         // 1. Check if the line uses a safe escaping tag
-        if (line.contains("<c:out")
-                || line.contains("<fmt:formatNumber")
-                || line.contains("<fmt:formatDate")) {
+        if (line.contains("<c:out") || line.contains("<fmt:formatNumber") || line.contains("<fmt:formatDate")) {
             return true;
         }
 

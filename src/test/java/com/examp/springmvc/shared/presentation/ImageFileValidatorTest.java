@@ -33,11 +33,13 @@ class ImageFileValidatorTest {
     @ValueSource(strings = {"photo.jpg", "img.jpeg", "banner.png", "anim.gif", "product.webp", "modern.avif"})
     @DisplayName("Should accept all valid image extensions")
     void shouldAcceptValidImages(String filename) {
-        String mime = filename.endsWith("gif") ? "image/gif"
-                : filename.endsWith("png") ? "image/png"
-                : filename.endsWith("webp") ? "image/webp"
-                : filename.endsWith("avif") ? "image/avif"
-                : "image/jpeg";
+        String mime = filename.endsWith("gif")
+                ? "image/gif"
+                : filename.endsWith("png")
+                        ? "image/png"
+                        : filename.endsWith("webp")
+                                ? "image/webp"
+                                : filename.endsWith("avif") ? "image/avif" : "image/jpeg";
         setupFile(filename, mime, 1024);
         assertDoesNotThrow(() -> ImageFileValidator.validate(file));
     }
@@ -45,17 +47,25 @@ class ImageFileValidatorTest {
     // ── Blocked extension tests ───────────────────────────────────────────────
 
     @ParameterizedTest
-    @ValueSource(strings = {"virus.exe", "shell.sh", "page.html", "script.js",
-                             "hack.php", "archive.zip", "data.pdf", "config.xml"})
+    @ValueSource(
+            strings = {
+                "virus.exe",
+                "shell.sh",
+                "page.html",
+                "script.js",
+                "hack.php",
+                "archive.zip",
+                "data.pdf",
+                "config.xml"
+            })
     @DisplayName("Should reject dangerous / non-image extensions")
     void shouldRejectDangerousExtensions(String filename) {
         when(file.isEmpty()).thenReturn(false);
         when(file.getOriginalFilename()).thenReturn(filename);
         when(file.getSize()).thenReturn(1024L);
 
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
         assertTrue(ex.getMessage().contains("không được phép"));
     }
 
@@ -67,9 +77,8 @@ class ImageFileValidatorTest {
         // filename looks like an image but MIME type is application/octet-stream
         setupFile("photo.jpg", "application/octet-stream", 1024);
 
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
         assertTrue(ex.getMessage().contains("không được phép"));
     }
 
@@ -78,8 +87,7 @@ class ImageFileValidatorTest {
     void shouldRejectNullMimeType() {
         setupFile("photo.jpg", null, 1024);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
     }
 
     // ── File size tests ───────────────────────────────────────────────────────
@@ -91,9 +99,8 @@ class ImageFileValidatorTest {
         when(file.isEmpty()).thenReturn(false);
         when(file.getSize()).thenReturn(sixMb);
 
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
         assertTrue(ex.getMessage().contains("kích thước"));
     }
 
@@ -111,15 +118,13 @@ class ImageFileValidatorTest {
     @DisplayName("Should reject empty file")
     void shouldRejectEmptyFile() {
         when(file.isEmpty()).thenReturn(true);
-        assertThrows(IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
     }
 
     @Test
     @DisplayName("Should reject null file")
     void shouldRejectNullFile() {
-        assertThrows(IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(null));
+        assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(null));
     }
 
     // ── Edge case: file has no extension ─────────────────────────────────────
@@ -131,7 +136,6 @@ class ImageFileValidatorTest {
         when(file.getOriginalFilename()).thenReturn("imagewithoutextension");
         when(file.getSize()).thenReturn(1024L);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> ImageFileValidator.validate(file));
+        assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
     }
 }

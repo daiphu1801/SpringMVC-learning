@@ -28,17 +28,12 @@ public final class ImageFileValidator {
     private static final long MAX_SIZE_BYTES = 5L * 1024 * 1024;
 
     /** Allowed file extensions (lower-cased, no dot). */
-    private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(
-            Arrays.asList("jpg", "jpeg", "png", "gif", "webp", "avif"));
+    private static final Set<String> ALLOWED_EXTENSIONS =
+            new HashSet<>(Arrays.asList("jpg", "jpeg", "png", "gif", "webp", "avif"));
 
     /** Allowed MIME types. Must correspond 1-to-1 with ALLOWED_EXTENSIONS. */
-    private static final Set<String> ALLOWED_MIME_TYPES = new HashSet<>(
-            Arrays.asList(
-                    "image/jpeg",
-                    "image/png",
-                    "image/gif",
-                    "image/webp",
-                    "image/avif"));
+    private static final Set<String> ALLOWED_MIME_TYPES =
+            new HashSet<>(Arrays.asList("image/jpeg", "image/png", "image/gif", "image/webp", "image/avif"));
 
     private ImageFileValidator() {}
 
@@ -55,9 +50,8 @@ public final class ImageFileValidator {
 
         // 1. Check file size
         if (file.getSize() > MAX_SIZE_BYTES) {
-            throw new IllegalArgumentException(
-                    "File vượt quá kích thước cho phép (tối đa 5 MB). File của bạn: "
-                            + (file.getSize() / (1024 * 1024)) + " MB.");
+            throw new IllegalArgumentException("File vượt quá kích thước cho phép (tối đa 5 MB). File của bạn: "
+                    + (file.getSize() / (1024 * 1024)) + " MB.");
         }
 
         // 2. Check file extension
@@ -67,17 +61,15 @@ public final class ImageFileValidator {
         }
         String ext = extractExtension(originalName);
         if (!ALLOWED_EXTENSIONS.contains(ext)) {
-            throw new IllegalArgumentException(
-                    "Định dạng file \"." + ext + "\" không được phép. "
-                            + "Chỉ chấp nhận: " + String.join(", ", ALLOWED_EXTENSIONS) + ".");
+            throw new IllegalArgumentException("Định dạng file \"." + ext + "\" không được phép. " + "Chỉ chấp nhận: "
+                    + String.join(", ", ALLOWED_EXTENSIONS) + ".");
         }
 
         // 3. Check MIME type (reported by the container)
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new IllegalArgumentException(
-                    "Loại file \"" + contentType + "\" không được phép. "
-                            + "Chỉ chấp nhận ảnh (JPEG, PNG, GIF, WebP, AVIF).");
+            throw new IllegalArgumentException("Loại file \"" + contentType + "\" không được phép. "
+                    + "Chỉ chấp nhận ảnh (JPEG, PNG, GIF, WebP, AVIF).");
         }
     }
 

@@ -11,10 +11,10 @@ import com.examp.springmvc.catalog.application.product.query.FindAllProductsUseC
 import com.examp.springmvc.catalog.application.product.query.FindProductByIdUseCase;
 import com.examp.springmvc.catalog.application.product.query.ProductDTO;
 import com.examp.springmvc.catalog.domain.model.ProductStatus;
+import com.examp.springmvc.shared.presentation.ImageFileValidator;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
-import com.examp.springmvc.shared.presentation.ImageFileValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
