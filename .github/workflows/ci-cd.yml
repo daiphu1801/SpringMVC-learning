@@ -71,6 +71,7 @@ jobs:
           target: 'http://localhost:8080/'
           fail_action: false
           token: ${{ secrets.GITHUB_TOKEN }}
+          artifact_name: 'zapreport'
 
       - name: Stop Docker container
         if: always()
