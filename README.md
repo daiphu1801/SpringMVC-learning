@@ -120,9 +120,3 @@ docker run -p 8080:8080 --name springmvc-app springmvc-demo
 Sau đó truy cập ứng dụng tại: `http://localhost:8080/`.
 
 ---
-
-## 📚 Tài liệu tham khảo sâu
-* [Tài liệu Kiến trúc & Design Decisions](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/docs/architecture.md)
-* [Báo cáo chi tiết các biện pháp Bảo mật](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/docs/security_report.md)
-* [Cẩm nang kỹ năng bảo mật Frontend (Frontend Security Skills)](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/skills/frontend_security_rules.md)
-* [Hướng dẫn Deploy & CI/CD tự động](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/docs/deployment.md)
