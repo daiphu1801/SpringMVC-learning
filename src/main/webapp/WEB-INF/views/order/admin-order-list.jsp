@@ -3,13 +3,17 @@
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Quản lý Đơn hàng">
+<jsp:attribute name="head">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pages/order.css?v=${appVersion}">
+</jsp:attribute>
+<jsp:body>
 <div class="container">
     <h1>Quản lý Đơn hàng</h1>
-    <p style="color: var(--text-muted); margin-bottom: 25px;">Tất cả đơn hàng trong hệ thống — <strong>${orders.size()}</strong> đơn.</p>
+    <p class="text-muted mb-3">Tất cả đơn hàng trong hệ thống — <strong>${orders.size()}</strong> đơn.</p>
 
     <c:if test="${empty orders}">
-        <div style="text-align: center; padding: 60px 0; color: var(--text-muted);">
-            <p style="font-size: 3rem; margin-bottom: 15px;">📋</p>
+        <div class="text-center mt-4 mb-4 text-muted">
+            <p class="empty-state-icon">📋</p>
             <h3>Chưa có đơn hàng nào</h3>
         </div>
     </c:if>
@@ -33,40 +37,40 @@
                         <tr>
                             <td><strong>#${order.id}</strong></td>
                             <td>
-                                <div>${order.receiverName}</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">${order.receiverPhone}</div>
+                                <div><c:out value="${order.receiverName}"/></div>
+                                <div class="text-sm text-muted"><c:out value="${order.receiverPhone}"/></div>
                             </td>
-                            <td style="font-size: 0.85rem; color: var(--text-muted); max-width: 200px;">
-                                ${order.shippingAddress}
+                            <td class="text-sm text-muted max-w-200">
+                                <c:out value="${order.shippingAddress}"/>
                             </td>
                             <td>
-                                <strong style="color: #2ecc71;">
+                                <strong class="text-success">
                                     <fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> đ
                                 </strong>
                             </td>
-                            <td style="color: var(--text-muted); font-size: 0.85rem;">
+                            <td class="text-sm text-muted">
                                 ${order.formattedCreatedAt}
                             </td>
                             <td>
                                 <c:choose>
                                     <c:when test="${order.status == 'PENDING'}">
-                                        <span class="badge" style="background: #FEF3C7; color: #B45309;">Chờ xử lý</span>
+                                        <span class="badge badge-warning">Chờ xử lý</span>
                                     </c:when>
                                     <c:when test="${order.status == 'CONFIRMED'}">
-                                        <span class="badge" style="background: #DBEAFE; color: #1D4ED8;">Đã xác nhận</span>
+                                        <span class="badge badge-info">Đã xác nhận</span>
                                     </c:when>
                                     <c:when test="${order.status == 'SHIPPING'}">
-                                        <span class="badge" style="background: #EDE9FE; color: #6D28D9;">Đang vận chuyển</span>
+                                        <span class="badge badge-secondary">Đang vận chuyển</span>
                                     </c:when>
                                     <c:when test="${order.status == 'DELIVERED'}">
-                                        <span class="badge badge-active">Đã giao</span>
+                                        <span class="badge badge-success">Đã giao</span>
                                     </c:when>
                                     <c:when test="${order.status == 'CANCELLED'}">
-                                        <span class="badge badge-inactive">Đã huỷ</span>
+                                        <span class="badge badge-danger">Đã huỷ</span>
                                     </c:when>
                                 </c:choose>
                             </td>
-                            <td style="white-space: nowrap;">
+                            <td class="ws-nowrap">
                                 <a href="${pageContext.request.contextPath}/admin/orders/${order.id}" class="action-link-edit">Xem & Xử lý</a>
                             </td>
                         </tr>
@@ -76,4 +80,5 @@
         </div>
     </c:if>
 </div>
+</jsp:body>
 </t:layout>

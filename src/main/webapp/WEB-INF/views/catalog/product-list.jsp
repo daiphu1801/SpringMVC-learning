@@ -3,78 +3,86 @@
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Quản lý Sản phẩm">
-    <div class="container" style="max-width: 1100px; margin: 30px auto; padding: 30px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-            <h2 style="margin: 0; color: var(--primary);">Danh sách Sản phẩm</h2>
-            <a href="${pageContext.request.contextPath}/admin/products/create" class="btn" style="padding: 10px 20px;">+ Thêm Sản phẩm</a>
+    <jsp:attribute name="head">
+        <script src="${pageContext.request.contextPath}/resources/js/pages/product-list.js?v=${appVersion}" defer></script>
+    </jsp:attribute>
+    <jsp:body>
+    <div class="container">
+        <div class="flex-row-between mb-3">
+            <h2 class="text-primary">Danh sách Sản phẩm</h2>
+            <a href="${pageContext.request.contextPath}/admin/products/create" class="btn">+ Thêm Sản phẩm</a>
         </div>
 
         <c:if test="${not empty error}">
-            <div style="background: rgba(255, 114, 114, 0.1); border-left: 4px solid #FF7272; color: #FF7272; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+            <div class="alert alert-danger">
                 ${error}
             </div>
         </c:if>
 
-        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
-            <thead>
-                <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
-                    <th style="padding: 12px; color: var(--text-muted);">SKU</th>
-                    <th style="padding: 12px; color: var(--text-muted); width: 80px;">Ảnh</th>
-                    <th style="padding: 12px; color: var(--text-muted);">Tên Sản phẩm</th>
-                    <th style="padding: 12px; color: var(--text-muted);">Danh mục</th>
-                    <th style="padding: 12px; color: var(--text-muted);">Giá</th>
-                    <th style="padding: 12px; color: var(--text-muted);">Trạng thái</th>
-                    <th style="padding: 12px; color: var(--text-muted); text-align: center;">Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:choose>
-                    <c:when test="${empty products}">
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 30px; color: var(--text-muted);">
-                                Chưa có sản phẩm nào. Hãy tạo sản phẩm đầu tiên!
-                            </td>
-                        </tr>
-                    </c:when>
-                    <c:otherwise>
-                        <c:forEach var="prod" items="${products}">
-                            <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;" onmouseover="this.style.background='rgba(159, 161, 255, 0.03)'" onmouseout="this.style.background='transparent'">
-                                <td style="padding: 15px 12px;"><code style="background: var(--bg-main); padding: 4px 8px; border-radius: 6px; color: var(--primary); font-family: monospace; font-weight: 600;">${prod.sku}</code></td>
-                                <td style="padding: 15px 12px;">
-                                    <c:choose>
-                                        <c:when test="${not empty prod.imageUrl}">
-                                            <img src="<c:out value='${prod.imageUrl}'/>" alt="${prod.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border-color);" />
-                                        </c:when>
-                                        <c:otherwise>
-                                            <div style="width: 50px; height: 50px; border-radius: 8px; background: linear-gradient(135deg, #7F84FF, #9FA1FF); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 0.7rem;">
-                                                NO IMG
-                                            </div>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </td>
-                                <td style="padding: 15px 12px; color: var(--text-main); font-weight: 500;">${prod.name}</td>
-                                <td style="padding: 15px 12px; color: var(--text-muted);">${prod.categoryName}</td>
-                                <td style="padding: 15px 12px; font-weight: 600; color: #2ecc71;">
-                                    <fmt:formatNumber value="${prod.price}" pattern="#,##0"/> đ
-                                </td>
-                                <td style="padding: 15px 12px;">
-                                    <span style="padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; background: ${prod.status == 'ACTIVE' ? 'rgba(46, 204, 113, 0.1)' : 'rgba(255, 114, 114, 0.1)'}; color: ${prod.status == 'ACTIVE' ? '#2ecc71' : '#ff7272'};">
-                                        ${prod.statusDesc}
-                                    </span>
-                                </td>
-                                <td style="padding: 15px 12px; text-align: center;">
-                                    <div style="display: inline-flex; gap: 8px;">
-                                        <a href="${pageContext.request.contextPath}/admin/products/edit/${prod.id}" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; box-shadow: none;">Sửa</a>
-                                        <form action="${pageContext.request.contextPath}/admin/products/delete/${prod.id}" method="POST" style="margin: 0;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
-                                            <button type="submit" class="btn" style="padding: 6px 12px; font-size: 0.8rem; background: #ff7272; box-shadow: none;">Xóa</button>
-                                        </form>
-                                    </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th class="w-80">Ảnh</th>
+                        <th>Tên Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                        <th class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:choose>
+                        <c:when test="${empty products}">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">
+                                    Chưa có sản phẩm nào. Hãy tạo sản phẩm đầu tiên!
                                 </td>
                             </tr>
-                        </c:forEach>
-                    </c:otherwise>
-                </c:choose>
-            </tbody>
-        </table>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="prod" items="${products}">
+                                <tr>
+                                    <td><code class="sku-code"><c:out value="${prod.sku}"/></code></td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${not empty prod.imageUrl}">
+                                                <img src="<c:out value='${prod.imageUrl}'/>" alt="<c:out value='${prod.name}'/>" class="admin-prod-thumb" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <div class="admin-prod-thumb-placeholder">
+                                                    NO IMG
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="text-main font-bold"><c:out value="${prod.name}"/></td>
+                                    <td class="text-muted"><c:out value="${prod.categoryName}"/></td>
+                                    <td class="text-success font-bold">
+                                        <fmt:formatNumber value="${prod.price}" pattern="#,##0"/> đ
+                                    </td>
+                                    <td>
+                                        <span class="badge ${prod.status == 'ACTIVE' ? 'badge-success' : 'badge-danger'}">
+                                            ${prod.statusDesc}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="d-inline-flex gap-2">
+                                            <a href="${pageContext.request.contextPath}/admin/products/edit/${prod.id}" class="btn btn-secondary btn-sm">Sửa</a>
+                                            <form action="${pageContext.request.contextPath}/admin/products/delete/${prod.id}" method="POST" class="m-0 delete-product-form">
+                                                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                                                <button type="submit" class="btn btn-danger btn-sm">Xóa</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
+                </tbody>
+            </table>
+        </div>
     </div>
+    </jsp:body>
 </t:layout>

@@ -1,3 +1,6 @@
+/* User Pages Styles */
+
+/* Address book styles */
 .address-layout {
     display: flex;
     gap: 30px;
@@ -5,11 +8,11 @@
 }
 .address-form-section {
     flex: 1.2;
-    background: var(--white);
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 25px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--shadow-sm);
 }
 .address-cards-section {
     flex: 1.8;
@@ -18,13 +21,13 @@
     gap: 20px;
 }
 .address-card {
-    background: var(--white);
+    background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: 16px;
     padding: 20px;
     position: relative;
     transition: all var(--transition-speed) ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    box-shadow: var(--shadow-sm);
 }
 .address-card:hover {
     transform: translateY(-2px);
@@ -83,22 +86,24 @@
     accent-color: var(--primary);
     cursor: pointer;
 }
-.alert {
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 0.95rem;
+
+.empty-address-state {
+    text-align: center;
+    padding: 40px;
+    border: 2px dashed var(--border-color);
+    border-radius: 16px;
+    color: var(--text-muted);
 }
-.alert-danger {
-    background-color: var(--danger-bg);
-    color: var(--danger-text);
-    border: 1px solid rgba(139, 0, 0, 0.1);
+.empty-address-state p:first-child {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
 }
-.alert-success {
-    background-color: var(--success-bg);
-    color: var(--success-text);
-    border: 1px solid rgba(30, 78, 44, 0.1);
+.empty-address-state p:last-child {
+    font-size: 0.9rem;
 }
+
 @media (max-width: 850px) {
     .address-layout {
         flex-direction: column;

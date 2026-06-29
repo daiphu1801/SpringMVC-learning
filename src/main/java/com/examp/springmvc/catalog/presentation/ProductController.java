@@ -14,6 +14,7 @@ import com.examp.springmvc.catalog.domain.model.ProductStatus;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import com.examp.springmvc.shared.presentation.ImageFileValidator;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,7 @@ public class ProductController {
             InputStream imageStream = null;
             String imageName = null;
             if (imageFile != null && !imageFile.isEmpty()) {
+                ImageFileValidator.validate(imageFile);
                 imageStream = imageFile.getInputStream();
                 imageName = imageFile.getOriginalFilename();
             }
@@ -120,6 +122,7 @@ public class ProductController {
             InputStream imageStream = null;
             String imageName = null;
             if (imageFile != null && !imageFile.isEmpty()) {
+                ImageFileValidator.validate(imageFile);
                 imageStream = imageFile.getInputStream();
                 imageName = imageFile.getOriginalFilename();
             }

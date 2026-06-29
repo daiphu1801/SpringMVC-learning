@@ -3,11 +3,16 @@
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:layout title="Danh sách người dùng">
+<jsp:attribute name="head">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pages/user.css?v=${appVersion}">
+    <script src="${pageContext.request.contextPath}/resources/js/pages/user-list.js?v=${appVersion}" defer></script>
+</jsp:attribute>
+<jsp:body>
 <div class="container">
     <h1>Danh sách người dùng</h1>
 
     <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
-        <div class="btn-container">
+        <div class="btn-container mb-3">
             <a href="${pageContext.request.contextPath}/users/create" class="btn">
                 Thêm người dùng
             </a>
@@ -69,18 +74,15 @@
                                         Sửa
                                     </a>
 
-                                    <form
-                                            action="${pageContext.request.contextPath}/users/delete/${user.id}"
-                                            method="post"
-                                            style="display:inline">
-
-                                        <button type="submit" class="btn-delete" onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                    <form action="${pageContext.request.contextPath}/users/delete/${user.id}" method="post" class="d-inline-flex">
+                                        <input type="hidden" name="csrfToken" value="${csrfToken}">
+                                        <button type="submit" class="btn-delete">
                                             Xóa
                                         </button>
                                     </form>
                                 </c:when>
                                 <c:otherwise>
-                                    <span style="color: var(--text-muted); font-size: 0.85rem;">Không có quyền</span>
+                                    <span class="text-sm text-muted">Không có quyền</span>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -90,7 +92,7 @@
 
             <c:if test="${empty users}">
                 <tr>
-                    <td colspan="7" style="text-align: center; color: var(--text-muted);">
+                    <td colspan="7" class="text-center text-muted">
                         Chưa có dữ liệu người dùng
                     </td>
                 </tr>
@@ -100,4 +102,5 @@
         </table>
     </div>
 </div>
+</jsp:body>
 </t:layout>

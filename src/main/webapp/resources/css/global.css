@@ -162,6 +162,31 @@ a.btn-secondary:hover {
     box-shadow: var(--shadow-md);
 }
 
+a.btn-sm,
+button.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+    box-shadow: none;
+}
+a.btn-sm:hover,
+button.btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+a.btn-danger,
+button.btn-danger {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+    color: var(--white);
+}
+a.btn-danger:hover,
+button.btn-danger:hover {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+
 /* Data Table */
 .table-wrapper {
     overflow-x: auto;
@@ -204,6 +229,54 @@ tr:last-child {
 
 tbody tr:hover {
     background-color: rgba(79, 70, 229, 0.02);
+}
+
+/* Table Helper Classes */
+.w-80 {
+    width: 80px;
+}
+.m-0 {
+    margin: 0;
+}
+.admin-prod-thumb {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+}
+.admin-prod-thumb-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, #7F84FF, #9FA1FF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: bold;
+    font-size: 0.7rem;
+}
+.sku-code {
+    background: var(--bg-main);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    font-family: monospace;
+    font-weight: 600;
+}
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+.max-w-200 {
+    max-width: 200px;
+}
+.ws-nowrap {
+    white-space: nowrap;
+}
+.flex-2 {
+    flex: 2;
 }
 
 /* Badges */
@@ -338,4 +411,129 @@ tbody tr:hover {
 .btn-full {
     width: 100%;
     margin-top: 10px;
+}
+
+/* Page Containers */
+.container-sm {
+    max-width: 700px;
+}
+.container-md {
+    max-width: 850px;
+}
+.container-lg {
+    max-width: 900px;
+}
+
+/* Layout Utilities */
+.d-flex {
+    display: flex;
+}
+.d-inline {
+    display: inline;
+}
+.d-none {
+    display: none;
+}
+.flex-col {
+    flex-direction: column;
+}
+.flex-row-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.align-center {
+    align-items: center;
+}
+.justify-center {
+    justify-content: center;
+}
+.flex-wrap {
+    flex-wrap: wrap;
+}
+.gap-1 { gap: 5px; }
+.gap-2 { gap: 10px; }
+.gap-3 { gap: 15px; }
+.gap-4 { gap: 20px; }
+
+/* Spacing Utilities */
+.mt-1 { margin-top: 5px; }
+.mt-2 { margin-top: 10px; }
+.mt-3 { margin-top: 20px; }
+.mt-4 { margin-top: 30px; }
+.mb-1 { margin-bottom: 5px; }
+.mb-2 { margin-bottom: 10px; }
+.mb-3 { margin-bottom: 20px; }
+.mb-4 { margin-bottom: 30px; }
+.w-100 { width: 100%; }
+.w-auto { width: auto; }
+
+/* Typography & Colors */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: var(--text-muted); }
+.text-sm { font-size: 0.85rem; }
+.text-lg { font-size: 1.1rem; }
+.text-xl { font-size: 1.4rem; }
+.font-bold { font-weight: 700; }
+.text-success { color: var(--success-text); }
+.text-danger { color: var(--danger-text); }
+.required-star { color: #EF4444; margin-left: 2px; }
+.form-help {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* Badge Variants */
+.badge-warning {
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
+}
+.badge-info {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+}
+.badge-success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+}
+.badge-danger {
+    background-color: var(--danger-bg);
+    color: var(--danger-text);
+}
+.badge-secondary {
+    background-color: #EDE9FE;
+    color: #6D28D9;
+}
+
+/* More utilities */
+.flex-1 {
+    flex: 1;
+}
+.flex-2 {
+    flex: 2;
+}
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .grid-2-col {
+        grid-template-columns: 1fr;
+    }
+}
+.textarea-field {
+    min-height: 120px;
+    resize: vertical;
+}
+.img-preview {
+    max-width: 150px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    display: block;
+}
+.d-inline-flex {
+    display: inline-flex;
 }

@@ -12,7 +12,6 @@ com/examp/springmvc/catalog/application/product/command/CreateProductUseCase.cla
 com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.class
 com/examp/springmvc/user/domain/ports/output/UserPersistencePort.class
 com/examp/springmvc/order/application/command/UpdateOrderStatusCommand.class
-com/examp/springmvc/shared/infrastructure/SecurityInterceptor.class
 com/examp/springmvc/user/infrastructure/persistence/UserAddressDbEntity.class
 com/examp/springmvc/order/application/query/FindOrderByIdUseCase.class
 com/examp/springmvc/user/infrastructure/mapper/UserAddressMapper.class
@@ -119,6 +118,7 @@ com/examp/springmvc/order/application/command/CancelOrderUseCase.class
 com/examp/springmvc/user/domain/event/UserAddressRemovedEvent.class
 com/examp/springmvc/catalog/infrastructure/persistence/ProductPersistenceAdapter.class
 com/examp/springmvc/user/infrastructure/persistence/UserPersistenceAdapter.class
+com/examp/springmvc/shared/presentation/ImageFileValidator.class
 com/examp/springmvc/catalog/application/category/query/FindCategoryByIdUseCase.class
 com/examp/springmvc/user/application/usermanagement/command/UpdateUserUseCase.class
 com/examp/springmvc/order/application/command/UpdateOrderStatusUseCase.class

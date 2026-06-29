@@ -3,35 +3,39 @@
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Chi tiết đơn hàng #${order.id}">
-<div class="container" style="max-width: 850px;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;">
+<jsp:attribute name="head">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pages/order.css?v=${appVersion}">
+</jsp:attribute>
+<jsp:body>
+<div class="container container-md">
+    <div class="order-detail-header">
         <div>
-            <h1>Chi tiết đơn hàng <span style="color: var(--primary);">#${order.id}</span></h1>
-            <p style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">
+            <h1 class="order-detail-title">Chi tiết đơn hàng <span class="text-primary">#${order.id}</span></h1>
+            <p class="order-detail-subtitle">
                 Đặt lúc: ${order.formattedCreatedAt}
             </p>
         </div>
         <c:choose>
             <c:when test="${order.status == 'PENDING'}">
-                <span class="badge" style="background: #FEF3C7; color: #B45309; font-size: 1rem; padding: 10px 18px;">⏳ Chờ xử lý</span>
+                <span class="badge badge-warning order-status-badge">⏳ Chờ xử lý</span>
             </c:when>
             <c:when test="${order.status == 'CONFIRMED'}">
-                <span class="badge" style="background: #DBEAFE; color: #1D4ED8; font-size: 1rem; padding: 10px 18px;">✅ Đã xác nhận</span>
+                <span class="badge badge-info order-status-badge">✅ Đã xác nhận</span>
             </c:when>
             <c:when test="${order.status == 'SHIPPING'}">
-                <span class="badge" style="background: #EDE9FE; color: #6D28D9; font-size: 1rem; padding: 10px 18px;">🚚 Đang vận chuyển</span>
+                <span class="badge badge-secondary order-status-badge">🚚 Đang vận chuyển</span>
             </c:when>
             <c:when test="${order.status == 'DELIVERED'}">
-                <span class="badge badge-active" style="font-size: 1rem; padding: 10px 18px;">🎉 Đã giao thành công</span>
+                <span class="badge badge-success order-status-badge">🎉 Đã giao thành công</span>
             </c:when>
             <c:when test="${order.status == 'CANCELLED'}">
-                <span class="badge badge-inactive" style="font-size: 1rem; padding: 10px 18px;">❌ Đã huỷ</span>
+                <span class="badge badge-danger order-status-badge">❌ Đã huỷ</span>
             </c:when>
         </c:choose>
     </div>
 
     <c:if test="${param.paymentSuccess == 'true'}">
-        <div class="alert alert-success" style="margin-bottom: 20px;">🎉 Thanh toán đơn hàng thành công! Đơn hàng của bạn đã được xác nhận.</div>
+        <div class="alert alert-success">🎉 Thanh toán đơn hàng thành công! Đơn hàng của bạn đã được xác nhận.</div>
     </c:if>
 
     <c:if test="${not empty error}">
@@ -39,38 +43,43 @@
     </c:if>
 
     <%-- Thông tin đơn hàng (Địa chỉ, Thanh toán, Ghi chú) --%>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 25px;">
-        <div style="background: var(--bg-main); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color);">
-            <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px;">📦 Địa chỉ giao hàng</h3>
-            <p style="font-weight: 600; margin-bottom: 4px;">${order.receiverName}</p>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">${order.receiverPhone}</p>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 6px;">${order.shippingAddress}</p>
+    <div class="order-info-grid">
+        <div class="order-info-card">
+            <h3 class="order-info-title">📦 Địa chỉ giao hàng</h3>
+            <p class="order-info-name"><c:out value="${order.receiverName}"/></p>
+            <p class="order-info-phone"><c:out value="${order.receiverPhone}"/></p>
+            <p class="order-info-address mt-1"><c:out value="${order.shippingAddress}"/></p>
         </div>
-        <div style="background: var(--bg-main); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color);">
-            <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px;">💳 Thanh toán</h3>
-            <p style="font-weight: 600; margin-bottom: 4px;">Phương thức: ${order.formattedPaymentMethod}</p>
-            <p style="margin-top: 6px;">
+        <div class="order-info-card">
+            <h3 class="order-info-title">💳 Thanh toán</h3>
+            <p class="order-info-name">Phương thức: ${order.formattedPaymentMethod}</p>
+            <p class="mt-1">
                 <c:choose>
                     <c:when test="${order.paymentStatus == 'PAID'}">
-                        <span class="badge" style="background: #D1FAE5; color: #065F46; padding: 4px 10px; font-size: 0.8rem; font-weight: 600;">✅ Đã thanh toán</span>
+                        <span class="badge badge-success">✅ Đã thanh toán</span>
                     </c:when>
                     <c:otherwise>
-                        <span class="badge" style="background: #FEE2E2; color: #991B1B; padding: 4px 10px; font-size: 0.8rem; font-weight: 600;">⏳ Chờ thanh toán</span>
+                        <span class="badge badge-danger">⏳ Chờ thanh toán</span>
                         <c:if test="${order.paymentMethod == 'VIETQR' && order.status == 'PENDING'}">
-                            <a href="${pageContext.request.contextPath}/orders/${order.id}/payment" style="display: block; margin-top: 8px; font-size: 0.85rem; color: var(--primary); font-weight: bold; text-decoration: none;">👉 Đi đến trang QR thanh toán</a>
+                            <a href="${pageContext.request.contextPath}/orders/${order.id}/payment" class="order-payment-link">👉 Đi đến trang QR thanh toán</a>
                         </c:if>
                     </c:otherwise>
                 </c:choose>
             </p>
         </div>
-        <div style="background: var(--bg-main); border-radius: var(--radius-md); padding: 20px; border: 1px solid var(--border-color);">
-            <h3 style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px;">💬 Ghi chú</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem;">${empty order.note ? 'Không có ghi chú' : order.note}</p>
+        <div class="order-info-card">
+            <h3 class="order-info-title">💬 Ghi chú</h3>
+            <p class="order-info-address">
+                <c:choose>
+                    <c:when test="${empty order.note}">Không có ghi chú</c:when>
+                    <c:otherwise><c:out value="${order.note}"/></c:otherwise>
+                </c:choose>
+            </p>
         </div>
     </div>
 
     <%-- Danh sách sản phẩm --%>
-    <div class="table-wrapper" style="margin-bottom: 25px;">
+    <div class="table-wrapper mb-3">
         <table>
             <thead>
                 <tr>
@@ -84,12 +93,12 @@
                 <c:forEach var="item" items="${order.items}">
                     <tr>
                         <td>
-                            <div style="font-weight: 600;">${item.productName}</div>
-                            <div style="font-size: 0.8rem; color: var(--text-muted);">SKU: ${item.productSku}</div>
+                            <div class="font-bold"><c:out value="${item.productName}"/></div>
+                            <div class="text-sm text-muted">SKU: <c:out value="${item.productSku}"/></div>
                         </td>
                         <td><fmt:formatNumber value="${item.unitPrice}" pattern="#,##0"/> đ</td>
                         <td>${item.quantity}</td>
-                        <td><strong style="color: #2ecc71;"><fmt:formatNumber value="${item.subtotal}" pattern="#,##0"/> đ</strong></td>
+                        <td><strong class="text-success"><fmt:formatNumber value="${item.subtotal}" pattern="#,##0"/> đ</strong></td>
                     </tr>
                 </c:forEach>
             </tbody>
@@ -97,10 +106,10 @@
     </div>
 
     <%-- Tổng cộng --%>
-    <div style="display: flex; justify-content: flex-end; margin-bottom: 30px;">
-        <div style="text-align: right; background: var(--primary-light); padding: 20px 30px; border-radius: var(--radius-md); border: 1px solid rgba(79, 70, 229, 0.1);">
-            <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 4px;">Tổng giá trị đơn hàng</div>
-            <div style="font-size: 2rem; font-weight: 800; color: var(--primary);">
+    <div class="order-total-bill-wrapper">
+        <div class="order-total-bill-box">
+            <div class="order-total-bill-label">Tổng giá trị đơn hàng</div>
+            <div class="order-total-bill-val">
                 <fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> đ
             </div>
         </div>
@@ -110,12 +119,14 @@
     <div class="form-actions">
         <a href="${pageContext.request.contextPath}/orders" class="btn btn-secondary">← Lịch sử đơn hàng</a>
         <c:if test="${order.status == 'PENDING' || order.status == 'CONFIRMED'}">
-            <form action="${pageContext.request.contextPath}/orders/${order.id}/cancel" method="post">
-                <button type="submit" class="btn" style="background: linear-gradient(135deg, #EF4444, #DC2626);" onclick="return confirm('Bạn chắc chắn muốn huỷ đơn hàng này?')">
+            <form action="${pageContext.request.contextPath}/orders/${order.id}/cancel" method="post" class="m-0">
+                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                <button type="submit" class="btn btn-danger">
                     ❌ Huỷ đơn hàng
                 </button>
             </form>
         </c:if>
     </div>
 </div>
+</jsp:body>
 </t:layout>

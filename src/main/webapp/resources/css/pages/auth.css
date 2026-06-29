@@ -1,0 +1,50 @@
+/* Auth Page Styles (Login/Register) */
+
+.demo-account-box {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: rgba(127, 132, 255, 0.08);
+    border: 1px dashed var(--primary);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.demo-account-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 6px;
+}
+
+.btn-demo-fill {
+    margin-top: 8px;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    border: 1px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.btn-demo-fill:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.auth-redirect-wrapper {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.auth-redirect-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.auth-redirect-link:hover {
+    text-decoration: underline;
+}

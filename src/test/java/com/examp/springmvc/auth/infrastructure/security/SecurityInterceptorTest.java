@@ -2,6 +2,7 @@ package com.examp.springmvc.auth.infrastructure.security;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,9 @@ class SecurityInterceptorTest {
 
     @BeforeEach
     void setUp() {
-        when(request.getContextPath()).thenReturn("/demo");
+        lenient().when(request.getContextPath()).thenReturn("/demo");
+        lenient().when(request.getSession(true)).thenReturn(session);
+        lenient().when(session.getAttribute("CSRF_TOKEN")).thenReturn("mock-csrf-token");
     }
 
     @Test
@@ -51,7 +54,7 @@ class SecurityInterceptorTest {
         when(request.getRequestURI()).thenReturn("/demo/login");
         assertTrue(securityInterceptor.preHandle(request, response, null));
 
-        when(request.getRequestURI()).thenReturn("/demo/resources/css/style.css");
+        when(request.getRequestURI()).thenReturn("/demo/resources/css/global.css");
         assertTrue(securityInterceptor.preHandle(request, response, null));
     }
 
@@ -59,7 +62,7 @@ class SecurityInterceptorTest {
     @DisplayName("Should redirect unauthenticated users to login page")
     void shouldRedirectUnauthenticated() throws Exception {
         when(request.getRequestURI()).thenReturn("/demo/users");
-        when(request.getSession(false)).thenReturn(null);
+        when(session.getAttribute("currentUser")).thenReturn(null);
 
         assertFalse(securityInterceptor.preHandle(request, response, null));
         verify(response).sendRedirect("/demo/login");
@@ -69,7 +72,6 @@ class SecurityInterceptorTest {
     @DisplayName("Should allow logged-in user to access user list")
     void shouldAllowUserListAccess() throws Exception {
         when(request.getRequestURI()).thenReturn("/demo/users");
-        when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("currentUser")).thenReturn(testUser("USER"));
 
         assertTrue(securityInterceptor.preHandle(request, response, null));
@@ -79,7 +81,6 @@ class SecurityInterceptorTest {
     @DisplayName("Should deny non-admin access to create user form")
     void shouldDenyNonAdminToWriteActions() throws Exception {
         when(request.getRequestURI()).thenReturn("/demo/users/create");
-        when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("currentUser")).thenReturn(testUser("USER"));
 
         assertFalse(securityInterceptor.preHandle(request, response, null));
@@ -90,9 +91,63 @@ class SecurityInterceptorTest {
     @DisplayName("Should allow admin access to create user form")
     void shouldAllowAdminToWriteActions() throws Exception {
         when(request.getRequestURI()).thenReturn("/demo/users/create");
-        when(request.getSession(false)).thenReturn(session);
         when(session.getAttribute("currentUser")).thenReturn(testUser("ADMIN"));
 
         assertTrue(securityInterceptor.preHandle(request, response, null));
+    }
+
+    @Test
+    @DisplayName("Should set security headers on response on preHandle")
+    void shouldSetSecurityHeaders() throws Exception {
+        when(request.getRequestURI()).thenReturn("/demo/login");
+        assertTrue(securityInterceptor.preHandle(request, response, null));
+
+        verify(response)
+                .setHeader(
+                        "Content-Security-Policy",
+                        "default-src 'self'; "
+                                + "script-src 'self'; "
+                                + "style-src 'self' https://fonts.googleapis.com; "
+                                + "font-src 'self' https://fonts.gstatic.com; "
+                                + "img-src 'self' data: https://img.vietqr.io https://res.cloudinary.com; "
+                                + "frame-ancestors 'self';");
+        verify(response).setHeader("X-Frame-Options", "SAMEORIGIN");
+        verify(response).setHeader("X-Content-Type-Options", "nosniff");
+        verify(response).setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
+        verify(response).setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+        verify(response).setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+    }
+
+    @Test
+    @DisplayName("Should allow POST request with valid CSRF token")
+    void shouldAllowPostWithValidCsrf() throws Exception {
+        when(request.getRequestURI()).thenReturn("/demo/users");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("csrfToken")).thenReturn("mock-csrf-token");
+        when(session.getAttribute("currentUser")).thenReturn(testUser("ADMIN"));
+
+        assertTrue(securityInterceptor.preHandle(request, response, null));
+    }
+
+    @Test
+    @DisplayName("Should deny POST request with missing CSRF token")
+    void shouldDenyPostWithMissingCsrf() throws Exception {
+        when(request.getRequestURI()).thenReturn("/demo/users");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("csrfToken")).thenReturn(null);
+
+        assertFalse(securityInterceptor.preHandle(request, response, null));
+        verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF Token.");
+    }
+
+    @Test
+    @DisplayName("Should deny POST request with invalid CSRF token")
+    void shouldDenyPostWithInvalidCsrf() throws Exception {
+        when(request.getRequestURI()).thenReturn("/demo/users");
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getParameter("csrfToken")).thenReturn("wrong-token");
+
+        assertFalse(securityInterceptor.preHandle(request, response, null));
+        verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF Token.");
     }
 }

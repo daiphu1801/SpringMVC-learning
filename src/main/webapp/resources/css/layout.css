@@ -1,0 +1,221 @@
+/* Layout Header, Navigation & Footer CSS */
+
+.app-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Base Navigation Container */
+.nav-container {
+    margin-bottom: 30px;
+    padding: 15px 30px;
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    background: var(--bg-card);
+    transition: all var(--transition-speed) ease;
+}
+
+/* Admin specific nav override */
+.nav-container.admin-nav {
+    border-color: rgba(255, 107, 107, 0.2);
+    box-shadow: 0 4px 20px rgba(255, 107, 107, 0.05);
+    background: #FFFDFD;
+}
+
+/* User shop specific nav override */
+.nav-container.user-nav {
+    box-shadow: 0 4px 20px rgba(159, 161, 255, 0.05);
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.brand-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-weight: 800;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(159, 161, 255, 0.3);
+}
+
+.brand-icon.user-icon {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+}
+
+.brand-icon.admin-icon {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--text-main);
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
+.brand-subtitle {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.brand-subtitle.admin-subtitle {
+    color: #FF6B6B;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Nav links styling */
+.nav-link {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-speed) ease;
+    background: transparent;
+}
+
+.nav-link:hover {
+    background: rgba(159, 161, 255, 0.08);
+    color: var(--primary);
+}
+
+.admin-nav .nav-link:hover {
+    background: rgba(255, 107, 107, 0.08);
+    color: #FF6B6B;
+}
+
+.nav-link.nav-link-outline {
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    font-weight: 700;
+}
+
+.nav-link.nav-link-outline:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.admin-nav .nav-link.nav-link-outline {
+    color: #FF6B6B;
+    border-color: #FF6B6B;
+}
+
+.admin-nav .nav-link.nav-link-outline:hover {
+    background: #FF6B6B;
+    color: var(--white);
+}
+
+.nav-separator {
+    height: 20px;
+    width: 1px;
+    background-color: var(--border-color);
+    margin: 0 8px;
+}
+
+.user-profile-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.user-fullname {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.user-role-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+.user-role-badge.user-role {
+    color: var(--primary);
+    background: rgba(159, 161, 255, 0.1);
+}
+
+.user-role-badge.admin-role {
+    color: var(--white);
+    background: #FF6B6B;
+}
+
+.btn-logout {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    box-shadow: none !important;
+}
+
+/* Footer Styling */
+.footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 25px 20px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}

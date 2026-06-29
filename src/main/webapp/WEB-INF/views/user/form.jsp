@@ -13,10 +13,14 @@
 </c:choose>
 
 <t:layout title="${pageTitle}">
-<div class="container">
+<jsp:attribute name="head">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pages/user.css?v=${appVersion}">
+</jsp:attribute>
+<jsp:body>
+<div class="container container-sm">
   <c:choose>
     <c:when test="${empty user.id}">
-      <h1>Thêm người dùng</h1>
+      <h1 class="text-center text-primary mb-3">Thêm người dùng</h1>
 
       <c:set
               var="formAction"
@@ -24,7 +28,7 @@
     </c:when>
 
     <c:otherwise>
-      <h1>Cập nhật người dùng</h1>
+      <h1 class="text-center text-primary mb-3">Cập nhật người dùng</h1>
 
       <c:set
               var="formAction"
@@ -36,7 +40,8 @@
           modelAttribute="user"
           action="${formAction}"
           method="post"
-          style="margin-top: 30px;">
+          cssClass="mt-3">
+    <input type="hidden" name="csrfToken" value="${csrfToken}">
 
     <div class="form-group">
       <label for="username">Tên đăng nhập</label>
@@ -131,7 +136,7 @@
       <label for="password">
         Mật khẩu
         <c:if test="${not empty user.id}">
-          <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">(Để trống nếu không thay đổi)</span>
+          <span class="form-help d-inline-flex">(Để trống nếu không thay đổi)</span>
         </c:if>
       </label>
       <form:password id="password" path="password" class="form-control" placeholder="Nhập mật khẩu..." showPassword="false" required="${empty user.id ? 'true' : 'false'}"/>
@@ -139,15 +144,16 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn">
+      <button type="submit" class="btn flex-1">
         Lưu người dùng
       </button>
 
-      <a href="${pageContext.request.contextPath}/users" class="btn btn-secondary">
+      <a href="${pageContext.request.contextPath}/users" class="btn btn-secondary flex-1 text-center">
         Quay lại
       </a>
     </div>
 
   </form:form>
 </div>
+</jsp:body>
 </t:layout>
