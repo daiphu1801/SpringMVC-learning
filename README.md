@@ -114,9 +114,8 @@ Chúng tôi hỗ trợ build ứng dụng thông qua cơ chế **Multi-stage Doc
 # Build Docker image
 docker build -t springmvc-demo .
 
+
 # Run Docker container
 docker run -p 8080:8080 --name springmvc-app springmvc-demo
 ```
 Sau đó truy cập ứng dụng tại: `http://localhost:8080/`.
-
----

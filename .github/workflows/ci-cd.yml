@@ -43,8 +43,42 @@ jobs:
           path: target/SpringMVC-Demo.war
           retention-days: 7
 
-  deploy-docker:
+  security-scan:
     needs: build-and-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build local Docker Image
+        run: |
+          docker build -t springmvc-demo-test .
+
+      - name: Run Application in Docker container
+        run: |
+          docker run -d -p 8080:8080 --name app springmvc-demo-test
+
+      - name: Wait for application to start
+        run: |
+          echo "Waiting for app to start..."
+          timeout 60s bash -c 'until curl -s http://localhost:8080/ > /dev/null; do echo "Waiting for Tomcat..."; sleep 2; done'
+          echo "App is up and responding."
+
+      - name: Run OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:8080/'
+          fail_action: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Stop Docker container
+        if: always()
+        run: |
+          docker stop app || true
+          docker rm app || true
+
+  deploy-docker:
+    needs: [build-and-test, security-scan]
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
