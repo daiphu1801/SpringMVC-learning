@@ -10,7 +10,7 @@
     <jsp:body>
     <div class="container detail-container">
         
-        <!-- Left Column: Product Image -->
+        <%-- Left Column: Product Image --%>
         <div class="product-detail-image-box">
             <c:choose>
                 <c:when test="${not empty product.imageUrl}">
@@ -24,7 +24,7 @@
             </c:choose>
         </div>
 
-        <!-- Right Column: Product Info -->
+        <%-- Right Column: Product Info --%>
         <div class="product-detail-info">
             <div>
                 <span class="product-category-badge">
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <!-- Action buttons -->
+            <%-- Action buttons --%>
             <div class="product-detail-actions">
                 <div class="qty-selection">
                     <label for="quantityInput" class="qty-label">Số lượng:</label>

@@ -14,28 +14,6 @@ public class SecurityInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        // Set security headers
-        response.setHeader(
-                "Content-Security-Policy",
-                "default-src 'self'; "
-                        + "script-src 'self'; "
-                        + "style-src 'self' https://fonts.googleapis.com; "
-                        + "font-src 'self' https://fonts.gstatic.com; "
-                        + "img-src 'self' data: https://img.vietqr.io https://res.cloudinary.com; "
-                        + "frame-ancestors 'self';");
-        // Prevent embedding in iframes from other origins (clickjacking)
-        response.setHeader("X-Frame-Options", "SAMEORIGIN");
-        // Prevent browsers from guessing the content type (MIME-sniffing)
-        response.setHeader("X-Content-Type-Options", "nosniff");
-        // Force HTTPS for 1 year; includeSubDomains extends to all subdomains.
-        // Only effective when served over HTTPS (ignored on HTTP/localhost).
-        response.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-        // Controls how much referrer information the browser sends.
-        // strict-origin-when-cross-origin: sends full URL only for same-origin,
-        // and only the origin (no path) for cross-origin HTTPS requests.
-        response.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
-        // Restrict access to browser features this app does not use.
-        response.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 

@@ -61,11 +61,11 @@
             <textarea class="form-control" id="note" name="note" rows="3" placeholder="VD: Giao hàng giờ hành chính, gọi trước khi giao..."></textarea>
         </div>
 
-        <!-- PHƯƠNG THỨC THANH TOÁN -->
+        <%-- PHƯƠNG THỨC THANH TOÁN --%>
         <div class="mb-4">
             <label class="payment-method-title">💳 Chọn phương thức thanh toán</label>
             <div class="payment-grid">
-                <!-- TIỀN MẶT -->
+                <%-- TIỀN MẶT --%>
                 <label class="payment-card active" id="card-cash">
                     <input type="radio" name="paymentMethod" value="CASH" checked>
                     <div>
@@ -74,7 +74,7 @@
                     </div>
                 </label>
 
-                <!-- VIETQR -->
+                <%-- VIETQR --%>
                 <label class="payment-card" id="card-vietqr">
                     <input type="radio" name="paymentMethod" value="VIETQR">
                     <div>

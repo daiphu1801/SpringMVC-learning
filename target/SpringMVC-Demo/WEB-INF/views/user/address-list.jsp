@@ -12,7 +12,7 @@
     <h1>Sổ địa chỉ của tôi</h1>
     <p class="text-muted mb-3">Lưu trữ tối đa 5 địa chỉ giao hàng nhận hàng.</p>
 
-    <!-- Success or Error Alert -->
+    <%-- Success or Error Alert --%>
     <c:if test="${not empty error}">
         <div class="alert alert-danger">
             <c:out value="${error}"/>
@@ -26,7 +26,7 @@
 
     <div class="address-layout">
         
-        <!-- Left Side: Add Address Form -->
+        <%-- Left Side: Add Address Form --%>
         <div class="address-form-section">
             <h3 class="mb-3 font-bold">Thêm địa chỉ mới</h3>
             <form action="${pageContext.request.contextPath}/users/addresses/add" method="post">
@@ -71,7 +71,7 @@
             </form>
         </div>
         
-        <!-- Right Side: Address List -->
+        <%-- Right Side: Address List --%>
         <div class="address-cards-section">
             <h3 class="font-bold mb-2">Danh sách địa chỉ (${addresses.size()}/5)</h3>
             

@@ -11,6 +11,7 @@ com/examp/springmvc/order/application/query/OrderItemDTO.class
 com/examp/springmvc/catalog/application/product/command/CreateProductUseCase.class
 com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.class
 com/examp/springmvc/user/domain/ports/output/UserPersistencePort.class
+com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilter.class
 com/examp/springmvc/order/application/command/UpdateOrderStatusCommand.class
 com/examp/springmvc/user/infrastructure/persistence/UserAddressDbEntity.class
 com/examp/springmvc/order/application/query/FindOrderByIdUseCase.class
@@ -43,6 +44,7 @@ com/examp/springmvc/order/presentation/CartController$CartItemView.class
 com/examp/springmvc/user/application/address/command/AddAddressInputPort.class
 com/examp/springmvc/catalog/application/category/command/CreateCategoryUseCase.class
 com/examp/springmvc/catalog/presentation/StoreController.class
+com/examp/springmvc/shared/presentation/ErrorController.class
 com/examp/springmvc/catalog/domain/model/Product.class
 com/examp/springmvc/shared/infrastructure/config/RootConfig.class
 com/examp/springmvc/user/application/address/command/RemoveAddressInputPort.class
@@ -58,6 +60,7 @@ com/examp/springmvc/catalog/application/product/command/UpdateProductUseCase.cla
 com/examp/springmvc/catalog/domain/model/ProductStatus.class
 com/examp/springmvc/user/application/usermanagement/command/CreateUserCommand.class
 com/examp/springmvc/order/application/query/OrderDTO.class
+com/examp/springmvc/shared/presentation/GlobalExceptionHandler.class
 com/examp/springmvc/auth/application/ports/input/LogoutInputPort.class
 com/examp/springmvc/user/application/usermanagement/command/DeleteUserUseCase.class
 com/examp/springmvc/auth/presentation/AuthController.class

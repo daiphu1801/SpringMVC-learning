@@ -30,7 +30,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
             "com.examp.springmvc.auth.presentation",
             "com.examp.springmvc.catalog.presentation",
             "com.examp.springmvc.order.presentation",
-            "com.examp.springmvc.auth.infrastructure.security"
+            "com.examp.springmvc.auth.infrastructure.security",
+            "com.examp.springmvc.shared.presentation"
         })
 public class WebConfig implements WebMvcConfigurer {
 

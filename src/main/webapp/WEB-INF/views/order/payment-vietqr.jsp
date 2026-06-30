@@ -9,7 +9,7 @@
 </jsp:attribute>
 <jsp:body>
 <div class="payment-container">
-    <!-- Cột trái: Thông tin chuyển khoản -->
+    <%-- Cột trái: Thông tin chuyển khoản --%>
     <div class="info-card">
         <h2 class="payment-title">
             <span>💵</span> Thông tin chuyển khoản
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <!-- Cột phải: Mã QR và Nút giả lập -->
+    <%-- Cột phải: Mã QR và Nút giả lập --%>
     <div class="qr-card d-flex flex-col align-center justify-center">
         <h3 class="qr-title">
             Quét mã QR để thanh toán

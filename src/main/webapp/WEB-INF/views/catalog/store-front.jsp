@@ -9,7 +9,7 @@
     <jsp:body>
     <div class="store-layout">
         
-        <!-- Sidebar Categories -->
+        <%-- Sidebar Categories --%>
         <div class="container category-sidebar">
             <h3 class="category-title">
                 Danh mục
@@ -48,7 +48,7 @@
             </ul>
         </div>
 
-        <!-- Product Grid -->
+        <%-- Product Grid --%>
         <div>
             <div class="product-grid-header">
                 <h2 class="product-grid-title">Sản phẩm Nổi bật</h2>
@@ -67,7 +67,7 @@
                         <c:forEach var="prod" items="${products}">
                             <div class="container product-card">
                                 
-                                <!-- Product Image -->
+                                <%-- Product Image --%>
                                 <div class="product-image-wrapper">
                                     <c:choose>
                                         <c:when test="${not empty prod.imageUrl}">
@@ -84,7 +84,7 @@
                                      </span>
                                 </div>
 
-                                <!-- Product Info -->
+                                <%-- Product Info --%>
                                 <div class="product-details">
                                     <div>
                                         <h4 class="product-name">

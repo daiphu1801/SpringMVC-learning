@@ -77,6 +77,9 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/RootConfig.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebConfig.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilter.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ErrorController.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandler.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ImageFileValidator.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/address/command/AddAddressCommand.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/address/command/AddAddressInputPort.java

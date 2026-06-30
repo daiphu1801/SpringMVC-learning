@@ -23,7 +23,7 @@
         <p>Phân tích mô hình Clean Architecture kết hợp Domain-Driven Design (DDD) & CQRS</p>
     </div>
 
-    <!-- Tab Bar -->
+    <%-- Tab Bar --%>
     <div class="tabs">
         <button class="tab-btn active" data-tab="clean-arch">Clean Architecture</button>
         <button class="tab-btn" data-tab="ddd-patterns">Domain-Driven Design (DDD)</button>
@@ -32,10 +32,10 @@
         <button class="tab-btn" data-tab="directories">Cấu Trúc Thư Mục</button>
     </div>
 
-    <!-- TAB 1: Clean Architecture -->
+    <%-- TAB 1: Clean Architecture --%>
     <div id="clean-arch" class="tab-content active">
         <div class="arch-layout">
-            <!-- Layers Visual -->
+            <%-- Layers Visual --%>
             <div class="layers-box">
                 <h3 class="section-title">Các lớp kiến trúc (từ ngoài vào trong)</h3>
                 
@@ -60,7 +60,7 @@
                 </div>
             </div>
 
-            <!-- Layer Details Panel -->
+            <%-- Layer Details Panel --%>
             <div class="detail-panel" id="layer-details-panel">
                 <h3 id="detail-title">Presentation Layer</h3>
                 <p id="detail-desc">Vui lòng nhấp vào một lớp ở sơ đồ bên trái để xem chi tiết các thành phần và quy tắc phụ thuộc.</p>
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <!-- TAB 2: DDD Patterns -->
+    <%-- TAB 2: DDD Patterns --%>
     <div id="ddd-patterns" class="tab-content">
         <div class="ddd-grid">
             <div class="ddd-card">
@@ -116,7 +116,7 @@
         </div>
     </div>
 
-    <!-- TAB 3: CQRS Pattern -->
+    <%-- TAB 3: CQRS Pattern --%>
     <div id="cqrs-pattern" class="tab-content">
         <div class="content-card">
             <h3 class="card-title">Phân tách Lệnh - Truy vấn (CQRS)</h3>
@@ -158,7 +158,7 @@
         </div>
     </div>
 
-    <!-- TAB: Dependency & Execution Flow -->
+    <%-- TAB: Dependency & Execution Flow --%>
     <div id="dep-flow" class="tab-content">
         <div class="content-card">
             <h3 class="card-title">Luồng Phụ Thuộc (DIP) & Luồng Chạy Thực Tế (Execution Flow)</h3>
@@ -167,7 +167,7 @@
             </p>
 
             <div class="split-grid">
-                <!-- 1. Chiều phụ thuộc mã nguồn -->
+                <%-- 1. Chiều phụ thuộc mã nguồn --%>
                 <div class="column-card-lg">
                     <h4 class="compile-title">
                         A. Chiều Phụ Thuộc Mã Nguồn (Compile-Time)
@@ -184,7 +184,7 @@
                     </div>
                 </div>
 
-                <!-- 2. Luồng chạy thực tế -->
+                <%-- 2. Luồng chạy thực tế --%>
                 <div class="column-card-lg">
                     <h4 class="runtime-title">
                         B. Luồng Thực Thi Thực Tế (Runtime)
@@ -216,7 +216,7 @@
         </div>
     </div>
 
-    <!-- TAB 4: Directory Structure -->
+    <%-- TAB 4: Directory Structure --%>
     <div id="directories" class="tab-content">
         <div class="dir-tree">
             <span class="folder">src/main/java/com/examp/springmvc</span><br>

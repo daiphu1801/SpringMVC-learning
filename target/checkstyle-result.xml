@@ -2,6 +2,10 @@
 <checkstyle version="13.6.0">
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ImageFileValidator.java">
 </file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ErrorController.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandler.java">
+</file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.java">
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/CloudinaryConfig.java">
@@ -13,6 +17,8 @@
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java">
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/RootConfig.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilter.java">
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/domain/DomainEvent.java">
 </file>
@@ -244,9 +250,15 @@
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/domain/PasswordHasher.java">
 </file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ErrorControllerTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandlerTest.java">
+</file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ImageFileValidatorTest.java">
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/JspXssEncodingTest.java">
+</file>
+<file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilterTest.java">
 </file>
 <file name="/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/usermanagement/command/UserCommandUseCasesTest.java">
 </file>

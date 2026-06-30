@@ -1,4 +1,4 @@
-#Mon Jun 29 11:10:30 ICT 2026
+#Tue Jun 30 11:56:29 ICT 2026
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/LoginInputPort.java=1782375568778
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/LogoutInputPort.java=1782375599399
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/ports/input/RegisterCommand.java=1782378480358
@@ -8,7 +8,7 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/application/usecase/RegisterUseCase.java=1782380827164
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/domain/PasswordHasher.java=1782375563772
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/infrastructure/security/BCryptPasswordHasher.java=1782375713544
-/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptor.java=1782702430759
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptor.java=1782794929560
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/auth/presentation/AuthController.java=1782378480411
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/catalog/application/category/command/CreateCategoryCommand.java=1782440991533
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/catalog/application/category/command/CreateCategoryUseCase.java=1782462954754
@@ -74,10 +74,13 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/domain/DomainEvent.java=1782380684643
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/CloudinaryConfig.java=1782462953552
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/MailConfig.java=1782466574394
-/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.java=1782468089837
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/MyBatisConfig.java=1782729018684
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/RootConfig.java=1782468258369
-/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java=1782702412732
-/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebConfig.java=1782469722536
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebAppInitializer.java=1782790215277
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/config/WebConfig.java=1782794505598
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilter.java=1782794929486
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ErrorController.java=1782794516942
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandler.java=1782794929430
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/shared/presentation/ImageFileValidator.java=1782706206905
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/address/command/AddAddressCommand.java=1782437074015
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/application/address/command/AddAddressInputPort.java=1782437074015
@@ -126,7 +129,7 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/application/usecase/LoginUseCaseTest.java=1782376747957
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/application/usecase/RegisterUseCaseTest.java=1782382831223
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/infrastructure/security/BCryptPasswordHasherTest.java=1782376532698
-/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptorTest.java=1782702444088
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/infrastructure/security/SecurityInterceptorTest.java=1782794929746
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/auth/presentation/AuthControllerTest.java=1782378480739
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/catalog/application/product/command/CreateProductUseCaseTest.java=1782462955700
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/catalog/application/product/command/UpdateProductUseCaseTest.java=1782462955643
@@ -136,6 +139,9 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/order/application/command/PlaceOrderUseCaseTest.java=1782467506217
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/order/domain/model/OrderTest.java=1782467369534
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/JspXssEncodingTest.java=1782706207197
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilterTest.java=1782787828892
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ErrorControllerTest.java=1782794929613
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandlerTest.java=1782794611023
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ImageFileValidatorTest.java=1782706207118
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/address/command/AddAddressUseCaseTest.java=1782437074019
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/address/command/RemoveAddressUseCaseTest.java=1782437074019

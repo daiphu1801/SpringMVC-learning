@@ -195,14 +195,15 @@ Nếu ứng dụng bị tấn công XSS, mã độc có thể cố kích hoạt 
 | 3 | Cookie `HttpOnly` | Session Hijacking qua XSS | `WebAppInitializer` |
 | 4 | Cookie `SameSite=Lax` | CSRF qua trình duyệt | `WebAppInitializer` |
 | 5 | Cookie `Secure` (production) | Session Hijacking qua HTTP | `WebAppInitializer` |
-| 6 | Content-Security-Policy | XSS từ nguồn ngoài | `SecurityInterceptor` |
-| 7 | X-Frame-Options | Clickjacking | `SecurityInterceptor` |
-| 8 | X-Content-Type-Options | MIME Sniffing | `SecurityInterceptor` |
-| 9 | HSTS | SSL Stripping / MITM | `SecurityInterceptor` |
-| 10 | Referrer-Policy | URL/Data Leakage | `SecurityInterceptor` |
-| 11 | Permissions-Policy | Browser API Abuse | `SecurityInterceptor` |
-| 12 | Self-host / SRI | Supply Chain Attack | Thiết kế (không dùng CDN JS) |
-| 13 | Không lưu bí mật frontend | Credential Exposure | Thiết kế + Code review |
+| 6 | Content-Security-Policy | XSS từ nguồn ngoài | `SecurityHeadersFilter` |
+| 7 | X-Frame-Options | Clickjacking | `SecurityHeadersFilter` |
+| 8 | X-Content-Type-Options | MIME Sniffing | `SecurityHeadersFilter` |
+| 9 | HSTS | SSL Stripping / MITM | `SecurityHeadersFilter` |
+| 10 | Referrer-Policy | URL/Data Leakage | `SecurityHeadersFilter` |
+| 11 | Permissions-Policy | Browser API Abuse | `SecurityHeadersFilter` |
+| 12 | Custom Error Pages & Logging | Information Disclosure / Lộ Stack Trace & Tomcat Version | `web.xml` + `GlobalExceptionHandler` + `ErrorController` |
+| 13 | Self-host / SRI | Supply Chain Attack | Thiết kế (không dùng CDN JS) |
+| 14 | Không lưu bí mật frontend | Credential Exposure | Thiết kế + Code review |
 
 ---
 
@@ -254,11 +255,37 @@ Mọi dữ liệu được nhúng vào file JS, JSP hoặc HTML gửi xuống tr
 
 ---
 
+## 12. Improper Error Handling & Information Disclosure Prevention (Quản lý lỗi và chống lộ lọt thông tin)
+
+### Định nghĩa
+Improper Error Handling (CWE-209) xảy ra khi ứng dụng sinh ra thông báo lỗi chứa thông tin nhạy cách (stack trace hệ thống, tên thư mục ổ đĩa, phiên bản phần mềm, cơ sở dữ liệu...). Kẻ tấn công có thể lợi dụng thông tin này để vẽ sơ đồ thiết kế hệ thống, tìm các lỗ hổng đã biết (CVE) hoặc thực hiện các cuộc tấn công khai thác phức tạp.
+
+### Cơ chế hoạt động
+
+1. **Xử lý lỗi tập trung phía Server (Global Exception Logging):**
+   * Sử dụng `@ControllerAdvice` trong `GlobalExceptionHandler` để đánh chặn toàn bộ các Exception chưa được bắt trong Controller.
+   * Toàn bộ chi tiết lỗi và Stack Trace được **ghi đầy đủ vào log máy chủ** (`LOG.error(...)` cho lỗi hệ thống, `LOG.warn(...)` cho lỗi tham số người dùng) để phục vụ việc debug.
+2. **Ẩn lỗi phía Client (Secure Error Views):**
+   * Tuyệt đối không hiển thị Stack Trace hay in lại nội dung đầu vào nguy hiểm của người dùng trên trình duyệt. Thay vào đó, trả về các trang lỗi độc lập, thiết kế an toàn:
+     * **400 (Bad Request)**: Cho các lỗi ép kiểu dữ liệu, thiếu tham số.
+     * **404 (Not Found)**: Cho các đường dẫn không tồn tại.
+     * **500 (Internal Server Error)**: Cho các lỗi ngoại lệ chưa biết ở server.
+3. **Cấu hình Web Container chống rò rỉ phiên bản (web.xml):**
+   * Định nghĩa các thẻ `<error-page>` trong `web.xml` để chuyển hướng các mã lỗi HTTP trực tiếp về Spring MVC `/error/*` nhằm thay thế hoàn toàn trang lỗi mặc định của Apache Tomcat (vốn chứa phiên bản Tomcat như `Apache Tomcat/10.1.55`).
+
+### Lý do cần thiết
+* **An toàn thông tin:** Ngăn chặn kẻ tấn công dò tìm kiến trúc và các thư viện sử dụng trong ứng dụng qua lỗi stack trace.
+* **Loại bỏ cảnh báo giả của ZAP:** Chặn cơ chế phản chiếu (reflection) payload tấn công (ví dụ: ZAP gửi chuỗi SQL hay path traversal vào tham số số và lỗi in ngược lại), giúp quét an toàn và sạch sẽ hơn.
+* **Trải nghiệm người dùng:** Mang lại giao diện trang lỗi chuyên nghiệp, nhất quán và thân thiện cho khách hàng.
+
+---
+
 ## Kết quả kiểm thử
 
 ```
-Tests run: 94, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 120, Failures: 0, Errors: 0, Skipped: 0
 BUILD SUCCESS
 ```
 
-Toàn bộ các header bảo mật và logic CSRF đã được xác thực tự động qua `SecurityInterceptorTest.java`.
+Toàn bộ các header bảo mật và logic CSRF đã được xác thực tự động qua `SecurityHeadersFilterTest.java` và `SecurityInterceptorTest.java`. Hệ thống xử lý lỗi tập trung cũng được bao phủ đầy đủ bằng các bài test tự động tại `GlobalExceptionHandlerTest.java` và `ErrorControllerTest.java`.
+

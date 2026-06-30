@@ -1,5 +1,6 @@
 package com.examp.springmvc.shared.infrastructure.config;
 
+import com.examp.springmvc.shared.infrastructure.security.SecurityHeadersFilter;
 import jakarta.servlet.Filter;
 import jakarta.servlet.SessionCookieConfig;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -25,6 +26,11 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         cookieConfig.setHttpOnly(true);
         cookieConfig.setSecure(false); // TODO: set true in production (HTTPS only)
         cookieConfig.setAttribute("SameSite", "Lax");
+
+        // Register SecurityHeadersFilter globally
+        jakarta.servlet.FilterRegistration.Dynamic securityFilter =
+                servletContext.addFilter("securityHeadersFilter", new SecurityHeadersFilter());
+        securityFilter.addMappingForUrlPatterns(null, true, "/*");
     }
 
     @Override

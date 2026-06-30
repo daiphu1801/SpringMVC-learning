@@ -11,6 +11,9 @@
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/order/application/command/PlaceOrderUseCaseTest.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/order/domain/model/OrderTest.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/JspXssEncodingTest.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/infrastructure/security/SecurityHeadersFilterTest.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ErrorControllerTest.java
+/home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/GlobalExceptionHandlerTest.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/shared/presentation/ImageFileValidatorTest.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/address/command/AddAddressUseCaseTest.java
 /home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/user/application/address/command/RemoveAddressUseCaseTest.java
