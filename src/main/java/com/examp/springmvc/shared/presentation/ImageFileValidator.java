@@ -69,7 +69,8 @@ public final class ImageFileValidator {
         // 3. Check MIME type (reported by the container)
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
-            String safeContentType = org.springframework.web.util.HtmlUtils.htmlEscape(contentType);
+            String safeContentType =
+                    contentType == null ? "unknown" : org.springframework.web.util.HtmlUtils.htmlEscape(contentType);
             throw new IllegalArgumentException("Loại file \"" + safeContentType + "\" không được phép. "
                     + "Chỉ chấp nhận ảnh (JPEG, PNG, GIF, WebP, AVIF).");
         }
