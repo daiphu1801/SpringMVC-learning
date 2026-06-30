@@ -17,12 +17,12 @@ public class CancelOrderUseCase {
     }
 
     @Transactional
-    public void execute(Long orderId, Long requestingUserId) {
+    public void execute(Long orderId, Long requestingUserId, boolean isAdmin) {
         Order order = orderPersistencePort
                 .findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + orderId));
 
-        if (!order.getUserId().equals(requestingUserId)) {
+        if (!isAdmin && !order.getUserId().equals(requestingUserId)) {
             throw new IllegalStateException("Bạn không có quyền huỷ đơn hàng này");
         }
 

@@ -11,6 +11,7 @@ public final class Product {
     private BigDecimal price;
     private ProductStatus status;
     private String imageUrl;
+    private Integer stock;
 
     public Product(
             Long id,
@@ -20,7 +21,8 @@ public final class Product {
             String description,
             BigDecimal price,
             ProductStatus status,
-            String imageUrl) {
+            String imageUrl,
+            Integer stock) {
         if (categoryId == null) {
             throw new IllegalArgumentException("Mã danh mục không được để trống");
         }
@@ -32,6 +34,9 @@ public final class Product {
         }
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Giá sản phẩm không được âm");
+        }
+        if (stock == null || stock < 0) {
+            throw new IllegalArgumentException("Số lượng tồn kho không hợp lệ");
         }
         this.id = id;
         this.categoryId = categoryId;
@@ -41,6 +46,7 @@ public final class Product {
         this.price = price;
         this.status = status != null ? status : ProductStatus.ACTIVE;
         this.imageUrl = imageUrl;
+        this.stock = stock;
     }
 
     public void updateDetails(
@@ -50,7 +56,8 @@ public final class Product {
             String description,
             BigDecimal price,
             ProductStatus status,
-            String imageUrl) {
+            String imageUrl,
+            Integer stock) {
         if (categoryId == null) {
             throw new IllegalArgumentException("Mã danh mục không được để trống");
         }
@@ -63,6 +70,9 @@ public final class Product {
         if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Giá sản phẩm không được âm");
         }
+        if (stock == null || stock < 0) {
+            throw new IllegalArgumentException("Số lượng tồn kho không hợp lệ");
+        }
         this.categoryId = categoryId;
         this.sku = sku.trim().toUpperCase();
         this.name = name.trim();
@@ -70,6 +80,17 @@ public final class Product {
         this.price = price;
         this.status = status != null ? status : ProductStatus.ACTIVE;
         this.imageUrl = imageUrl;
+        this.stock = stock;
+    }
+
+    public void decreaseStock(int quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Số lượng trừ kho không được âm");
+        }
+        if (quantity > this.stock) {
+            throw new IllegalArgumentException("Không đủ hàng tồn kho cho sản phẩm: " + this.name);
+        }
+        this.stock -= quantity;
     }
 
     public Long getId() {
@@ -102,5 +123,9 @@ public final class Product {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public Integer getStock() {
+        return stock;
     }
 }

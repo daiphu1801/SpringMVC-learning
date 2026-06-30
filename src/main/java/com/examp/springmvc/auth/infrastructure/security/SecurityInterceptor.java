@@ -1,6 +1,6 @@
 package com.examp.springmvc.auth.infrastructure.security;
 
-import com.examp.springmvc.user.domain.model.User;
+import com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -49,7 +49,7 @@ public class SecurityInterceptor implements HandlerInterceptor {
         }
 
         // Authentication check
-        User currentUser = (User) session.getAttribute("currentUser");
+        AuthenticatedUserDTO currentUser = (AuthenticatedUserDTO) session.getAttribute("currentUser");
 
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/login");
@@ -57,14 +57,8 @@ public class SecurityInterceptor implements HandlerInterceptor {
         }
 
         // Authorization checks
-        if (path.startsWith("/users")) {
-            boolean isWriteAction = path.equals("/users/create")
-                    || path.startsWith("/users/edit")
-                    || path.startsWith("/users/delete")
-                    || (path.equals("/users") && "POST".equalsIgnoreCase(request.getMethod()))
-                    || (path.matches("/users/\\d+") && "POST".equalsIgnoreCase(request.getMethod()));
-
-            if (isWriteAction && !currentUser.isAdmin()) {
+        if (path.startsWith("/users") && !path.startsWith("/users/addresses")) {
+            if (!currentUser.isAdmin()) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền thực hiện hành động này.");
                 return false;
             }

@@ -56,4 +56,18 @@ public class OrderItemDTO {
     public BigDecimal getSubtotal() {
         return subtotal;
     }
+
+    public static OrderItemDTO fromDomain(com.examp.springmvc.order.domain.model.OrderItem item) {
+        if (item == null) {
+            return null;
+        }
+        return new OrderItemDTO(
+                item.getId(),
+                item.getProductId(),
+                item.getProductName(),
+                item.getProductSku(),
+                item.getUnitPrice(),
+                item.getQuantity(),
+                item.getSubtotal());
+    }
 }

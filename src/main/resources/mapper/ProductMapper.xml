@@ -12,6 +12,7 @@
         <result property="price" column="PRICE"/>
         <result property="status" column="STATUS"/>
         <result property="imageUrl" column="IMAGE_URL"/>
+        <result property="stock" column="STOCK"/>
         <result property="createdAt" column="CREATED_AT"/>
         <result property="updatedAt" column="UPDATED_AT"/>
     </resultMap>
@@ -21,7 +22,7 @@
             SELECT APP_PRODUCT_SEQ.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO APP_PRODUCTS (
-            ID, CATEGORY_ID, SKU, NAME, DESCRIPTION, PRICE, STATUS, IMAGE_URL, CREATED_AT, UPDATED_AT
+            ID, CATEGORY_ID, SKU, NAME, DESCRIPTION, PRICE, STATUS, IMAGE_URL, STOCK, CREATED_AT, UPDATED_AT
         ) VALUES (
             #{id, jdbcType=NUMERIC},
             #{categoryId, jdbcType=NUMERIC},
@@ -31,6 +32,7 @@
             #{price, jdbcType=NUMERIC},
             #{status, jdbcType=VARCHAR},
             #{imageUrl, jdbcType=VARCHAR},
+            #{stock, jdbcType=NUMERIC},
             SYSTIMESTAMP,
             SYSTIMESTAMP
         )
@@ -46,37 +48,48 @@
             PRICE = #{price, jdbcType=NUMERIC},
             STATUS = #{status, jdbcType=VARCHAR},
             IMAGE_URL = #{imageUrl, jdbcType=VARCHAR},
+            STOCK = #{stock, jdbcType=NUMERIC},
             UPDATED_AT = SYSTIMESTAMP
         WHERE ID = #{id, jdbcType=NUMERIC}
     </update>
 
     <select id="findById" parameterType="long" resultMap="productResultMap">
-        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
         JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.ID = #{id, jdbcType=NUMERIC}
     </select>
 
     <select id="findBySku" parameterType="string" resultMap="productResultMap">
-        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
         JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.SKU = #{sku, jdbcType=VARCHAR}
     </select>
 
     <select id="findAll" resultMap="productResultMap">
-        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
         JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         ORDER BY p.ID DESC
     </select>
 
     <select id="findByCategoryId" parameterType="long" resultMap="productResultMap">
-        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.CREATED_AT, p.UPDATED_AT
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
         JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.CATEGORY_ID = #{categoryId, jdbcType=NUMERIC}
         ORDER BY p.ID DESC
+    </select>
+
+    <select id="findByIds" resultMap="productResultMap">
+        SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
+        FROM APP_PRODUCTS p
+        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        WHERE p.ID IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id, jdbcType=NUMERIC}
+        </foreach>
     </select>
 
     <delete id="deleteById" parameterType="long">

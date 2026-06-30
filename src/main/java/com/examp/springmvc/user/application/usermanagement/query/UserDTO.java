@@ -14,7 +14,6 @@ public class UserDTO implements Serializable {
     private String phone;
     private String status;
     private String role;
-    private String password;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -115,13 +114,5 @@ public class UserDTO implements Serializable {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }

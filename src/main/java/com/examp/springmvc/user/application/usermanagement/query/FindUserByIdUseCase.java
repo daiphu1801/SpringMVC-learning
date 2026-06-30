@@ -1,17 +1,15 @@
 package com.examp.springmvc.user.application.usermanagement.query;
 
-import com.examp.springmvc.user.infrastructure.mapper.UserQueryMapper;
-import com.examp.springmvc.user.infrastructure.persistence.UserDbEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component("userFindUserByIdUseCase")
 public class FindUserByIdUseCase implements FindUserByIdInputPort {
 
-    private final UserQueryMapper userQueryMapper;
+    private final UserQueryPort userQueryPort;
 
-    public FindUserByIdUseCase(UserQueryMapper userQueryMapper) {
-        this.userQueryMapper = userQueryMapper;
+    public FindUserByIdUseCase(UserQueryPort userQueryPort) {
+        this.userQueryPort = userQueryPort;
     }
 
     @Override
@@ -20,26 +18,8 @@ public class FindUserByIdUseCase implements FindUserByIdInputPort {
         if (id == null) {
             throw new IllegalArgumentException("ID không được để trống");
         }
-        UserDbEntity entity = userQueryMapper.findById(id);
-        if (entity == null) {
-            throw new IllegalArgumentException("Không tìm thấy user với id: " + id);
-        }
-        return toDTO(entity);
-    }
-
-    private UserDTO toDTO(UserDbEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-        return new UserDTO(
-                entity.getId(),
-                entity.getUsername(),
-                entity.getFullName(),
-                entity.getEmail(),
-                entity.getPhone(),
-                entity.getStatus(),
-                entity.getRole(),
-                entity.getCreatedAt(),
-                entity.getUpdatedAt());
+        return userQueryPort
+                .findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy user với id: " + id));
     }
 }

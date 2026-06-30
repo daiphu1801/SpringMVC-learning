@@ -133,7 +133,6 @@ public class JspXssEncodingTest {
         if (expression.contains("formatted")
                 || expression.equals("pageTitle")
                 || expression.equals("formAction")
-                || expression.equals("error")
                 || expression.equals("success")
                 || expression.contains("status")) {
             return true;

@@ -9,6 +9,8 @@ public interface ProductPersistencePort {
 
     Optional<Product> findById(Long id);
 
+    List<Product> findByIds(List<Long> ids);
+
     Optional<Product> findBySku(String sku);
 
     List<Product> findAll();

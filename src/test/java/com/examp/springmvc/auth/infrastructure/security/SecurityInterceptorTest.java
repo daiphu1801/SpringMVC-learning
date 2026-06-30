@@ -6,7 +6,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.examp.springmvc.user.domain.model.User;
+import com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -33,18 +33,14 @@ class SecurityInterceptorTest {
     @InjectMocks
     private SecurityInterceptor securityInterceptor;
 
-    private User testUser(String role) {
-        return new User(
+    private AuthenticatedUserDTO testUser(String role) {
+        return new AuthenticatedUserDTO(
                 1L,
                 "john",
                 "John",
-                new com.examp.springmvc.user.domain.model.Email("john@example.com"),
                 "0901234567",
-                com.examp.springmvc.user.domain.model.UserStatus.ACTIVE,
-                null,
-                com.examp.springmvc.user.domain.model.UserRole.valueOf(role),
-                null,
-                null);
+                "john@example.com",
+                com.examp.springmvc.user.domain.model.UserRole.valueOf(role));
     }
 
     @BeforeEach
@@ -75,9 +71,19 @@ class SecurityInterceptorTest {
     }
 
     @Test
-    @DisplayName("Should allow logged-in user to access user list")
-    void shouldAllowUserListAccess() throws Exception {
+    @DisplayName("Should deny non-admin access to user list")
+    void shouldDenyUserListAccessToNonAdmin() throws Exception {
         when(request.getRequestURI()).thenReturn("/demo/users");
+        when(session.getAttribute("currentUser")).thenReturn(testUser("USER"));
+
+        assertFalse(securityInterceptor.preHandle(request, response, null));
+        verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền thực hiện hành động này.");
+    }
+
+    @Test
+    @DisplayName("Should allow logged-in user to access user addresses list")
+    void shouldAllowUserAddressesAccess() throws Exception {
+        when(request.getRequestURI()).thenReturn("/demo/users/addresses");
         when(session.getAttribute("currentUser")).thenReturn(testUser("USER"));
 
         assertTrue(securityInterceptor.preHandle(request, response, null));
@@ -90,7 +96,6 @@ class SecurityInterceptorTest {
         when(session.getAttribute("currentUser")).thenReturn(testUser("USER"));
 
         assertFalse(securityInterceptor.preHandle(request, response, null));
-        verify(response).sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền thực hiện hành động này.");
     }
 
     @Test

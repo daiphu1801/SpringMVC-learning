@@ -13,7 +13,7 @@
     <p class="text-muted mb-4">Điền thông tin giao hàng để hoàn tất đơn hàng của bạn.</p>
 
     <c:if test="${not empty error}">
-        <div class="alert alert-danger">${error}</div>
+        <div class="alert alert-danger"><c:out value="${error}"/></div>
     </c:if>
 
     <form action="${pageContext.request.contextPath}/orders/place" method="post">

@@ -14,6 +14,7 @@ public class ProductDbEntity {
     private BigDecimal price;
     private ProductStatus status;
     private String imageUrl;
+    private Integer stock;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -103,5 +104,13 @@ public class ProductDbEntity {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }

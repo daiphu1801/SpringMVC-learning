@@ -59,7 +59,7 @@ Thêm các Header bảo mật trực tiếp vào lớp `SecurityInterceptor.java
 ---
 
 ### Bước 3: Cải thiện hiệu năng render của trình duyệt (Hiệu năng)
-1.  **Sử dụng thẻ Preconnect**: Thêm các chỉ dẫn mạng vào thẻ `<head>` trong [layout.tag](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/webapp/WEB-INF/tags/layout.tag) để thiết lập kết nối TCP/TLS sớm với CDN của Google Fonts và VietQR:
+1.  **Sử dụng thẻ Preconnect**: Thêm các chỉ dẫn mạng vào thẻ `<head>` trong [layout.tag](../src/main/webapp/WEB-INF/tags/layout.tag) để thiết lập kết nối TCP/TLS sớm với CDN của Google Fonts và VietQR:
     ```html
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

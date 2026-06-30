@@ -24,17 +24,14 @@ public class UpdateOrderStatusUseCase {
                         () -> new IllegalArgumentException("Không tìm thấy đơn hàng với ID: " + command.getOrderId()));
 
         switch (command.getAction()) {
-            case "confirm":
+            case CONFIRM:
                 order.confirm();
                 break;
-            case "ship":
+            case SHIP:
                 order.markShipping();
                 break;
-            case "deliver":
+            case DELIVER:
                 order.markDelivered();
-                break;
-            case "cancel":
-                order.cancel();
                 break;
             default:
                 throw new IllegalArgumentException("Hành động không hợp lệ: " + command.getAction());

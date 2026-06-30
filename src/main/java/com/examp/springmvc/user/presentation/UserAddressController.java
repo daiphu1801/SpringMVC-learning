@@ -1,11 +1,11 @@
 package com.examp.springmvc.user.presentation;
 
+import com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO;
 import com.examp.springmvc.user.application.address.command.AddAddressCommand;
 import com.examp.springmvc.user.application.address.command.AddAddressInputPort;
 import com.examp.springmvc.user.application.address.command.RemoveAddressInputPort;
 import com.examp.springmvc.user.application.address.query.AddressDTO;
 import com.examp.springmvc.user.application.address.query.GetUserAddressesInputPort;
-import com.examp.springmvc.user.domain.model.User;
 import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import org.springframework.stereotype.Controller;
@@ -34,17 +34,17 @@ public class UserAddressController {
         this.removeAddressUseCase = removeAddressUseCase;
     }
 
-    private User getLoggedInUser(HttpSession session) {
+    private AuthenticatedUserDTO getLoggedInUser(HttpSession session) {
         Object userObj = session.getAttribute("currentUser");
-        if (userObj instanceof User) {
-            return (User) userObj;
+        if (userObj instanceof AuthenticatedUserDTO) {
+            return (AuthenticatedUserDTO) userObj;
         }
         return null;
     }
 
     @GetMapping
     public String listAddresses(HttpSession session, Model model) {
-        User loggedInUser = getLoggedInUser(session);
+        AuthenticatedUserDTO loggedInUser = getLoggedInUser(session);
         if (loggedInUser == null) {
             return "redirect:/login";
         }
@@ -65,7 +65,7 @@ public class UserAddressController {
             @RequestParam(value = "isDefault", required = false, defaultValue = "false") boolean isDefault,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-        User loggedInUser = getLoggedInUser(session);
+        AuthenticatedUserDTO loggedInUser = getLoggedInUser(session);
         if (loggedInUser == null) {
             return "redirect:/login";
         }
@@ -99,7 +99,7 @@ public class UserAddressController {
     @PostMapping("/delete/{addressId}")
     public String deleteAddress(
             @PathVariable("addressId") Long addressId, HttpSession session, RedirectAttributes redirectAttributes) {
-        User loggedInUser = getLoggedInUser(session);
+        AuthenticatedUserDTO loggedInUser = getLoggedInUser(session);
         if (loggedInUser == null) {
             return "redirect:/login";
         }

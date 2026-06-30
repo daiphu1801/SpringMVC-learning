@@ -54,7 +54,7 @@ Mỗi phân hệ (context) đều phân tách rõ các lớp:
 
 ## ⚙️ Cấu hình dự án
 
-Tất cả cấu hình được đặt tại [application.properties](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/resources/application.properties).
+Tất cả cấu hình được đặt tại [application.properties](src/main/resources/application.properties).
 
 Để ghi đè các cấu hình nhạy cảm trên môi trường phát triển cục bộ, bạn hãy tạo file **`application-local.properties`** tại cùng thư mục tài nguyên (file này đã được cấu hình ẩn trong `.gitignore`):
 

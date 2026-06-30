@@ -47,4 +47,29 @@ public class CloudinaryImageStorageAdapter implements ImageStoragePort {
             return "/resources/images/placeholder-product.png";
         }
     }
+
+    @Override
+    public void delete(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty() || imageUrl.startsWith("/resources/")) {
+            return;
+        }
+        try {
+            int uploadIndex = imageUrl.indexOf("/upload/");
+            if (uploadIndex != -1) {
+                String pathAfterUpload = imageUrl.substring(uploadIndex + 8);
+                if (pathAfterUpload.startsWith("v")) {
+                    int firstSlash = pathAfterUpload.indexOf('/');
+                    if (firstSlash != -1) {
+                        pathAfterUpload = pathAfterUpload.substring(firstSlash + 1);
+                    }
+                }
+                int lastDot = pathAfterUpload.lastIndexOf('.');
+                String publicId = (lastDot != -1) ? pathAfterUpload.substring(0, lastDot) : pathAfterUpload;
+
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to delete image from Cloudinary: " + e.getMessage());
+        }
+    }
 }

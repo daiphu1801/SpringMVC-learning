@@ -138,4 +138,26 @@ class ImageFileValidatorTest {
 
         assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
     }
+
+    @Test
+    @DisplayName("Should escape HTML in filename extension to prevent XSS")
+    void shouldEscapeHtmlInFilenameExtension() {
+        when(file.isEmpty()).thenReturn(false);
+        when(file.getOriginalFilename()).thenReturn("photo.<script>alert(1)</script>");
+        when(file.getSize()).thenReturn(1024L);
+
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
+        assertTrue(ex.getMessage().contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
+    }
+
+    @Test
+    @DisplayName("Should escape HTML in content type to prevent XSS")
+    void shouldEscapeHtmlInContentType() {
+        setupFile("photo.jpg", "<script>alert(1)</script>", 1024);
+
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
+        assertTrue(ex.getMessage().contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
+    }
 }

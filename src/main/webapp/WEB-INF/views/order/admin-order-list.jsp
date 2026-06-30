@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@taglib prefix="h" uri="com.examp.springmvc.helpers" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Quản lý Đơn hàng">
 <jsp:attribute name="head">
@@ -49,7 +50,7 @@
                                 </strong>
                             </td>
                             <td class="text-sm text-muted">
-                                ${order.formattedCreatedAt}
+                                <c:out value="${h:formatDateTime(order.createdAt)}"/>
                             </td>
                             <td>
                                 <c:choose>

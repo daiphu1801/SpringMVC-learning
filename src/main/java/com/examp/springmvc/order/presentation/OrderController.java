@@ -1,5 +1,6 @@
 package com.examp.springmvc.order.presentation;
 
+import com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO;
 import com.examp.springmvc.order.application.command.CancelOrderUseCase;
 import com.examp.springmvc.order.application.command.ConfirmVietQRPaymentUseCase;
 import com.examp.springmvc.order.application.command.PlaceOrderCommand;
@@ -9,7 +10,6 @@ import com.examp.springmvc.order.application.query.FindOrdersByUserUseCase;
 import com.examp.springmvc.order.application.query.OrderDTO;
 import com.examp.springmvc.order.domain.model.Order;
 import com.examp.springmvc.order.domain.model.PaymentMethod;
-import com.examp.springmvc.user.domain.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +56,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public String listOrders(@SessionAttribute("currentUser") User currentUser, Model model) {
+    public String listOrders(@SessionAttribute("currentUser") AuthenticatedUserDTO currentUser, Model model) {
         List<OrderDTO> orders = findOrdersByUserUseCase.execute(currentUser.getId());
         model.addAttribute("orders", orders);
         return "order/order-history";
@@ -64,7 +64,9 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public String orderDetail(
-            @PathVariable("id") Long id, @SessionAttribute("currentUser") User currentUser, Model model) {
+            @PathVariable("id") Long id,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
+            Model model) {
         OrderDTO order = findOrderByIdUseCase.execute(id);
         if (!order.getUserId().equals(currentUser.getId())
                 && currentUser.getRole() != com.examp.springmvc.user.domain.model.UserRole.ADMIN) {
@@ -77,7 +79,7 @@ public class OrderController {
     @GetMapping("/checkout")
     public String showCheckout(
             @SessionAttribute(name = "cart", required = false) Map<Long, Integer> cart,
-            @SessionAttribute("currentUser") User currentUser,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
             Model model) {
         if (cart == null || cart.isEmpty()) {
             return "redirect:/cart";
@@ -97,7 +99,7 @@ public class OrderController {
             @RequestParam("province") String province,
             @RequestParam(value = "note", required = false) String note,
             @RequestParam("paymentMethod") String paymentMethodStr,
-            @SessionAttribute("currentUser") User currentUser,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
             jakarta.servlet.http.HttpSession session,
             Model model) {
         @SuppressWarnings("unchecked")
@@ -147,9 +149,11 @@ public class OrderController {
 
     @PostMapping("/{id}/cancel")
     public String cancelOrder(
-            @PathVariable("id") Long id, @SessionAttribute("currentUser") User currentUser, Model model) {
+            @PathVariable("id") Long id,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
+            Model model) {
         try {
-            cancelOrderUseCase.execute(id, currentUser.getId());
+            cancelOrderUseCase.execute(id, currentUser.getId(), false);
             return "redirect:/orders/" + id;
         } catch (IllegalStateException ex) {
             model.addAttribute("error", ex.getMessage());
@@ -161,7 +165,9 @@ public class OrderController {
 
     @GetMapping("/{id}/payment")
     public String showPayment(
-            @PathVariable("id") Long id, @SessionAttribute("currentUser") User currentUser, Model model) {
+            @PathVariable("id") Long id,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
+            Model model) {
         OrderDTO order = findOrderByIdUseCase.execute(id);
         if (!order.getUserId().equals(currentUser.getId())) {
             return "redirect:/orders";
@@ -182,7 +188,9 @@ public class OrderController {
 
     @PostMapping("/{id}/payment/confirm")
     public String confirmPayment(
-            @PathVariable("id") Long id, @SessionAttribute("currentUser") User currentUser, Model model) {
+            @PathVariable("id") Long id,
+            @SessionAttribute("currentUser") AuthenticatedUserDTO currentUser,
+            Model model) {
         try {
             confirmVietQRPaymentUseCase.execute(id, currentUser.getId());
             return "redirect:/orders/" + id + "?paymentSuccess=true";

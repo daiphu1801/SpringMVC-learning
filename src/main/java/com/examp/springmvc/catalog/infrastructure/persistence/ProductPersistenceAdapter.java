@@ -53,6 +53,14 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
     }
 
     @Override
+    public List<Product> findByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return productMapper.findByIds(ids).stream().map(this::toDomain).collect(Collectors.toList());
+    }
+
+    @Override
     public void deleteById(Long id) {
         productMapper.deleteById(id);
     }
@@ -67,6 +75,7 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
         entity.setPrice(domain.getPrice());
         entity.setStatus(domain.getStatus());
         entity.setImageUrl(domain.getImageUrl());
+        entity.setStock(domain.getStock());
         return entity;
     }
 
@@ -79,6 +88,7 @@ public class ProductPersistenceAdapter implements ProductPersistencePort {
                 entity.getDescription(),
                 entity.getPrice(),
                 entity.getStatus(),
-                entity.getImageUrl());
+                entity.getImageUrl(),
+                entity.getStock());
     }
 }

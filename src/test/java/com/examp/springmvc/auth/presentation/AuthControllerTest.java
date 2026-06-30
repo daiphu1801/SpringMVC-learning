@@ -15,8 +15,6 @@ import com.examp.springmvc.auth.application.ports.input.LoginInputPort;
 import com.examp.springmvc.auth.application.ports.input.LogoutInputPort;
 import com.examp.springmvc.auth.application.ports.input.RegisterCommand;
 import com.examp.springmvc.auth.application.ports.input.RegisterInputPort;
-import com.examp.springmvc.user.domain.model.Email;
-import com.examp.springmvc.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,13 +56,14 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /login - Should login and redirect on success")
     void shouldLoginAndRedirect() throws Exception {
-        User user = new User(
-                "john",
-                "John Doe",
-                new Email("john@example.com"),
-                "0987654321",
-                null,
-                com.examp.springmvc.user.domain.model.UserRole.USER);
+        com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO user =
+                new com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO(
+                        1L,
+                        "john",
+                        "John Doe",
+                        "0987654321",
+                        "john@example.com",
+                        com.examp.springmvc.user.domain.model.UserRole.USER);
         when(loginInputPort.execute("john", "pass")).thenReturn(user);
 
         mockMvc.perform(post("/login").param("username", "john").param("password", "pass"))

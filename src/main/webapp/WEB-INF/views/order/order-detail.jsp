@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@taglib prefix="h" uri="com.examp.springmvc.helpers" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Chi tiết đơn hàng #${order.id}">
 <jsp:attribute name="head">
@@ -12,7 +13,7 @@
         <div>
             <h1 class="order-detail-title">Chi tiết đơn hàng <span class="text-primary">#${order.id}</span></h1>
             <p class="order-detail-subtitle">
-                Đặt lúc: ${order.formattedCreatedAt}
+                Đặt lúc: <c:out value="${h:formatDateTime(order.createdAt)}"/>
             </p>
         </div>
         <c:choose>
@@ -39,7 +40,7 @@
     </c:if>
 
     <c:if test="${not empty error}">
-        <div class="alert alert-danger">${error}</div>
+        <div class="alert alert-danger"><c:out value="${error}"/></div>
     </c:if>
 
     <%-- Thông tin đơn hàng (Địa chỉ, Thanh toán, Ghi chú) --%>
@@ -52,7 +53,7 @@
         </div>
         <div class="order-info-card">
             <h3 class="order-info-title">💳 Thanh toán</h3>
-            <p class="order-info-name">Phương thức: ${order.formattedPaymentMethod}</p>
+            <p class="order-info-name">Phương thức: <c:out value="${h:formatPaymentMethod(order.paymentMethod)}"/></p>
             <p class="mt-1">
                 <c:choose>
                     <c:when test="${order.paymentStatus == 'PAID'}">

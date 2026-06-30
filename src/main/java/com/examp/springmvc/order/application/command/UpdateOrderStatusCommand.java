@@ -3,9 +3,9 @@ package com.examp.springmvc.order.application.command;
 public class UpdateOrderStatusCommand {
 
     private final Long orderId;
-    private final String action;
+    private final OrderStatusAction action;
 
-    public UpdateOrderStatusCommand(Long orderId, String action) {
+    public UpdateOrderStatusCommand(Long orderId, OrderStatusAction action) {
         this.orderId = orderId;
         this.action = action;
     }
@@ -14,10 +14,7 @@ public class UpdateOrderStatusCommand {
         return orderId;
     }
 
-    /**
-     * Hành động Admin muốn thực hiện: "confirm", "ship", "deliver".
-     */
-    public String getAction() {
+    public OrderStatusAction getAction() {
         return action;
     }
 }

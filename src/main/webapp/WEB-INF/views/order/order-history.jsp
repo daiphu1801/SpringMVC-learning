@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@taglib prefix="h" uri="com.examp.springmvc.helpers" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Lịch sử đơn hàng">
 <jsp:attribute name="head">
@@ -38,7 +39,7 @@
                         <tr>
                             <td><strong>#${order.id}</strong></td>
                             <td class="text-muted text-sm">
-                                ${order.formattedCreatedAt}
+                                <c:out value="${h:formatDateTime(order.createdAt)}"/>
                             </td>
                             <td>
                                 <div class="text-sm">
@@ -73,16 +74,16 @@
                                     </c:otherwise>
                                 </c:choose>
                                 <div class="order-meta-info">
-                                    <span class="text-muted">${order.formattedPaymentMethod}</span><br>
-                                    <c:choose>
-                                        <c:when test="${order.paymentStatus == 'PAID'}">
-                                            <span class="text-success font-bold">Đã thanh toán</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="text-danger font-bold">Chờ thanh toán</span>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </div>
+                                     <span class="text-muted"><c:out value="${h:formatPaymentMethod(order.paymentMethod)}"/></span><br>
+                                     <c:choose>
+                                         <c:when test="${order.paymentStatus == 'PAID'}">
+                                             <span class="text-success font-bold">Đã thanh toán</span>
+                                         </c:when>
+                                         <c:otherwise>
+                                             <span class="text-danger font-bold">Chờ thanh toán</span>
+                                         </c:otherwise>
+                                     </c:choose>
+                                 </div>
                             </td>
                             <td>
                                 <div class="action-links">

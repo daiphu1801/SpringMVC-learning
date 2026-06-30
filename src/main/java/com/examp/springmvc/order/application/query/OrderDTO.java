@@ -91,24 +91,6 @@ public class OrderDTO {
         return paymentStatus;
     }
 
-    public String getFormattedPaymentMethod() {
-        if ("VIETQR".equals(paymentMethod)) {
-            return "Chuyển khoản VietQR";
-        } else if ("CASH".equals(paymentMethod)) {
-            return "Tiền mặt khi nhận hàng";
-        }
-        return paymentMethod != null ? paymentMethod : "";
-    }
-
-    public String getFormattedPaymentStatus() {
-        if ("PAID".equals(paymentStatus)) {
-            return "Đã thanh toán";
-        } else if ("PENDING".equals(paymentStatus)) {
-            return "Chờ thanh toán";
-        }
-        return paymentStatus != null ? paymentStatus : "";
-    }
-
     @SuppressFBWarnings("EI_EXPOSE_REP")
     public List<OrderItemDTO> getItems() {
         return items;
@@ -122,17 +104,25 @@ public class OrderDTO {
         return updatedAt;
     }
 
-    public String getFormattedCreatedAt() {
-        if (createdAt == null) {
-            return "";
+    public static OrderDTO fromDomain(com.examp.springmvc.order.domain.model.Order order) {
+        if (order == null) {
+            return null;
         }
-        return createdAt.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
-    }
-
-    public String getFormattedUpdatedAt() {
-        if (updatedAt == null) {
-            return "";
-        }
-        return updatedAt.format(java.time.format.DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy"));
+        List<OrderItemDTO> itemDtos =
+                order.getItems().stream().map(OrderItemDTO::fromDomain).collect(java.util.stream.Collectors.toList());
+        return new OrderDTO(
+                order.getId(),
+                order.getUserId(),
+                order.getStatus().name(),
+                order.getTotalAmount(),
+                order.getShippingAddress().getReceiverName(),
+                order.getShippingAddress().getReceiverPhone(),
+                order.getShippingAddress().getFullAddress(),
+                order.getNote(),
+                order.getPaymentMethod().name(),
+                order.getPaymentStatus().name(),
+                itemDtos,
+                order.getCreatedAt(),
+                order.getUpdatedAt());
     }
 }

@@ -54,7 +54,7 @@ class CancelOrderUseCaseTest {
 
         when(orderPersistencePort.findById(orderId)).thenReturn(Optional.of(order));
 
-        cancelOrderUseCase.execute(orderId, userId);
+        cancelOrderUseCase.execute(orderId, userId, false);
 
         assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
         verify(orderPersistencePort).save(order);
@@ -84,8 +84,38 @@ class CancelOrderUseCaseTest {
 
         when(orderPersistencePort.findById(orderId)).thenReturn(Optional.of(order));
 
-        assertThatThrownBy(() -> cancelOrderUseCase.execute(orderId, otherUserId))
+        assertThatThrownBy(() -> cancelOrderUseCase.execute(orderId, otherUserId, false))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Bạn không có quyền huỷ đơn hàng này");
+    }
+
+    @Test
+    void shouldCancelOrderSuccessfullyWhenAdminEvenIfNotOwner() {
+        Long orderId = 1L;
+        Long ownerId = 2L;
+        Long adminUserId = 99L;
+        ShippingAddress address = new ShippingAddress("Nguyen A", "0987654321", "123 Street, District 1, HCMC");
+        List<OrderItem> items =
+                List.of(new OrderItem(null, 101L, "iPhone 15", "IPHONE15", new BigDecimal("20000000"), 1));
+
+        Order order = new Order(
+                orderId,
+                ownerId,
+                OrderStatus.PENDING,
+                items,
+                new BigDecimal("20000000"),
+                address,
+                "Note",
+                PaymentMethod.CASH,
+                PaymentStatus.PENDING,
+                LocalDateTime.now(),
+                LocalDateTime.now());
+
+        when(orderPersistencePort.findById(orderId)).thenReturn(Optional.of(order));
+
+        cancelOrderUseCase.execute(orderId, adminUserId, true);
+
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCELLED);
+        verify(orderPersistencePort).save(order);
     }
 }

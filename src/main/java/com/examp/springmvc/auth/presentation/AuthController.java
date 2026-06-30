@@ -1,10 +1,10 @@
 package com.examp.springmvc.auth.presentation;
 
+import com.examp.springmvc.auth.application.dto.AuthenticatedUserDTO;
 import com.examp.springmvc.auth.application.ports.input.LoginInputPort;
 import com.examp.springmvc.auth.application.ports.input.LogoutInputPort;
 import com.examp.springmvc.auth.application.ports.input.RegisterCommand;
 import com.examp.springmvc.auth.application.ports.input.RegisterInputPort;
-import com.examp.springmvc.user.domain.model.User;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,7 +42,7 @@ public class AuthController {
             HttpSession session,
             Model model) {
         try {
-            User user = loginInputPort.execute(username, password);
+            AuthenticatedUserDTO user = loginInputPort.execute(username, password);
             session.setAttribute("currentUser", user);
             return "redirect:/users";
         } catch (IllegalArgumentException e) {

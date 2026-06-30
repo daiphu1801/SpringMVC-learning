@@ -8,7 +8,7 @@ Tài liệu này hướng dẫn cách deploy tối ưu dự án **Spring MVC (WA
 
 Thay vì build file `.war` thủ công trên máy cá nhân rồi mới copy vào Docker (dễ lỗi không đồng bộ phiên bản Java/Maven), chúng ta sử dụng **Multi-stage Build**. Toàn bộ quá trình build và chạy được đóng gói độc lập trong Docker container.
 
-File [Dockerfile](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/Dockerfile) đã được cấu hình tại thư mục gốc:
+File [Dockerfile](../Dockerfile) đã được cấu hình tại thư mục gốc:
 
 ```dockerfile
 # STAGE 1: Build WAR file inside Docker
@@ -35,7 +35,7 @@ CMD ["catalina.sh", "run"]
 
 ## 2. Cấu hình CI/CD Tự động hóa qua GitHub Actions
 
-Quy trình tự động hóa đã được thiết lập tại file [.github/workflows/ci-cd.yml](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/.github/workflows/ci-cd.yml). Khi bạn push code lên nhánh `main` hoặc `master`, GitHub Actions sẽ tự động:
+Quy trình tự động hóa đã được thiết lập tại file [.github/workflows/ci-cd.yml](../.github/workflows/ci-cd.yml). Khi bạn push code lên nhánh `main` hoặc `master`, GitHub Actions sẽ tự động:
 
 1. **Kiểm tra Style code** (`mvn spotless:check` và `mvn checkstyle:check`).
 2. **Chạy Unit Tests** (`mvn test`) để đảm bảo chất lượng nghiệp vụ.

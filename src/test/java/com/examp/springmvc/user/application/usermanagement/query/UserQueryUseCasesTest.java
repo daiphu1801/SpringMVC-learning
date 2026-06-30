@@ -6,10 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.examp.springmvc.user.infrastructure.mapper.UserQueryMapper;
-import com.examp.springmvc.user.infrastructure.persistence.UserDbEntity;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class UserQueryUseCasesTest {
 
     @Mock
-    private UserQueryMapper userQueryMapper;
+    private UserQueryPort userQueryPort;
 
     @InjectMocks
     private FindAllUsersUseCase findAllUsersUseCase;
@@ -29,15 +28,14 @@ class UserQueryUseCasesTest {
     @InjectMocks
     private FindUserByIdUseCase findUserByIdUseCase;
 
-    private UserDbEntity testUserDbEntity(Long id, String username) {
-        return new UserDbEntity(
+    private UserDTO testUserDTO(Long id, String username) {
+        return new UserDTO(
                 id,
                 username,
                 "Nguyen Van A",
                 username + "@example.com",
                 "0900000000",
                 "ACTIVE",
-                "Password123!",
                 "USER",
                 LocalDateTime.now(),
                 LocalDateTime.now());
@@ -46,34 +44,34 @@ class UserQueryUseCasesTest {
     @Test
     @DisplayName("Should return all users")
     void shouldReturnAllUsers() {
-        List<UserDbEntity> entities = List.of(testUserDbEntity(1L, "user1"), testUserDbEntity(2L, "user2"));
-        when(userQueryMapper.findAll()).thenReturn(entities);
+        List<UserDTO> dtos = List.of(testUserDTO(1L, "user1"), testUserDTO(2L, "user2"));
+        when(userQueryPort.findAll()).thenReturn(dtos);
 
         List<UserDTO> result = findAllUsersUseCase.execute();
 
         assertNotNull(result);
         assertEquals(2, result.size());
         assertEquals("user1", result.get(0).getUsername());
-        verify(userQueryMapper).findAll();
+        verify(userQueryPort).findAll();
     }
 
     @Test
     @DisplayName("Should return user by ID when found")
     void shouldReturnUserByIdWhenFound() {
-        UserDbEntity entity = testUserDbEntity(1L, "user1");
-        when(userQueryMapper.findById(1L)).thenReturn(entity);
+        UserDTO dto = testUserDTO(1L, "user1");
+        when(userQueryPort.findById(1L)).thenReturn(Optional.of(dto));
 
         UserDTO result = findUserByIdUseCase.execute(1L);
 
         assertNotNull(result);
         assertEquals("user1", result.getUsername());
-        verify(userQueryMapper).findById(1L);
+        verify(userQueryPort).findById(1L);
     }
 
     @Test
     @DisplayName("Should throw exception when user not found")
     void shouldThrowExceptionWhenUserNotFound() {
-        when(userQueryMapper.findById(99L)).thenReturn(null);
+        when(userQueryPort.findById(99L)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> findUserByIdUseCase.execute(99L));

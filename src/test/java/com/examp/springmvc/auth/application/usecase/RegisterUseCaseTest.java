@@ -67,13 +67,31 @@ class RegisterUseCaseTest {
         RegisterCommand command =
                 new RegisterCommand("newuser", "Nguyen Van A", "newuser@example.com", "0900000000", "Password123!");
         when(userPersistencePort.findByUsername("newuser")).thenReturn(Optional.of(newUser(1L, "newuser")));
-        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> registerUseCase.execute(command));
 
         assertEquals("Username đã tồn tại", exception.getMessage());
         verify(userPersistencePort, never()).save(any(User.class));
+        verify(passwordHasher, never()).hash(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when unique constraint is violated during save")
+    void shouldThrowExceptionWhenUniqueConstraintViolatedDuringSave() {
+        RegisterCommand command =
+                new RegisterCommand("newuser", "Nguyen Van A", "newuser@example.com", "0900000000", "Password123!");
+
+        when(userPersistencePort.findByUsername("newuser")).thenReturn(Optional.empty());
+        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
+        org.mockito.Mockito.doThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"))
+                .when(userPersistencePort)
+                .save(any(User.class));
+
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> registerUseCase.execute(command));
+
+        assertEquals("Username đã tồn tại", exception.getMessage());
     }
 
     @Test

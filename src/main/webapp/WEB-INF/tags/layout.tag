@@ -24,7 +24,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${empty title ? 'Spring MVC Demo' : title}</title>
+    <title><c:out value="${empty title ? 'Spring MVC Demo' : title}"/></title>
     <%-- Preconnect to external asset servers to speed up initial network requests --%>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

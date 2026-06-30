@@ -8,6 +8,7 @@ import com.examp.springmvc.user.domain.model.Password;
 import com.examp.springmvc.user.domain.model.User;
 import com.examp.springmvc.user.domain.ports.output.UserPersistencePort;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +31,11 @@ public class RegisterUseCase implements RegisterInputPort {
             throw new IllegalArgumentException("Dữ liệu đăng ký không được null");
         }
 
+        // 1. Kiểm tra sớm username trùng trước khi băm mật khẩu bằng BCrypt (tiết kiệm CPU)
+        if (userPersistencePort.findByUsername(command.getUsername()).isPresent()) {
+            throw new IllegalArgumentException("Username đã tồn tại");
+        }
+
         Email email = new Email(command.getEmail());
         Password password = Password.fromRaw(command.getPassword(), passwordHasher);
 
@@ -42,12 +48,13 @@ public class RegisterUseCase implements RegisterInputPort {
                 com.examp.springmvc.user.domain.model.UserRole.USER);
 
         user.validate();
-
-        if (userPersistencePort.findByUsername(user.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username đã tồn tại");
-        }
-
         user.registered();
-        userPersistencePort.save(user);
+
+        // 2. Lưu và xử lý ngoại lệ vi phạm ràng buộc unique để tránh lỗi race condition
+        try {
+            userPersistencePort.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("Username đã tồn tại", e);
+        }
     }
 }

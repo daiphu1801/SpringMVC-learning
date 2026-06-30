@@ -71,13 +71,31 @@ class UserCommandUseCasesTest {
         CreateUserCommand command = new CreateUserCommand(
                 "user1", "Nguyen Van A", "user1@example.com", "0900000000", "Password123!", "USER");
         when(userPersistencePort.findByUsername("user1")).thenReturn(Optional.of(newUser(1L, "user1")));
-        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> createUserUseCase.execute(command));
 
         assertEquals("Username đã tồn tại", exception.getMessage());
         verify(userPersistencePort, never()).save(any(User.class));
+        verify(passwordHasher, never()).hash(any());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when unique constraint is violated during user creation")
+    void shouldThrowExceptionWhenUniqueConstraintViolatedDuringUserCreation() {
+        CreateUserCommand command = new CreateUserCommand(
+                "user1", "Nguyen Van A", "user1@example.com", "0900000000", "Password123!", "USER");
+
+        when(userPersistencePort.findByUsername("user1")).thenReturn(Optional.empty());
+        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
+        org.mockito.Mockito.doThrow(new org.springframework.dao.DataIntegrityViolationException("Duplicate key"))
+                .when(userPersistencePort)
+                .save(any(User.class));
+
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> createUserUseCase.execute(command));
+
+        assertEquals("Username đã tồn tại", exception.getMessage());
     }
 
     @Test

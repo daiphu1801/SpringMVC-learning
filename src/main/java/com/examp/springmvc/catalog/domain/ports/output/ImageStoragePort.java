@@ -4,4 +4,6 @@ import java.io.InputStream;
 
 public interface ImageStoragePort {
     String upload(InputStream inputStream, String fileName);
+
+    void delete(String imageUrl);
 }

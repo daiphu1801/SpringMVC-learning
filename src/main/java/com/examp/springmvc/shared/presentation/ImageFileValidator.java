@@ -61,14 +61,16 @@ public final class ImageFileValidator {
         }
         String ext = extractExtension(originalName);
         if (!ALLOWED_EXTENSIONS.contains(ext)) {
-            throw new IllegalArgumentException("Định dạng file \"." + ext + "\" không được phép. " + "Chỉ chấp nhận: "
-                    + String.join(", ", ALLOWED_EXTENSIONS) + ".");
+            String safeExt = org.springframework.web.util.HtmlUtils.htmlEscape(ext);
+            throw new IllegalArgumentException("Định dạng file \"." + safeExt + "\" không được phép. "
+                    + "Chỉ chấp nhận: " + String.join(", ", ALLOWED_EXTENSIONS) + ".");
         }
 
         // 3. Check MIME type (reported by the container)
         String contentType = file.getContentType();
         if (contentType == null || !ALLOWED_MIME_TYPES.contains(contentType.toLowerCase())) {
-            throw new IllegalArgumentException("Loại file \"" + contentType + "\" không được phép. "
+            String safeContentType = org.springframework.web.util.HtmlUtils.htmlEscape(contentType);
+            throw new IllegalArgumentException("Loại file \"" + safeContentType + "\" không được phép. "
                     + "Chỉ chấp nhận ảnh (JPEG, PNG, GIF, WebP, AVIF).");
         }
     }

@@ -7,25 +7,28 @@ import com.examp.springmvc.catalog.domain.ports.output.ProductPersistencePort;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 public class UpdateProductUseCase {
     private final ProductPersistencePort productPersistencePort;
     private final CategoryPersistencePort categoryPersistencePort;
     private final ImageStoragePort imageStoragePort;
+    private final TransactionTemplate transactionTemplate;
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public UpdateProductUseCase(
             ProductPersistencePort productPersistencePort,
             CategoryPersistencePort categoryPersistencePort,
-            ImageStoragePort imageStoragePort) {
+            ImageStoragePort imageStoragePort,
+            PlatformTransactionManager transactionManager) {
         this.productPersistencePort = productPersistencePort;
         this.categoryPersistencePort = categoryPersistencePort;
         this.imageStoragePort = imageStoragePort;
+        this.transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
-    @Transactional
     public void execute(UpdateProductCommand command) {
         Product existingProduct = productPersistencePort
                 .findById(command.getId())
@@ -41,20 +44,34 @@ public class UpdateProductUseCase {
             throw new IllegalArgumentException("Mã SKU '" + cleanSku + "' đã được sử dụng bởi sản phẩm khác!");
         }
 
-        String imageUrl = existingProduct.getImageUrl();
+        String newImageUrl = null;
+        boolean uploadedNewImage = false;
         if (command.getImageStream() != null) {
-            imageUrl = imageStoragePort.upload(command.getImageStream(), command.getImageName());
+            newImageUrl = imageStoragePort.upload(command.getImageStream(), command.getImageName());
+            uploadedNewImage = true;
         }
 
-        existingProduct.updateDetails(
-                command.getCategoryId(),
-                command.getSku(),
-                command.getName(),
-                command.getDescription(),
-                command.getPrice(),
-                command.getStatus(),
-                imageUrl);
+        final String finalImageUrl = uploadedNewImage ? newImageUrl : existingProduct.getImageUrl();
+        final String finalNewImageUrl = newImageUrl;
+        try {
+            transactionTemplate.executeWithoutResult(status -> {
+                existingProduct.updateDetails(
+                        command.getCategoryId(),
+                        command.getSku(),
+                        command.getName(),
+                        command.getDescription(),
+                        command.getPrice(),
+                        command.getStatus(),
+                        finalImageUrl,
+                        existingProduct.getStock());
 
-        productPersistencePort.save(existingProduct);
+                productPersistencePort.save(existingProduct);
+            });
+        } catch (Exception e) {
+            if (finalNewImageUrl != null) {
+                imageStoragePort.delete(finalNewImageUrl);
+            }
+            throw e;
+        }
     }
 }

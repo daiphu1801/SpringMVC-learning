@@ -230,24 +230,24 @@ Phân tách rõ ràng giữa luồng Ghi (Command) và luồng Đọc (Query):
 Để hiểu rõ DDD và Clean Architecture qua code thực tế, hãy đọc mã nguồn theo thứ tự sau:
 
 ### Bước 1 — Domain Layer (Bắt đầu từ lõi)
-- [Order.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/domain/model/Order.java) — Xem các phương thức `place()`, `confirm()`, `markPaymentPaid()` bảo vệ trạng thái nghiệp vụ như thế nào.
-- [PaymentMethod.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/domain/model/PaymentMethod.java) / [PaymentStatus.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/domain/model/PaymentStatus.java) — Enum đại diện trạng thái nghiệp vụ.
-- [NotificationPort.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/domain/ports/output/NotificationPort.java) — Interface cổng gửi thông báo thuần Java.
+- [Order.java](../src/main/java/com/examp/springmvc/order/domain/model/Order.java) — Xem các phương thức `place()`, `confirm()`, `markPaymentPaid()` bảo vệ trạng thái nghiệp vụ như thế nào.
+- [PaymentMethod.java](../src/main/java/com/examp/springmvc/order/domain/model/PaymentMethod.java) / [PaymentStatus.java](../src/main/java/com/examp/springmvc/order/domain/model/PaymentStatus.java) — Enum đại diện trạng thái nghiệp vụ.
+- [NotificationPort.java](../src/main/java/com/examp/springmvc/order/domain/ports/output/NotificationPort.java) — Interface cổng gửi thông báo thuần Java.
 
 ### Bước 2 — Unit Test (Kiểm thử nghiệp vụ miền)
-- [OrderTest.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/test/java/com/examp/springmvc/order/domain/model/OrderTest.java) — Kiểm thử nghiệp vụ AR hoàn toàn không cần Spring hay Database. Đây là cách DDD cho phép kiểm thử nhanh nghiệp vụ phức tạp.
+- [OrderTest.java](../src/test/java/com/examp/springmvc/order/domain/model/OrderTest.java) — Kiểm thử nghiệp vụ AR hoàn toàn không cần Spring hay Database. Đây là cách DDD cho phép kiểm thử nhanh nghiệp vụ phức tạp.
 
 ### Bước 3 — Application Layer (Điều phối nghiệp vụ)
-- [PlaceOrderUseCase.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/application/command/PlaceOrderUseCase.java) — Xem cách Use Case phối hợp Catalog Port (tải sản phẩm) và Order Port (lưu đơn hàng).
-- [ConfirmVietQRPaymentUseCase.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/application/command/ConfirmVietQRPaymentUseCase.java) — Xem luồng xác nhận thanh toán và phát Domain Event.
+- [PlaceOrderUseCase.java](../src/main/java/com/examp/springmvc/order/application/command/PlaceOrderUseCase.java) — Xem cách Use Case phối hợp Catalog Port (tải sản phẩm) và Order Port (lưu đơn hàng).
+- [ConfirmVietQRPaymentUseCase.java](../src/main/java/com/examp/springmvc/order/application/command/ConfirmVietQRPaymentUseCase.java) — Xem luồng xác nhận thanh toán và phát Domain Event.
 
 ### Bước 4 — Infrastructure Layer (Chi tiết kỹ thuật)
-- [JavaMailNotificationAdapter.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/infrastructure/notification/JavaMailNotificationAdapter.java) — Triển khai gửi email HTML thật qua SMTP, tách biệt hoàn toàn với Domain.
-- [OrderEventListener.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/infrastructure/event/OrderEventListener.java) — Kết nối Domain Events với tác vụ gửi email.
-- [OrderPersistenceAdapter.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/infrastructure/persistence/OrderPersistenceAdapter.java) — Xem cách ánh xạ Domain Entity sang DB Entity và phát Domain Events sau khi lưu thành công.
+- [JavaMailNotificationAdapter.java](../src/main/java/com/examp/springmvc/order/infrastructure/notification/JavaMailNotificationAdapter.java) — Triển khai gửi email HTML thật qua SMTP, tách biệt hoàn toàn với Domain.
+- [OrderEventListener.java](../src/main/java/com/examp/springmvc/order/infrastructure/event/OrderEventListener.java) — Kết nối Domain Events với tác vụ gửi email.
+- [OrderPersistenceAdapter.java](../src/main/java/com/examp/springmvc/order/infrastructure/persistence/OrderPersistenceAdapter.java) — Xem cách ánh xạ Domain Entity sang DB Entity và phát Domain Events sau khi lưu thành công.
 
 ### Bước 5 — Presentation Layer (Cổng ngoài cùng)
-- [OrderController.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/order/presentation/OrderController.java) — Controller chỉ có trách nhiệm nhận tham số HTTP, xây dựng Command và gọi Use Case.
+- [OrderController.java](../src/main/java/com/examp/springmvc/order/presentation/OrderController.java) — Controller chỉ có trách nhiệm nhận tham số HTTP, xây dựng Command và gọi Use Case.
 
 ---
 

@@ -96,9 +96,9 @@ Khi có yêu cầu thêm/xóa địa chỉ:
 Dưới đây là sơ đồ tệp tin cấu thành tính năng Address Book trong hệ thống:
 
 *   **Domain Layer**
-    *   [Address.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/Address.java): Value Object chứa thông tin địa chỉ và các logic tự kiểm tra dữ liệu.
-    *   [User.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/model/User.java): Aggregate Root chứa danh sách `List<Address>` và quản trị các luật bất biến.
-    *   [UserAddressAddedEvent.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/event/UserAddressAddedEvent.java) / [UserAddressRemovedEvent.java](file:///home/phubd-fsddint/Documents/ProjectSpring/SpringMVC-Demo/src/main/java/com/examp/springmvc/user/domain/event/UserAddressRemovedEvent.java): Các sự kiện nghiệp vụ miền được kích hoạt khi trạng thái thay đổi.
+    *   [Address.java](../src/main/java/com/examp/springmvc/user/domain/model/Address.java): Value Object chứa thông tin địa chỉ và các logic tự kiểm tra dữ liệu.
+    *   [User.java](../src/main/java/com/examp/springmvc/user/domain/model/User.java): Aggregate Root chứa danh sách `List<Address>` và quản trị các luật bất biến.
+    *   [UserAddressAddedEvent.java](../src/main/java/com/examp/springmvc/user/domain/event/UserAddressAddedEvent.java) / [UserAddressRemovedEvent.java](../src/main/java/com/examp/springmvc/user/domain/event/UserAddressRemovedEvent.java): Các sự kiện nghiệp vụ miền được kích hoạt khi trạng thái thay đổi.
 
 *   **Application Layer**
     *   `ports/in`: Cổng giao tiếp đầu vào cho Use Case.

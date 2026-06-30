@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@taglib prefix="h" uri="com.examp.springmvc.helpers" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:layout title="Đơn hàng #${order.id} - Admin">
 <jsp:attribute name="head">
@@ -15,7 +16,7 @@
             <h1>Đơn hàng <span class="text-primary">#${order.id}</span></h1>
             <p class="order-detail-subtitle">
                 User ID: ${order.userId} &bull;
-                Đặt lúc: ${order.formattedCreatedAt}
+                Đặt lúc: <c:out value="${h:formatDateTime(order.createdAt)}"/>
             </p>
         </div>
         <c:choose>
@@ -38,7 +39,7 @@
     </div>
 
     <c:if test="${not empty error}">
-        <div class="alert alert-danger">${error}</div>
+        <div class="alert alert-danger"><c:out value="${error}"/></div>
     </c:if>
 
     <%-- Cập nhật trạng thái --%>
