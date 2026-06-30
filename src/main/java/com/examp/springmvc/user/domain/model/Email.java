@@ -6,7 +6,7 @@ import java.util.Objects;
 public final class Email implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@(.+)$";
+    private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     private final String value;
 
@@ -14,7 +14,7 @@ public final class Email implements Serializable {
         if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException("Email không được để trống");
         }
-        String trimmed = value.trim();
+        String trimmed = value.trim().toLowerCase(java.util.Locale.ROOT);
         if (!trimmed.matches(EMAIL_REGEX)) {
             throw new IllegalArgumentException("Định dạng email không hợp lệ");
         }

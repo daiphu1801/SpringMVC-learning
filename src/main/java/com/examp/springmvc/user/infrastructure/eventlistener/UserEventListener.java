@@ -14,8 +14,8 @@ public class UserEventListener {
     @EventListener
     public void handleUserRegisteredEvent(UserRegisteredEvent event) {
         LOG.info("=== DOMAIN EVENT RECEIVED ===");
-        LOG.info("User registered successfully: {}", event.getUser().getUsername());
-        LOG.info("Email registered: {}", event.getUser().getEmail().getValue());
+        LOG.info("User registered successfully: {}", event.getUsername());
+        LOG.info("Email registered: {}", event.getEmail());
         LOG.info("Sending welcome email... (Simulated)");
         LOG.info("=============================");
     }

@@ -13,10 +13,17 @@ class UserRegisteredEventTest {
     @Test
     @DisplayName("Should create event with user and occurredOn")
     void shouldCreateEvent() {
-        User user = new User();
+        User user = new User(
+                "john",
+                "John",
+                new com.examp.springmvc.user.domain.model.Email("john@example.com"),
+                "0987654321",
+                null,
+                com.examp.springmvc.user.domain.model.UserRole.USER);
         UserRegisteredEvent event = new UserRegisteredEvent(user);
 
-        assertEquals(user, event.getUser());
+        assertEquals("john", event.getUsername());
+        assertEquals("john@example.com", event.getEmail());
         assertNotNull(event.getOccurredOn());
     }
 

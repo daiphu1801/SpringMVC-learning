@@ -39,15 +39,14 @@ class UserCommandUseCasesTest {
     private DeleteUserUseCase deleteUserUseCase;
 
     private User newUser(Long id, String username) {
-        User user = new User();
-        user.setId(id);
-        user.setUsername(username);
-        user.setFullName("Nguyen Van A");
-        user.setEmail(new Email(username + "@example.com"));
-        user.setPhone("0900000000");
-        user.setStatus("ACTIVE");
-        user.setPassword(Password.fromHashed("password123"));
-        user.setRole("USER");
+        User user = new User(
+                username,
+                "Nguyen Van A",
+                new Email(username + "@example.com"),
+                "0900000000",
+                Password.fromHashed("password123"),
+                com.examp.springmvc.user.domain.model.UserRole.USER);
+        user.assignId(id);
         return user;
     }
 
@@ -55,10 +54,10 @@ class UserCommandUseCasesTest {
     @DisplayName("Should create user successfully")
     void shouldCreateUserSuccessfully() {
         CreateUserCommand command = new CreateUserCommand(
-                "user1", "Nguyen Van A", "user1@example.com", "0900000000", "password123", "USER");
+                "user1", "Nguyen Van A", "user1@example.com", "0900000000", "Password123!", "USER");
 
         when(userPersistencePort.findByUsername("user1")).thenReturn(Optional.empty());
-        when(passwordHasher.hash("password123")).thenReturn("hashed123");
+        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
 
         createUserUseCase.execute(command);
 
@@ -70,9 +69,9 @@ class UserCommandUseCasesTest {
     @DisplayName("Should throw exception when username exists during creation")
     void shouldThrowExceptionWhenUsernameExists() {
         CreateUserCommand command = new CreateUserCommand(
-                "user1", "Nguyen Van A", "user1@example.com", "0900000000", "password123", "USER");
+                "user1", "Nguyen Van A", "user1@example.com", "0900000000", "Password123!", "USER");
         when(userPersistencePort.findByUsername("user1")).thenReturn(Optional.of(newUser(1L, "user1")));
-        when(passwordHasher.hash("password123")).thenReturn("hashed123");
+        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> createUserUseCase.execute(command));
@@ -85,11 +84,11 @@ class UserCommandUseCasesTest {
     @DisplayName("Should update user successfully")
     void shouldUpdateUserSuccessfully() {
         UpdateUserCommand command = new UpdateUserCommand(
-                1L, "user1", "Nguyen Van A", "user1@example.com", "0900000000", "ACTIVE", "password123", "USER");
+                1L, "user1", "Nguyen Van A", "user1@example.com", "0900000000", "ACTIVE", "Password123!", "USER");
         User existing = newUser(1L, "user1");
 
         when(userPersistencePort.findById(1L)).thenReturn(Optional.of(existing));
-        when(passwordHasher.hash("password123")).thenReturn("hashed123");
+        when(passwordHasher.hash("Password123!")).thenReturn("hashed123");
 
         updateUserUseCase.execute(command);
 
@@ -101,7 +100,7 @@ class UserCommandUseCasesTest {
     @DisplayName("Should throw exception when update ID is null")
     void shouldThrowExceptionWhenUpdateIdIsNull() {
         UpdateUserCommand command = new UpdateUserCommand(
-                null, "user1", "Nguyen Van A", "user1@example.com", "0900000000", "ACTIVE", "password123", "USER");
+                null, "user1", "Nguyen Van A", "user1@example.com", "0900000000", "ACTIVE", "Password123!", "USER");
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> updateUserUseCase.execute(command));

@@ -32,6 +32,14 @@ class EmailTest {
         assertThrows(IllegalArgumentException.class, () -> new Email("invalid-format"));
         assertThrows(IllegalArgumentException.class, () -> new Email("test@"));
         assertThrows(IllegalArgumentException.class, () -> new Email("@example.com"));
+        assertThrows(IllegalArgumentException.class, () -> new Email("test@domain")); // weak domain
+    }
+
+    @Test
+    @DisplayName("Should lowercase email value upon creation")
+    void shouldLowercaseEmailValue() {
+        Email email = new Email("TEST@example.COM");
+        assertEquals("test@example.com", email.getValue());
     }
 
     @Test

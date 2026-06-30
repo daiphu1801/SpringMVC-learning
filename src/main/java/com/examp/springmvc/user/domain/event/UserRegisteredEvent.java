@@ -2,23 +2,35 @@ package com.examp.springmvc.user.domain.event;
 
 import com.examp.springmvc.shared.domain.DomainEvent;
 import com.examp.springmvc.user.domain.model.User;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.LocalDateTime;
 
 public final class UserRegisteredEvent implements DomainEvent {
 
-    private final User user;
+    private final Long userId;
+    private final String username;
+    private final String email;
     private final LocalDateTime occurredOn;
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public UserRegisteredEvent(User user) {
-        this.user = user;
+        if (user == null) {
+            throw new IllegalArgumentException("User không được null");
+        }
+        this.userId = user.getId();
+        this.username = user.getUsername();
+        this.email = user.getEmail() != null ? user.getEmail().getValue() : null;
         this.occurredOn = LocalDateTime.now();
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     @Override

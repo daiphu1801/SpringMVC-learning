@@ -40,7 +40,7 @@ public class LoginUseCase implements LoginInputPort {
 
         User user = userDataAccessMapper.toDomain(entity);
 
-        if (!"ACTIVE".equals(user.getStatus())) {
+        if (user.getStatus() != com.examp.springmvc.user.domain.model.UserStatus.ACTIVE) {
             throw new IllegalArgumentException("Tài khoản đang bị khóa");
         }
 

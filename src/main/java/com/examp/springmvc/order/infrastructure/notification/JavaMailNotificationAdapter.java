@@ -1,7 +1,5 @@
 package com.examp.springmvc.order.infrastructure.notification;
 
-import com.examp.springmvc.order.domain.model.Order;
-import com.examp.springmvc.order.domain.model.OrderItem;
 import com.examp.springmvc.order.domain.ports.output.NotificationPort;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -33,25 +31,33 @@ public class JavaMailNotificationAdapter implements NotificationPort {
     }
 
     @Override
-    public void sendOrderPlacedNotification(Order order, String recipientEmail) {
-        String subject = "[SpringMVC Shop] \u0110\u1eb7t h\u00e0ng #" + order.getId() + " th\u00e0nh c\u00f4ng!";
-        String body = buildOrderPlacedBody(order);
+    public void sendOrderPlacedNotification(
+            Long orderId,
+            java.util.List<com.examp.springmvc.order.domain.model.OrderItem> items,
+            com.examp.springmvc.order.domain.model.PaymentMethod paymentMethod,
+            java.math.BigDecimal totalAmount,
+            com.examp.springmvc.order.domain.model.ShippingAddress shippingAddress,
+            String recipientEmail) {
+        String subject = "[SpringMVC Shop] \u0110\u1eb7t h\u00e0ng #" + orderId + " th\u00e0nh c\u00f4ng!";
+        String body = buildOrderPlacedBody(orderId, items, paymentMethod, totalAmount, shippingAddress);
         sendHtmlEmail(recipientEmail, subject, body);
     }
 
     @Override
-    public void sendPaymentConfirmation(Order order, String recipientEmail) {
+    public void sendPaymentConfirmation(Long orderId, java.math.BigDecimal totalAmount, String recipientEmail) {
+        String subject = "[SpringMVC Shop] X\u00e1c nh\u1eadn thanh to\u00e1n \u0111\u01a1n h\u00e0ng #" + orderId;
+        String body = buildPaymentConfirmationBody(orderId, totalAmount);
+        sendHtmlEmail(recipientEmail, subject, body);
+    }
+
+    @Override
+    public void sendDeliverySuccess(
+            Long orderId,
+            com.examp.springmvc.order.domain.model.ShippingAddress shippingAddress,
+            String recipientEmail) {
         String subject =
-                "[SpringMVC Shop] X\u00e1c nh\u1eadn thanh to\u00e1n \u0111\u01a1n h\u00e0ng #" + order.getId();
-        String body = buildPaymentConfirmationBody(order);
-        sendHtmlEmail(recipientEmail, subject, body);
-    }
-
-    @Override
-    public void sendDeliverySuccess(Order order, String recipientEmail) {
-        String subject = "[SpringMVC Shop] \u0110\u01a1n h\u00e0ng #" + order.getId()
-                + " \u0111\u00e3 giao th\u00e0nh c\u00f4ng!";
-        String body = buildDeliverySuccessBody(order);
+                "[SpringMVC Shop] \u0110\u01a1n h\u00e0ng #" + orderId + " \u0111\u00e3 giao th\u00e0nh c\u00f4ng!";
+        String body = buildDeliverySuccessBody(orderId, shippingAddress);
         sendHtmlEmail(recipientEmail, subject, body);
     }
 
@@ -72,10 +78,16 @@ public class JavaMailNotificationAdapter implements NotificationPort {
         }
     }
 
-    private String buildOrderPlacedBody(Order order) {
-        StringBuilder items = new StringBuilder();
-        for (OrderItem item : order.getItems()) {
-            items.append("<tr>")
+    private String buildOrderPlacedBody(
+            Long orderId,
+            java.util.List<com.examp.springmvc.order.domain.model.OrderItem> items,
+            com.examp.springmvc.order.domain.model.PaymentMethod paymentMethod,
+            java.math.BigDecimal totalAmount,
+            com.examp.springmvc.order.domain.model.ShippingAddress shippingAddress) {
+        StringBuilder itemsHtml = new StringBuilder();
+        for (com.examp.springmvc.order.domain.model.OrderItem item : items) {
+            itemsHtml
+                    .append("<tr>")
                     .append("<td style='padding:8px;border-bottom:1px solid #eee;'>")
                     .append(item.getProductName())
                     .append("</td>")
@@ -87,15 +99,14 @@ public class JavaMailNotificationAdapter implements NotificationPort {
                     .append(" \u0111</td>")
                     .append("</tr>");
         }
-        String paymentLabel = "VIETQR".equals(order.getPaymentMethod().name())
-                ? "📱 VietQR (Chuyển khoản)"
-                : "💵 Tiền mặt khi nhận hàng";
+        String paymentLabel =
+                "VIETQR".equals(paymentMethod.name()) ? "📱 VietQR (Chuyển khoản)" : "💵 Tiền mặt khi nhận hàng";
         return emailWrapper(
                 "🎉 Đặt hàng thành công!",
                 "Cảm ơn bạn đã đặt hàng tại <strong>SpringMVC Shop</strong>. "
                         + "Đơn hàng của bạn đã được tiếp nhận và đang chờ xử lý.",
                 "<h3 style='color:#333;margin-top:24px;'>📦 Chi tiết đơn hàng #"
-                        + order.getId()
+                        + orderId
                         + "</h3>"
                         + "<table style='width:100%;border-collapse:collapse;'>"
                         + "<thead><tr style='background:#f5f5f5;'>"
@@ -103,32 +114,32 @@ public class JavaMailNotificationAdapter implements NotificationPort {
                         + "<th style='padding:8px;text-align:center;'>Số lượng</th>"
                         + "<th style='padding:8px;text-align:right;'>Thành tiền</th>"
                         + "</tr></thead><tbody>"
-                        + items
+                        + itemsHtml
                         + "</tbody></table>"
                         + "<div style='text-align:right;margin-top:12px;font-size:1.2rem;"
                         + "font-weight:700;color:#2ecc71;'>"
                         + "Tổng cộng: "
-                        + VND_FORMAT.format(order.getTotalAmount())
+                        + VND_FORMAT.format(totalAmount)
                         + " đ"
                         + "</div>"
                         + "<div style='margin-top:16px;padding:12px;background:#f8f8ff;"
                         + "border-radius:8px;'>"
                         + "<strong>📍 Địa chỉ giao hàng:</strong> "
-                        + order.getShippingAddress().getFullAddress()
+                        + shippingAddress.getFullAddress()
                         + "<br><strong>💳 Phương thức thanh toán:</strong> "
                         + paymentLabel
                         + "</div>");
     }
 
-    private String buildPaymentConfirmationBody(Order order) {
+    private String buildPaymentConfirmationBody(Long orderId, java.math.BigDecimal totalAmount) {
         return emailWrapper(
                 "✅ Thanh toán thành công!",
-                "Hệ thống đã xác nhận thanh toán cho đơn hàng <strong>#" + order.getId() + "</strong> của bạn.",
+                "Hệ thống đã xác nhận thanh toán cho đơn hàng <strong>#" + orderId + "</strong> của bạn.",
                 "<div style='padding:16px;background:#f0fff4;border:1px solid #2ecc71;"
                         + "border-radius:8px;text-align:center;'>"
                         + "<div style='font-size:2rem;margin-bottom:8px;'>🎉</div>"
                         + "<div style='font-size:1.4rem;font-weight:700;color:#27ae60;'>Số tiền: "
-                        + VND_FORMAT.format(order.getTotalAmount())
+                        + VND_FORMAT.format(totalAmount)
                         + " đ</div>"
                         + "<div style='margin-top:8px;color:#555;'>Phương thức: VietQR (Chuyển khoản)</div>"
                         + "</div>"
@@ -136,16 +147,17 @@ public class JavaMailNotificationAdapter implements NotificationPort {
                         + "<strong>Xác nhận</strong>. Chúng tôi sẽ nhanh chóng xử lý và giao hàng đến bạn.</p>");
     }
 
-    private String buildDeliverySuccessBody(Order order) {
+    private String buildDeliverySuccessBody(
+            Long orderId, com.examp.springmvc.order.domain.model.ShippingAddress shippingAddress) {
         return emailWrapper(
                 "🚚 Giao hàng thành công!",
-                "Đơn hàng <strong>#" + order.getId() + "</strong> của bạn đã được giao đến nơi.",
+                "Đơn hàng <strong>#" + orderId + "</strong> của bạn đã được giao đến nơi.",
                 "<div style='padding:16px;background:#fff8e1;border:1px solid #f39c12;"
                         + "border-radius:8px;text-align:center;'>"
                         + "<div style='font-size:2.5rem;margin-bottom:8px;'>🏷️</div>"
                         + "<div style='font-size:1.1rem;font-weight:700;color:#e67e22;'>Giao thành công đến:</div>"
                         + "<div style='margin-top:8px;color:#333;'>"
-                        + order.getShippingAddress().getFullAddress()
+                        + shippingAddress.getFullAddress()
                         + "</div>"
                         + "</div>"
                         + "<p style='margin-top:16px;color:#555;'>Cảm ơn bạn đã tin tưởng mua sắm tại "

@@ -25,8 +25,17 @@ public final class Password implements Serializable {
         if (rawPassword == null || rawPassword.trim().isEmpty()) {
             throw new IllegalArgumentException("Mật khẩu không được để trống");
         }
-        if (rawPassword.length() < 6) {
-            throw new IllegalArgumentException("Mật khẩu phải có ít nhất 6 ký tự");
+        if (rawPassword.length() < 6 || rawPassword.length() > 50) {
+            throw new IllegalArgumentException("Mật khẩu phải từ 6 đến 50 ký tự");
+        }
+        if (!Character.isUpperCase(rawPassword.charAt(0))) {
+            throw new IllegalArgumentException("Mật khẩu phải bắt đầu bằng chữ in hoa");
+        }
+        if (!rawPassword.matches(".*\\d.*")) {
+            throw new IllegalArgumentException("Mật khẩu phải chứa ít nhất một chữ số");
+        }
+        if (!rawPassword.matches(".*[^a-zA-Z0-9].*")) {
+            throw new IllegalArgumentException("Mật khẩu phải chứa ít nhất một ký tự đặc biệt");
         }
         return new Password(hasher.hash(rawPassword));
     }

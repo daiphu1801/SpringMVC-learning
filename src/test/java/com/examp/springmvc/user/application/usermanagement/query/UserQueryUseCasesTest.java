@@ -37,7 +37,7 @@ class UserQueryUseCasesTest {
                 username + "@example.com",
                 "0900000000",
                 "ACTIVE",
-                "password123",
+                "Password123!",
                 "USER",
                 LocalDateTime.now(),
                 LocalDateTime.now());

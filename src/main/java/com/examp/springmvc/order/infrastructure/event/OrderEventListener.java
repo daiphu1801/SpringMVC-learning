@@ -1,6 +1,7 @@
 package com.examp.springmvc.order.infrastructure.event;
 
 import com.examp.springmvc.order.domain.event.OrderCancelledEvent;
+import com.examp.springmvc.order.domain.event.OrderPaidEvent;
 import com.examp.springmvc.order.domain.event.OrderPlacedEvent;
 import com.examp.springmvc.order.domain.event.OrderStatusChangedEvent;
 import com.examp.springmvc.order.domain.model.OrderStatus;
@@ -29,14 +30,20 @@ public class OrderEventListener {
     public void onOrderPlaced(OrderPlacedEvent event) {
         LOG.info(
                 "[ORDER] Đơn hàng mới được đặt thành công - ID: {}, User: {}, Tổng tiền: {}",
-                event.getOrder().getId(),
-                event.getOrder().getUserId(),
-                event.getOrder().getTotalAmount());
+                event.getOrderId(),
+                event.getUserId(),
+                event.getTotalAmount());
 
         try {
-            UserDTO user = findUserByIdInputPort.execute(event.getOrder().getUserId());
+            UserDTO user = findUserByIdInputPort.execute(event.getUserId());
             if (user != null && user.getEmail() != null) {
-                notificationPort.sendOrderPlacedNotification(event.getOrder(), user.getEmail());
+                notificationPort.sendOrderPlacedNotification(
+                        event.getOrderId(),
+                        event.getItems(),
+                        event.getPaymentMethod(),
+                        event.getTotalAmount(),
+                        event.getShippingAddress(),
+                        user.getEmail());
             }
         } catch (Exception ex) {
             LOG.error("[ORDER] Lỗi khi gửi email xác nhận đặt hàng: {}", ex.getMessage());
@@ -45,29 +52,45 @@ public class OrderEventListener {
 
     @EventListener
     public void onOrderCancelled(OrderCancelledEvent event) {
-        LOG.info(
-                "[ORDER] Đơn hàng bị huỷ - ID: {}, User: {}",
-                event.getOrder().getId(),
-                event.getOrder().getUserId());
+        LOG.info("[ORDER] Đơn hàng bị huỷ - ID: {}, User: {}", event.getOrderId(), event.getUserId());
     }
 
     @EventListener
     public void onOrderStatusChanged(OrderStatusChangedEvent event) {
         LOG.info(
                 "[ORDER] Trạng thái đơn hàng thay đổi - ID: {}, {} → {}",
-                event.getOrder().getId(),
+                event.getOrderId(),
                 event.getPreviousStatus(),
                 event.getNewStatus());
 
         if (event.getNewStatus() == OrderStatus.DELIVERED) {
             try {
-                UserDTO user = findUserByIdInputPort.execute(event.getOrder().getUserId());
+                UserDTO user = findUserByIdInputPort.execute(event.getUserId());
                 if (user != null && user.getEmail() != null) {
-                    notificationPort.sendDeliverySuccess(event.getOrder(), user.getEmail());
+                    notificationPort.sendDeliverySuccess(
+                            event.getOrderId(), event.getShippingAddress(), user.getEmail());
                 }
             } catch (Exception ex) {
                 LOG.error("[ORDER] Lỗi khi gửi email giao hàng thành công: {}", ex.getMessage());
             }
+        }
+    }
+
+    @EventListener
+    public void onOrderPaid(OrderPaidEvent event) {
+        LOG.info(
+                "[ORDER] Đơn hàng đã được thanh toán thành công - ID: {}, User: {}, Tổng tiền: {}",
+                event.getOrderId(),
+                event.getUserId(),
+                event.getTotalAmount());
+
+        try {
+            UserDTO user = findUserByIdInputPort.execute(event.getUserId());
+            if (user != null && user.getEmail() != null) {
+                notificationPort.sendPaymentConfirmation(event.getOrderId(), event.getTotalAmount(), user.getEmail());
+            }
+        } catch (Exception ex) {
+            LOG.error("[ORDER] Lỗi khi gửi email xác nhận thanh toán: {}", ex.getMessage());
         }
     }
 }

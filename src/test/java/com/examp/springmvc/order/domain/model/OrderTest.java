@@ -111,4 +111,34 @@ class OrderTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Không thể huỷ đơn hàng đang ở trạng thái SHIPPING");
     }
+
+    @Test
+    void shouldMarkPaymentPaidAndRegisterEventSuccessfully() {
+        Long userId = 1L;
+        ShippingAddress address = new ShippingAddress("Nguyen A", "0987654321", "123 Street, District 1, HCMC");
+        List<OrderItem> items =
+                List.of(new OrderItem(null, 101L, "iPhone 15", "IPHONE15", new BigDecimal("20000000"), 1));
+
+        Order order = Order.place(userId, items, address, "", PaymentMethod.VIETQR);
+        order.clearDomainEvents(); // Clear OrderPlacedEvent
+
+        order.markPaymentPaid();
+
+        assertThat(order.getPaymentStatus()).isEqualTo(PaymentStatus.PAID);
+        assertThat(order.getDomainEvents()).hasSize(1);
+        assertThat(order.getDomainEvents().get(0))
+                .isInstanceOf(com.examp.springmvc.order.domain.event.OrderPaidEvent.class);
+    }
+
+    @Test
+    void shouldTestShippingAddressEqualityAndHashCode() {
+        ShippingAddress address1 = new ShippingAddress("Nguyen A", "0987654321", "123 Street, District 1, HCMC");
+        ShippingAddress address2 = new ShippingAddress("Nguyen A", "0987654321", "123 Street, District 1, HCMC");
+        ShippingAddress address3 = new ShippingAddress("Nguyen B", "0987654321", "123 Street, District 1, HCMC");
+
+        assertThat(address1).isEqualTo(address2);
+        assertThat(address1).isNotEqualTo(address3);
+        assertThat(address1.hashCode()).isEqualTo(address2.hashCode());
+        assertThat(address1.hashCode()).isNotEqualTo(address3.hashCode());
+    }
 }

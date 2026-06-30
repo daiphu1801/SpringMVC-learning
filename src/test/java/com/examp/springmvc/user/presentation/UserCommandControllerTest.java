@@ -52,7 +52,7 @@ class UserCommandControllerTest {
                         .param("fullName", "John Doe")
                         .param("email", "john@example.com")
                         .param("phone", "0901234567")
-                        .param("password", "password123")
+                        .param("password", "Password123!")
                         .param("role", "USER"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/users"));

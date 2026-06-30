@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
-public class User implements Serializable {
+public final class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,16 +21,39 @@ public class User implements Serializable {
     private String fullName;
     private Email email;
     private String phone;
-    private String status = "ACTIVE";
+    private UserStatus status = UserStatus.ACTIVE;
     private Password password;
-    private String role = "USER";
+    private UserRole role = UserRole.USER;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     private final transient List<DomainEvent> domainEvents = new ArrayList<>();
     private final List<Address> addresses = new ArrayList<>();
 
+    @Deprecated
     public User() {}
+
+    public User(String username, String fullName, Email email, String phone, Password password, UserRole role) {
+        if (username == null || username.trim().isEmpty()) {
+            throw new IllegalArgumentException("Username không được để trống");
+        }
+        if (fullName == null || fullName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Họ tên không được để trống");
+        }
+        if (email == null) {
+            throw new IllegalArgumentException("Email không được để trống");
+        }
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.role = role != null ? role : UserRole.USER;
+        this.status = UserStatus.ACTIVE;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+        validate();
+    }
 
     public User(
             Long id,
@@ -38,9 +61,9 @@ public class User implements Serializable {
             String fullName,
             Email email,
             String phone,
-            String status,
+            UserStatus status,
             Password password,
-            String role,
+            UserRole role,
             LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.id = id;
@@ -53,6 +76,7 @@ public class User implements Serializable {
         this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        validate();
     }
 
     public void validate() {
@@ -65,7 +89,7 @@ public class User implements Serializable {
         if (email == null) {
             throw new IllegalArgumentException("Email không được để trống");
         }
-        if (role == null || (!role.equals("USER") && !role.equals("ADMIN"))) {
+        if (role == null) {
             throw new IllegalArgumentException("Vai trò không hợp lệ");
         }
     }
@@ -89,22 +113,30 @@ public class User implements Serializable {
     }
 
     public void activate() {
-        this.status = "ACTIVE";
+        this.status = UserStatus.ACTIVE;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void deactivate() {
-        this.status = "INACTIVE";
+        this.status = UserStatus.INACTIVE;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public boolean isAdmin() {
-        return "ADMIN".equals(this.role);
+        return this.role == UserRole.ADMIN;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void assignId(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("ID không được null");
+        }
+        if (this.id != null) {
+            throw new IllegalStateException("ID đã được gán và không thể thay đổi");
+        }
         this.id = id;
     }
 
@@ -112,72 +144,73 @@ public class User implements Serializable {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     public String getFullName() {
         return fullName;
     }
 
-    public void setFullName(String fullName) {
+    public void updateProfile(String fullName, String phone, Email email) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Họ tên không được để trống");
+        }
+        if (email == null) {
+            throw new IllegalArgumentException("Email không được để trống");
+        }
         this.fullName = fullName;
+        this.phone = phone;
+        this.email = email;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Email getEmail() {
         return email;
     }
 
-    public void setEmail(Email email) {
-        this.email = email;
-    }
-
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getStatus() {
+    public UserStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void changeStatus(UserStatus status) {
+        if (status == null) {
+            throw new IllegalArgumentException("Trạng thái không hợp lệ");
+        }
         this.status = status;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Password getPassword() {
         return password;
     }
 
-    public void setPassword(Password password) {
+    public void changePassword(Password password) {
+        if (password == null) {
+            throw new IllegalArgumentException("Mật khẩu không được để trống");
+        }
         this.password = password;
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public String getRole() {
+    public UserRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void changeRole(UserRole role) {
+        if (role == null) {
+            throw new IllegalArgumentException("Vai trò không hợp lệ");
+        }
         this.role = role;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public List<Address> getAddresses() {

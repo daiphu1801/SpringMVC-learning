@@ -30,4 +30,28 @@ class CategoryTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Mã danh mục không được để trống");
     }
+
+    @Test
+    void shouldUpdateDetailsSuccessfully() {
+        Category category = new Category(1L, "Điện thoại", "dien-thoai", "Mô tả điện thoại");
+
+        category.updateDetails("Laptop", "laptop", "Mô tả laptop");
+
+        assertThat(category.getName()).isEqualTo("Laptop");
+        assertThat(category.getCode()).isEqualTo("laptop");
+        assertThat(category.getDescription()).isEqualTo("Mô tả laptop");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenUpdatingWithInvalidDetails() {
+        Category category = new Category(1L, "Điện thoại", "dien-thoai", "Mô tả điện thoại");
+
+        assertThatThrownBy(() -> category.updateDetails("", "dien-thoai", "Mô tả"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Tên danh mục không được để trống");
+
+        assertThatThrownBy(() -> category.updateDetails("Điện thoại", "  ", "Mô tả"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Mã danh mục không được để trống");
+    }
 }

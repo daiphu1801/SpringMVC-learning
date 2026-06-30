@@ -46,8 +46,7 @@ public class UpdateProductUseCase {
             imageUrl = imageStoragePort.upload(command.getImageStream(), command.getImageName());
         }
 
-        Product updatedProduct = new Product(
-                existingProduct.getId(),
+        existingProduct.updateDetails(
                 command.getCategoryId(),
                 command.getSku(),
                 command.getName(),
@@ -56,6 +55,6 @@ public class UpdateProductUseCase {
                 command.getStatus(),
                 imageUrl);
 
-        productPersistencePort.save(updatedProduct);
+        productPersistencePort.save(existingProduct);
     }
 }

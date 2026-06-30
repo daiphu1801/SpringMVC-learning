@@ -19,9 +19,13 @@ public class UserDataAccessMapper {
                 entity.getFullName(),
                 entity.getEmail() != null ? new Email(entity.getEmail()) : null,
                 entity.getPhone(),
-                entity.getStatus(),
+                entity.getStatus() != null
+                        ? com.examp.springmvc.user.domain.model.UserStatus.valueOf(entity.getStatus())
+                        : null,
                 entity.getPassword() != null ? Password.fromHashed(entity.getPassword()) : null,
-                entity.getRole(),
+                entity.getRole() != null
+                        ? com.examp.springmvc.user.domain.model.UserRole.valueOf(entity.getRole())
+                        : null,
                 entity.getCreatedAt(),
                 entity.getUpdatedAt());
     }
@@ -36,9 +40,9 @@ public class UserDataAccessMapper {
                 user.getFullName(),
                 user.getEmail() != null ? user.getEmail().getValue() : null,
                 user.getPhone(),
-                user.getStatus(),
+                user.getStatus() != null ? user.getStatus().name() : null,
                 user.getPassword() != null ? user.getPassword().getHashedValue() : null,
-                user.getRole(),
+                user.getRole() != null ? user.getRole().name() : null,
                 user.getCreatedAt(),
                 user.getUpdatedAt());
     }

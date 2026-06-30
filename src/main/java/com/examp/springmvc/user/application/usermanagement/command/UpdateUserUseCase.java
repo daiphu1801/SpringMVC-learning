@@ -37,23 +37,16 @@ public class UpdateUserUseCase implements UpdateUserInputPort {
 
         Email email = new Email(command.getEmail());
 
-        User user = new User();
-        user.setId(command.getId());
-        user.setUsername(command.getUsername());
-        user.setFullName(command.getFullName());
-        user.setEmail(email);
-        user.setPhone(command.getPhone());
-        user.setStatus(command.getStatus());
-        user.setRole(command.getRole());
+        existing.updateProfile(command.getFullName(), command.getPhone(), email);
+        existing.changeRole(com.examp.springmvc.user.domain.model.UserRole.valueOf(command.getRole()));
+        existing.changeStatus(com.examp.springmvc.user.domain.model.UserStatus.valueOf(command.getStatus()));
 
-        if (command.getPassword() == null || command.getPassword().trim().isEmpty()) {
-            user.setPassword(existing.getPassword());
-        } else {
-            user.setPassword(Password.fromRaw(command.getPassword(), passwordHasher));
+        if (command.getPassword() != null && !command.getPassword().trim().isEmpty()) {
+            existing.changePassword(Password.fromRaw(command.getPassword(), passwordHasher));
         }
 
-        user.validate();
+        existing.validate();
 
-        userPersistencePort.save(user);
+        userPersistencePort.save(existing);
     }
 }

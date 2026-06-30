@@ -28,11 +28,14 @@ class RemoveAddressUseCaseTest {
     @Test
     @DisplayName("Should remove address and save user successfully")
     void shouldRemoveAddressSuccessfully() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("testuser");
-        user.setEmail(new Email("test@example.com"));
-        user.setPhone("0987654321");
+        User user = new User(
+                "testuser",
+                "Test User",
+                new Email("test@example.com"),
+                "0987654321",
+                null,
+                com.examp.springmvc.user.domain.model.UserRole.USER);
+        user.assignId(1L);
 
         Address address =
                 new Address(10L, "Nguyễn Văn A", "0987654321", "Hà Nội", "Cầu Giấy", "Dịch Vọng", "Số 1", true);

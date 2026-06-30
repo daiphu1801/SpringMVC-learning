@@ -15,6 +15,17 @@
 - **Rule**: Must contain only pure Java POJOs representing Entities, Value Objects, and Domain Events.
 - **Dependency Rule**: **Zero dependencies** on external frameworks (No Spring annotations like `@Component`/`@Service`, no MyBatis annotations, no HTTP/Servlet imports).
 - **Behavior**: Must encapsulate business validation logic (e.g., `.validate()`) and self-contained state mutations (e.g., `.activate()`).
+- **Encapsulation Rules**:
+  - **No Public Setters**: Domain entities must avoid exposing public setters (`setX(...)`) unless strictly needed and verified. State modifications must occur through semantic business methods (e.g., `changeEmail`, `changeRole`).
+  - **Constructor Validation**: Every domain entity constructor must call the internal `validate()` method to guarantee it is never instantiated in an invalid state.
+  - **Rich Entities (Anti-Anemic)**: Entities must not be final, and properties must be mutable through domain-level update methods (e.g. `updateDetails(...)`) rather than recreating the object from scratch in the Application layer.
+- **Stateless Domain Events**:
+  - Domain events must not store references to mutable aggregate root instances (e.g., `User`, `Order`).
+  - Events must store copies of primitive values or fully immutable Value Objects representing the state snapshot at the time the event occurred.
+- **Value Objects Hardening**:
+  - **Email**: Must normalize values using `toLowerCase()` and validate with strict format checks.
+  - **Password**: Must validate complexity constraints (e.g., starting with uppercase letter, containing at least one digit and one special character) and restrict length (6 to 50 characters).
+  - **Value Object Equality**: Must correctly override `equals` and `hashCode` for all value objects (e.g. `ShippingAddress`).
 
 ### 2. Application Layer
 - **Ports (`.../[context]/application/ports/output` or `/input`)**:

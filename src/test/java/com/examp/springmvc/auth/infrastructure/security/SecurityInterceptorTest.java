@@ -34,11 +34,17 @@ class SecurityInterceptorTest {
     private SecurityInterceptor securityInterceptor;
 
     private User testUser(String role) {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("john");
-        user.setRole(role);
-        return user;
+        return new User(
+                1L,
+                "john",
+                "John",
+                new com.examp.springmvc.user.domain.model.Email("john@example.com"),
+                "0901234567",
+                com.examp.springmvc.user.domain.model.UserStatus.ACTIVE,
+                null,
+                com.examp.springmvc.user.domain.model.UserRole.valueOf(role),
+                null,
+                null);
     }
 
     @BeforeEach

@@ -78,7 +78,7 @@ public class UserPersistenceAdapter implements UserPersistencePort {
         UserDbEntity dbEntity = userDataAccessMapper.toDbEntity(user);
         if (dbEntity.getId() == null) {
             userCommandMapper.insert(dbEntity);
-            user.setId(dbEntity.getId());
+            user.assignId(dbEntity.getId());
         } else {
             userCommandMapper.update(dbEntity);
         }

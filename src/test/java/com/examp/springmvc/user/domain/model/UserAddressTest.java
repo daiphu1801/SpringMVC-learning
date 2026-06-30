@@ -15,12 +15,14 @@ class UserAddressTest {
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setId(1L);
-        user.setUsername("user1");
-        user.setFullName("Nguyen Van A");
-        user.setEmail(new Email("user1@example.com"));
-        user.setPhone("0987654321");
+        user = new User(
+                "user1",
+                "Nguyen Van A",
+                new Email("user1@example.com"),
+                "0987654321",
+                null,
+                com.examp.springmvc.user.domain.model.UserRole.USER);
+        user.assignId(1L);
     }
 
     @Test

@@ -25,9 +25,9 @@ class PasswordTest {
     @DisplayName("Should create password from raw string and hasher")
     void shouldCreatePasswordFromRaw() {
         PasswordHasher hasher = mock(PasswordHasher.class);
-        when(hasher.hash("raw_password")).thenReturn("hashed_value");
+        when(hasher.hash("Password123!")).thenReturn("hashed_value");
 
-        Password password = Password.fromRaw("raw_password", hasher);
+        Password password = Password.fromRaw("Password123!", hasher);
         assertEquals("hashed_value", password.getHashedValue());
     }
 
@@ -35,7 +35,36 @@ class PasswordTest {
     @DisplayName("Should throw exception when raw password is too short")
     void shouldThrowExceptionWhenPasswordTooShort() {
         PasswordHasher hasher = mock(PasswordHasher.class);
-        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw("12345", hasher));
+        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw("Ab1!", hasher));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when raw password is too long")
+    void shouldThrowExceptionWhenPasswordTooLong() {
+        PasswordHasher hasher = mock(PasswordHasher.class);
+        String longPassword = "P1!" + "a".repeat(50);
+        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw(longPassword, hasher));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when raw password does not start with uppercase")
+    void shouldThrowExceptionWhenPasswordDoesNotStartWithUppercase() {
+        PasswordHasher hasher = mock(PasswordHasher.class);
+        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw("password123!", hasher));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when raw password does not contain a digit")
+    void shouldThrowExceptionWhenPasswordDoesNotContainDigit() {
+        PasswordHasher hasher = mock(PasswordHasher.class);
+        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw("Password!", hasher));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when raw password does not contain a special character")
+    void shouldThrowExceptionWhenPasswordDoesNotContainSpecialCharacter() {
+        PasswordHasher hasher = mock(PasswordHasher.class);
+        assertThrows(IllegalArgumentException.class, () -> Password.fromRaw("Password123", hasher));
     }
 
     @Test

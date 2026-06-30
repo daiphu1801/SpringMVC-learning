@@ -33,14 +33,13 @@ public class RegisterUseCase implements RegisterInputPort {
         Email email = new Email(command.getEmail());
         Password password = Password.fromRaw(command.getPassword(), passwordHasher);
 
-        User user = new User();
-        user.setUsername(command.getUsername());
-        user.setFullName(command.getFullName());
-        user.setEmail(email);
-        user.setPhone(command.getPhone());
-        user.setPassword(password);
-        user.setStatus("ACTIVE");
-        user.setRole("USER");
+        User user = new User(
+                command.getUsername(),
+                command.getFullName(),
+                email,
+                command.getPhone(),
+                password,
+                com.examp.springmvc.user.domain.model.UserRole.USER);
 
         user.validate();
 

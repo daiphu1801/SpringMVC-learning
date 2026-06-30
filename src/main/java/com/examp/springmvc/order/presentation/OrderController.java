@@ -66,7 +66,8 @@ public class OrderController {
     public String orderDetail(
             @PathVariable("id") Long id, @SessionAttribute("currentUser") User currentUser, Model model) {
         OrderDTO order = findOrderByIdUseCase.execute(id);
-        if (!order.getUserId().equals(currentUser.getId()) && !"ADMIN".equals(currentUser.getRole())) {
+        if (!order.getUserId().equals(currentUser.getId())
+                && currentUser.getRole() != com.examp.springmvc.user.domain.model.UserRole.ADMIN) {
             return "redirect:/orders";
         }
         model.addAttribute("order", order);

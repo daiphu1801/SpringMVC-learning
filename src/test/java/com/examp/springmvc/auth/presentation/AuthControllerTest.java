@@ -15,6 +15,7 @@ import com.examp.springmvc.auth.application.ports.input.LoginInputPort;
 import com.examp.springmvc.auth.application.ports.input.LogoutInputPort;
 import com.examp.springmvc.auth.application.ports.input.RegisterCommand;
 import com.examp.springmvc.auth.application.ports.input.RegisterInputPort;
+import com.examp.springmvc.user.domain.model.Email;
 import com.examp.springmvc.user.domain.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,8 +58,13 @@ class AuthControllerTest {
     @Test
     @DisplayName("POST /login - Should login and redirect on success")
     void shouldLoginAndRedirect() throws Exception {
-        User user = new User();
-        user.setUsername("john");
+        User user = new User(
+                "john",
+                "John Doe",
+                new Email("john@example.com"),
+                "0987654321",
+                null,
+                com.examp.springmvc.user.domain.model.UserRole.USER);
         when(loginInputPort.execute("john", "pass")).thenReturn(user);
 
         mockMvc.perform(post("/login").param("username", "john").param("password", "pass"))
@@ -85,7 +91,7 @@ class AuthControllerTest {
                         .param("fullName", "John Doe")
                         .param("email", "john@example.com")
                         .param("phone", "0901234567")
-                        .param("password", "password123"))
+                        .param("password", "Password123!"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/login"))
                 .andExpect(model().attributeExists("success"));
@@ -105,7 +111,7 @@ class AuthControllerTest {
                         .param("fullName", "John Doe")
                         .param("email", "john@example.com")
                         .param("phone", "0901234567")
-                        .param("password", "password123"))
+                        .param("password", "Password123!"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attribute("error", "Username đã tồn tại"));

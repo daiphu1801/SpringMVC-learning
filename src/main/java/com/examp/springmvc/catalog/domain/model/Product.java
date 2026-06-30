@@ -4,13 +4,13 @@ import java.math.BigDecimal;
 
 public final class Product {
     private final Long id;
-    private final Long categoryId;
-    private final String sku;
-    private final String name;
-    private final String description;
-    private final BigDecimal price;
-    private final ProductStatus status;
-    private final String imageUrl;
+    private Long categoryId;
+    private String sku;
+    private String name;
+    private String description;
+    private BigDecimal price;
+    private ProductStatus status;
+    private String imageUrl;
 
     public Product(
             Long id,
@@ -34,6 +34,35 @@ public final class Product {
             throw new IllegalArgumentException("Giá sản phẩm không được âm");
         }
         this.id = id;
+        this.categoryId = categoryId;
+        this.sku = sku.trim().toUpperCase();
+        this.name = name.trim();
+        this.description = description != null ? description.trim() : null;
+        this.price = price;
+        this.status = status != null ? status : ProductStatus.ACTIVE;
+        this.imageUrl = imageUrl;
+    }
+
+    public void updateDetails(
+            Long categoryId,
+            String sku,
+            String name,
+            String description,
+            BigDecimal price,
+            ProductStatus status,
+            String imageUrl) {
+        if (categoryId == null) {
+            throw new IllegalArgumentException("Mã danh mục không được để trống");
+        }
+        if (sku == null || sku.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã SKU không được để trống");
+        }
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên sản phẩm không được để trống");
+        }
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Giá sản phẩm không được âm");
+        }
         this.categoryId = categoryId;
         this.sku = sku.trim().toUpperCase();
         this.name = name.trim();

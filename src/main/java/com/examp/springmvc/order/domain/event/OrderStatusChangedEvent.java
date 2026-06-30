@@ -2,27 +2,37 @@ package com.examp.springmvc.order.domain.event;
 
 import com.examp.springmvc.order.domain.model.Order;
 import com.examp.springmvc.order.domain.model.OrderStatus;
+import com.examp.springmvc.order.domain.model.ShippingAddress;
 import com.examp.springmvc.shared.domain.DomainEvent;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.time.LocalDateTime;
 
-public class OrderStatusChangedEvent implements DomainEvent {
+public final class OrderStatusChangedEvent implements DomainEvent {
 
-    private final Order order;
+    private final Long orderId;
+    private final Long userId;
     private final OrderStatus previousStatus;
     private final OrderStatus newStatus;
-    private final java.time.LocalDateTime occurredOn;
+    private final ShippingAddress shippingAddress;
+    private final LocalDateTime occurredOn;
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public OrderStatusChangedEvent(Order order, OrderStatus previousStatus, OrderStatus newStatus) {
-        this.order = order;
+        if (order == null) {
+            throw new IllegalArgumentException("Order không được null");
+        }
+        this.orderId = order.getId();
+        this.userId = order.getUserId();
         this.previousStatus = previousStatus;
         this.newStatus = newStatus;
-        this.occurredOn = java.time.LocalDateTime.now();
+        this.shippingAddress = order.getShippingAddress();
+        this.occurredOn = LocalDateTime.now();
     }
 
-    @SuppressFBWarnings("EI_EXPOSE_REP")
-    public Order getOrder() {
-        return order;
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public OrderStatus getPreviousStatus() {
@@ -33,8 +43,12 @@ public class OrderStatusChangedEvent implements DomainEvent {
         return newStatus;
     }
 
+    public ShippingAddress getShippingAddress() {
+        return shippingAddress;
+    }
+
     @Override
-    public java.time.LocalDateTime getOccurredOn() {
+    public LocalDateTime getOccurredOn() {
         return occurredOn;
     }
 }

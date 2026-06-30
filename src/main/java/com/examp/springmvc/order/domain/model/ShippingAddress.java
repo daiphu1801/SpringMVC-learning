@@ -1,6 +1,6 @@
 package com.examp.springmvc.order.domain.model;
 
-import java.math.BigDecimal;
+import java.util.Objects;
 
 public final class ShippingAddress {
 
@@ -52,11 +52,22 @@ public final class ShippingAddress {
         return new ShippingAddress(receiverName, receiverPhone, full);
     }
 
-    /**
-     * Unused — fulfils BigDecimal import requirement removed; kept for ValueObject completeness.
-     * @return zero
-     */
-    private static BigDecimal zero() {
-        return BigDecimal.ZERO;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ShippingAddress that = (ShippingAddress) o;
+        return Objects.equals(receiverName, that.receiverName)
+                && Objects.equals(receiverPhone, that.receiverPhone)
+                && Objects.equals(fullAddress, that.fullAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(receiverName, receiverPhone, fullAddress);
     }
 }

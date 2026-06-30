@@ -164,6 +164,7 @@ public class Order {
         }
         this.paymentStatus = PaymentStatus.PAID;
         this.updatedAt = LocalDateTime.now();
+        domainEvents.add(new com.examp.springmvc.order.domain.event.OrderPaidEvent(this));
     }
 
     // ===== Getters =====

@@ -10,13 +10,9 @@ import org.junit.jupiter.api.Test;
 class UserTest {
 
     private User createValidUser() {
-        User user = new User();
-        user.setId(1L);
-        user.setUsername("john_doe");
-        user.setFullName("John Doe");
-        user.setEmail(new Email("john.doe@example.com"));
-        user.setPhone("0901234567");
-        user.setStatus("ACTIVE");
+        User user =
+                new User("john_doe", "John Doe", new Email("john.doe@example.com"), "0901234567", null, UserRole.USER);
+        user.assignId(1L);
         return user;
     }
 
@@ -28,15 +24,18 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when username is empty")
+    @DisplayName("Should throw exception when username is empty in constructor")
     void shouldThrowExceptionWhenUsernameIsEmpty() {
-        User user = createValidUser();
-        user.setUsername("");
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, user::validate);
+        Email email = new Email("john.doe@example.com");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new User("", "John Doe", email, "0901234567", null, UserRole.USER));
         assertEquals("Username không được để trống", exception.getMessage());
 
-        user.setUsername(null);
-        exception = assertThrows(IllegalArgumentException.class, user::validate);
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new User(null, "John Doe", email, "0901234567", null, UserRole.USER));
         assertEquals("Username không được để trống", exception.getMessage());
     }
 
@@ -56,11 +55,29 @@ class UserTest {
     }
 
     @Test
-    @DisplayName("Should throw exception when fullName is empty")
+    @DisplayName("Should throw exception when fullName is empty in constructor")
     void shouldThrowExceptionWhenFullNameIsEmpty() {
+        Email email = new Email("john.doe@example.com");
+
+        IllegalArgumentException exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new User("john_doe", "", email, "0901234567", null, UserRole.USER));
+        assertEquals("Họ tên không được để trống", exception.getMessage());
+
+        exception = assertThrows(
+                IllegalArgumentException.class,
+                () -> new User("john_doe", null, email, "0901234567", null, UserRole.USER));
+        assertEquals("Họ tên không được để trống", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when updating profile with empty name")
+    void shouldThrowExceptionWhenUpdatingProfileWithEmptyName() {
         User user = createValidUser();
-        user.setFullName("");
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, user::validate);
+        Email email = new Email("john.doe@example.com");
+
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> user.updateProfile("", "0901234567", email));
         assertEquals("Họ tên không được để trống", exception.getMessage());
     }
 
@@ -68,8 +85,7 @@ class UserTest {
     @DisplayName("Should throw exception when role is invalid")
     void shouldThrowExceptionWhenRoleIsInvalid() {
         User user = createValidUser();
-        user.setRole("SUPER_ADMIN");
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, user::validate);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> user.changeRole(null));
         assertEquals("Vai trò không hợp lệ", exception.getMessage());
     }
 
@@ -77,10 +93,10 @@ class UserTest {
     @DisplayName("Should detect admin role correctly")
     void shouldDetectAdminRole() {
         User user = createValidUser();
-        user.setRole("USER");
+        user.changeRole(UserRole.USER);
         assertEquals(false, user.isAdmin());
 
-        user.setRole("ADMIN");
+        user.changeRole(UserRole.ADMIN);
         assertEquals(true, user.isAdmin());
     }
 
@@ -88,17 +104,25 @@ class UserTest {
     @DisplayName("Should activate user status")
     void shouldActivateUser() {
         User user = createValidUser();
-        user.setStatus("INACTIVE");
+        user.changeStatus(UserStatus.INACTIVE);
         user.activate();
-        assertEquals("ACTIVE", user.getStatus());
+        assertEquals(UserStatus.ACTIVE, user.getStatus());
     }
 
     @Test
     @DisplayName("Should deactivate user status")
     void shouldDeactivateUser() {
         User user = createValidUser();
-        user.setStatus("ACTIVE");
+        user.changeStatus(UserStatus.ACTIVE);
         user.deactivate();
-        assertEquals("INACTIVE", user.getStatus());
+        assertEquals(UserStatus.INACTIVE, user.getStatus());
+    }
+
+    @Test
+    @DisplayName("Should protect ID assignment from being reassigned")
+    void shouldProtectIdAssignment() {
+        User user = createValidUser();
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () -> user.assignId(2L));
+        assertEquals("ID đã được gán và không thể thay đổi", exception.getMessage());
     }
 }
