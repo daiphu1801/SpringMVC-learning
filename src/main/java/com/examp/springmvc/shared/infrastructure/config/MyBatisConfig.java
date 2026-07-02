@@ -62,8 +62,13 @@ public class MyBatisConfig {
 
         config.setConnectionTestQuery("SELECT 1 FROM DUAL");
 
-        // Allow application context to start up even if database is offline (e.g. during CI/CD security scans)
-        config.setInitializationFailTimeout(-1);
+        // Allow application context to fail fast by default unless overridden
+        String initTimeout = environment.getProperty("db.pool.initialization-fail-timeout");
+        if (initTimeout != null) {
+            config.setInitializationFailTimeout(Long.parseLong(initTimeout));
+        } else {
+            config.setInitializationFailTimeout(1);
+        }
 
         return new HikariDataSource(config);
     }

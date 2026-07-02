@@ -19,6 +19,31 @@
         <result property="updatedAt"       column="UPDATED_AT"/>
     </resultMap>
 
+    <resultMap id="OrderWithItemsResultMap" type="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity">
+        <id     property="id"              column="ORDER_ID"/>
+        <result property="userId"          column="USER_ID"/>
+        <result property="status"          column="STATUS"/>
+        <result property="totalAmount"     column="TOTAL_AMOUNT"/>
+        <result property="receiverName"    column="RECEIVER_NAME"/>
+        <result property="receiverPhone"   column="RECEIVER_PHONE"/>
+        <result property="shippingAddress" column="SHIPPING_ADDRESS"/>
+        <result property="note"            column="NOTE"/>
+        <result property="paymentMethod"   column="PAYMENT_METHOD"/>
+        <result property="paymentStatus"   column="PAYMENT_STATUS"/>
+        <result property="createdAt"       column="CREATED_AT"/>
+        <result property="updatedAt"       column="UPDATED_AT"/>
+        <collection property="items" ofType="com.examp.springmvc.order.infrastructure.persistence.OrderItemDbEntity">
+            <id     property="id"          column="ITEM_ID"/>
+            <result property="orderId"     column="ITEM_ORDER_ID"/>
+            <result property="productId"   column="PRODUCT_ID"/>
+            <result property="productName" column="PRODUCT_NAME"/>
+            <result property="productSku"  column="PRODUCT_SKU"/>
+            <result property="unitPrice"   column="UNIT_PRICE"/>
+            <result property="quantity"    column="QUANTITY"/>
+            <result property="subtotal"    column="SUBTOTAL"/>
+        </collection>
+    </resultMap>
+
     <insert id="insert" parameterType="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity"
             useGeneratedKeys="false">
         <selectKey keyProperty="id" resultType="Long" order="BEFORE">
@@ -33,7 +58,7 @@
             #{id}, #{userId}, #{status}, #{totalAmount},
             #{receiverName}, #{receiverPhone}, #{shippingAddress}, #{note},
             #{paymentMethod}, #{paymentStatus},
-            #{createdAt}, #{updatedAt}
+            SYSTIMESTAMP, SYSTIMESTAMP
         )
     </insert>
 
@@ -41,20 +66,45 @@
         UPDATE APP_ORDERS SET
             STATUS         = #{status},
             PAYMENT_STATUS = #{paymentStatus},
-            UPDATED_AT     = #{updatedAt}
+            UPDATED_AT     = SYSTIMESTAMP
         WHERE ID = #{id}
     </update>
 
-    <select id="findById" parameterType="Long" resultMap="OrderResultMap">
-        SELECT * FROM APP_ORDERS WHERE ID = #{id}
+    <select id="findById" parameterType="Long" resultMap="OrderWithItemsResultMap">
+        SELECT 
+            o.ID AS ORDER_ID, o.USER_ID, o.STATUS, o.TOTAL_AMOUNT, 
+            o.RECEIVER_NAME, o.RECEIVER_PHONE, o.SHIPPING_ADDRESS, o.NOTE, 
+            o.PAYMENT_METHOD, o.PAYMENT_STATUS, o.CREATED_AT, o.UPDATED_AT,
+            i.ID AS ITEM_ID, i.ORDER_ID AS ITEM_ORDER_ID, i.PRODUCT_ID, 
+            i.PRODUCT_NAME, i.PRODUCT_SKU, i.UNIT_PRICE, i.QUANTITY, i.SUBTOTAL
+        FROM APP_ORDERS o
+        LEFT JOIN APP_ORDER_ITEMS i ON o.ID = i.ORDER_ID
+        WHERE o.ID = #{id}
     </select>
 
-    <select id="findByUserId" parameterType="Long" resultMap="OrderResultMap">
-        SELECT * FROM APP_ORDERS WHERE USER_ID = #{userId} ORDER BY CREATED_AT DESC
+    <select id="findByUserId" parameterType="Long" resultMap="OrderWithItemsResultMap">
+        SELECT 
+            o.ID AS ORDER_ID, o.USER_ID, o.STATUS, o.TOTAL_AMOUNT, 
+            o.RECEIVER_NAME, o.RECEIVER_PHONE, o.SHIPPING_ADDRESS, o.NOTE, 
+            o.PAYMENT_METHOD, o.PAYMENT_STATUS, o.CREATED_AT, o.UPDATED_AT,
+            i.ID AS ITEM_ID, i.ORDER_ID AS ITEM_ORDER_ID, i.PRODUCT_ID, 
+            i.PRODUCT_NAME, i.PRODUCT_SKU, i.UNIT_PRICE, i.QUANTITY, i.SUBTOTAL
+        FROM APP_ORDERS o
+        LEFT JOIN APP_ORDER_ITEMS i ON o.ID = i.ORDER_ID
+        WHERE o.USER_ID = #{userId}
+        ORDER BY o.CREATED_AT DESC
     </select>
 
-    <select id="findAll" resultMap="OrderResultMap">
-        SELECT * FROM APP_ORDERS ORDER BY CREATED_AT DESC
+    <select id="findAll" resultMap="OrderWithItemsResultMap">
+        SELECT 
+            o.ID AS ORDER_ID, o.USER_ID, o.STATUS, o.TOTAL_AMOUNT, 
+            o.RECEIVER_NAME, o.RECEIVER_PHONE, o.SHIPPING_ADDRESS, o.NOTE, 
+            o.PAYMENT_METHOD, o.PAYMENT_STATUS, o.CREATED_AT, o.UPDATED_AT,
+            i.ID AS ITEM_ID, i.ORDER_ID AS ITEM_ORDER_ID, i.PRODUCT_ID, 
+            i.PRODUCT_NAME, i.PRODUCT_SKU, i.UNIT_PRICE, i.QUANTITY, i.SUBTOTAL
+        FROM APP_ORDERS o
+        LEFT JOIN APP_ORDER_ITEMS i ON o.ID = i.ORDER_ID
+        ORDER BY o.CREATED_AT DESC
     </select>
 
     <delete id="deleteById" parameterType="Long">

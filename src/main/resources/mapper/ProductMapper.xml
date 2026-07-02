@@ -56,28 +56,28 @@
     <select id="findById" parameterType="long" resultMap="productResultMap">
         SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
-        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        LEFT JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.ID = #{id, jdbcType=NUMERIC}
     </select>
 
     <select id="findBySku" parameterType="string" resultMap="productResultMap">
         SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
-        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        LEFT JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.SKU = #{sku, jdbcType=VARCHAR}
     </select>
 
     <select id="findAll" resultMap="productResultMap">
         SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
-        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        LEFT JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         ORDER BY p.ID DESC
     </select>
 
     <select id="findByCategoryId" parameterType="long" resultMap="productResultMap">
         SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
-        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        LEFT JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.CATEGORY_ID = #{categoryId, jdbcType=NUMERIC}
         ORDER BY p.ID DESC
     </select>
@@ -85,7 +85,7 @@
     <select id="findByIds" resultMap="productResultMap">
         SELECT p.ID, p.CATEGORY_ID, c.NAME as CATEGORY_NAME, p.SKU, p.NAME, p.DESCRIPTION, p.PRICE, p.STATUS, p.IMAGE_URL, p.STOCK, p.CREATED_AT, p.UPDATED_AT
         FROM APP_PRODUCTS p
-        JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
+        LEFT JOIN APP_CATEGORIES c ON p.CATEGORY_ID = c.ID
         WHERE p.ID IN
         <foreach collection="ids" item="id" open="(" close=")" separator=",">
             #{id, jdbcType=NUMERIC}

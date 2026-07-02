@@ -98,6 +98,12 @@
 - **Where to store secrets**: Server-side in `application-local.properties` (excluded from version control), environment variables, or a dedicated secret manager.
 - **Current status**: ✅ Safe. Cloudinary credentials (`api-key`, `api-secret`) exist only in `application.properties` on the server and do not appear in any JS or JSP file. No `localStorage` usage exists anywhere in the codebase.
 
+### 14. Safe File Uploads (MIME Spoofing & Path Traversal Mitigation)
+- **Rule**: Never trust client-provided file MIME types (via Content-Type header) or original filenames (`getOriginalFilename()`).
+- **MIME Spoofing Mitigation**: Read the file's binary header (Magic Bytes / File Signature) using an `InputStream` on the server side to verify the actual format.
+- **Path Traversal Mitigation**: Generate a randomized UUID-based filename on the server (e.g. `<UUID>.<ext>`) instead of saving with the client-provided name, to prevent directory traversal attacks (e.g. `../../etc/passwd`).
+- **File Validation**: Validate the file size and verify that the extension matches both the allowed list and the verified magic byte signature.
+
 ---
 
 ## Success & Exit Criteria
@@ -112,4 +118,6 @@
 - Session cookies are configured with `HttpOnly=true`, `SameSite=Lax`, and `Secure=true` (production).
 - All 6 security response headers (CSP, X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy, Permissions-Policy) are set on every response.
 - Zero API keys, secrets, or credentials present in any `.js`, `.jsp`, `.html` file or `localStorage`.
+- All file upload functionalities validate Magic Bytes and use server-generated UUID filenames.
 - All code passes checkstyle checks without violation.
+

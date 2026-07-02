@@ -21,10 +21,22 @@ class ImageFileValidatorTest {
     private MultipartFile file;
 
     private void setupFile(String name, String contentType, long size) {
-        when(file.isEmpty()).thenReturn(false);
-        when(file.getOriginalFilename()).thenReturn(name);
-        when(file.getContentType()).thenReturn(contentType);
-        when(file.getSize()).thenReturn(size);
+        byte[] magicBytes = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        setupFile(name, contentType, size, magicBytes);
+    }
+
+    private void setupFile(String name, String contentType, long size, byte[] magicBytes) {
+        try {
+            org.mockito.Mockito.lenient().when(file.isEmpty()).thenReturn(false);
+            org.mockito.Mockito.lenient().when(file.getOriginalFilename()).thenReturn(name);
+            org.mockito.Mockito.lenient().when(file.getContentType()).thenReturn(contentType);
+            org.mockito.Mockito.lenient().when(file.getSize()).thenReturn(size);
+            org.mockito.Mockito.lenient()
+                    .when(file.getInputStream())
+                    .thenReturn(new java.io.ByteArrayInputStream(magicBytes));
+        } catch (java.io.IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // ── Happy-path tests ──────────────────────────────────────────────────────
@@ -40,7 +52,47 @@ class ImageFileValidatorTest {
                         : filename.endsWith("webp")
                                 ? "image/webp"
                                 : filename.endsWith("avif") ? "image/avif" : "image/jpeg";
-        setupFile(filename, mime, 1024);
+
+        byte[] magicBytes;
+        if (filename.endsWith("png")) {
+            magicBytes = new byte[] {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, 0, 0, 0, 0, 0, 0, 0, 0};
+        } else if (filename.endsWith("gif")) {
+            magicBytes = new byte[] {(byte) 0x47, (byte) 0x49, (byte) 0x46, (byte) 0x38, 0, 0, 0, 0, 0, 0, 0, 0};
+        } else if (filename.endsWith("webp")) {
+            magicBytes = new byte[] {
+                (byte) 0x52,
+                (byte) 0x49,
+                (byte) 0x46,
+                (byte) 0x46,
+                0,
+                0,
+                0,
+                0,
+                (byte) 0x57,
+                (byte) 0x45,
+                (byte) 0x42,
+                (byte) 0x50
+            };
+        } else if (filename.endsWith("avif")) {
+            magicBytes = new byte[] {
+                0,
+                0,
+                0,
+                0,
+                (byte) 0x66,
+                (byte) 0x74,
+                (byte) 0x79,
+                (byte) 0x70,
+                (byte) 0x61,
+                (byte) 0x76,
+                (byte) 0x69,
+                (byte) 0x66
+            };
+        } else {
+            magicBytes = new byte[] {(byte) 0xFF, (byte) 0xD8, (byte) 0xFF, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        }
+
+        setupFile(filename, mime, 1024, magicBytes);
         assertDoesNotThrow(() -> ImageFileValidator.validate(file));
     }
 
@@ -159,5 +211,16 @@ class ImageFileValidatorTest {
         IllegalArgumentException ex =
                 assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
         assertTrue(ex.getMessage().contains("&lt;script&gt;alert(1)&lt;/script&gt;"));
+    }
+
+    @Test
+    @DisplayName("Should reject file when magic bytes do not match expected image signatures")
+    void shouldRejectInvalidMagicBytes() {
+        byte[] badMagic = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        setupFile("photo.jpg", "image/jpeg", 1024, badMagic);
+
+        IllegalArgumentException ex =
+                assertThrows(IllegalArgumentException.class, () -> ImageFileValidator.validate(file));
+        assertTrue(ex.getMessage().contains("Magic Bytes không khớp"));
     }
 }

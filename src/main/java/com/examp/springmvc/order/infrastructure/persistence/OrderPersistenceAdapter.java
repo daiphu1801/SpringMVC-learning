@@ -64,27 +64,20 @@ public class OrderPersistenceAdapter implements OrderPersistencePort {
         if (entity == null) {
             return Optional.empty();
         }
-        List<OrderItemDbEntity> itemEntities = orderItemMapper.findByOrderId(id);
-        return Optional.of(toDomain(entity, itemEntities));
+        return Optional.of(toDomain(entity, entity.getItems()));
     }
 
     @Override
     public List<Order> findByUserId(Long userId) {
         return orderMapper.findByUserId(userId).stream()
-                .map(e -> {
-                    List<OrderItemDbEntity> items = orderItemMapper.findByOrderId(e.getId());
-                    return toDomain(e, items);
-                })
+                .map(e -> toDomain(e, e.getItems()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<Order> findAll() {
         return orderMapper.findAll().stream()
-                .map(e -> {
-                    List<OrderItemDbEntity> items = orderItemMapper.findByOrderId(e.getId());
-                    return toDomain(e, items);
-                })
+                .map(e -> toDomain(e, e.getItems()))
                 .collect(Collectors.toList());
     }
 
@@ -124,15 +117,20 @@ public class OrderPersistenceAdapter implements OrderPersistencePort {
     }
 
     private Order toDomain(OrderDbEntity entity, List<OrderItemDbEntity> itemEntities) {
-        List<OrderItem> items = itemEntities.stream()
-                .map(i -> new OrderItem(
-                        i.getId(),
-                        i.getProductId(),
-                        i.getProductName(),
-                        i.getProductSku(),
-                        i.getUnitPrice(),
-                        i.getQuantity()))
-                .collect(Collectors.toList());
+        List<OrderItem> items = new ArrayList<>();
+        if (itemEntities != null) {
+            for (OrderItemDbEntity i : itemEntities) {
+                if (i != null && i.getId() != null) {
+                    items.add(new OrderItem(
+                            i.getId(),
+                            i.getProductId(),
+                            i.getProductName(),
+                            i.getProductSku(),
+                            i.getUnitPrice(),
+                            i.getQuantity()));
+                }
+            }
+        }
 
         ShippingAddress address =
                 new ShippingAddress(entity.getReceiverName(), entity.getReceiverPhone(), entity.getShippingAddress());
@@ -140,7 +138,7 @@ public class OrderPersistenceAdapter implements OrderPersistencePort {
         return new Order(
                 entity.getId(),
                 entity.getUserId(),
-                OrderStatus.valueOf(entity.getStatus()),
+                entity.getStatus() != null ? OrderStatus.valueOf(entity.getStatus()) : OrderStatus.PENDING,
                 items,
                 entity.getTotalAmount(),
                 address,

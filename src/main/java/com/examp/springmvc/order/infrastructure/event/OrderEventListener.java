@@ -10,8 +10,10 @@ import com.examp.springmvc.user.application.usermanagement.query.FindUserByIdInp
 import com.examp.springmvc.user.application.usermanagement.query.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class OrderEventListener {
@@ -26,7 +28,8 @@ public class OrderEventListener {
         this.findUserByIdInputPort = findUserByIdInputPort;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("taskExecutor")
     public void onOrderPlaced(OrderPlacedEvent event) {
         LOG.info(
                 "[ORDER] Đơn hàng mới được đặt thành công - ID: {}, User: {}, Tổng tiền: {}",
@@ -50,12 +53,14 @@ public class OrderEventListener {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("taskExecutor")
     public void onOrderCancelled(OrderCancelledEvent event) {
         LOG.info("[ORDER] Đơn hàng bị huỷ - ID: {}, User: {}", event.getOrderId(), event.getUserId());
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("taskExecutor")
     public void onOrderStatusChanged(OrderStatusChangedEvent event) {
         LOG.info(
                 "[ORDER] Trạng thái đơn hàng thay đổi - ID: {}, {} → {}",
@@ -76,7 +81,8 @@ public class OrderEventListener {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Async("taskExecutor")
     public void onOrderPaid(OrderPaidEvent event) {
         LOG.info(
                 "[ORDER] Đơn hàng đã được thanh toán thành công - ID: {}, User: {}, Tổng tiền: {}",

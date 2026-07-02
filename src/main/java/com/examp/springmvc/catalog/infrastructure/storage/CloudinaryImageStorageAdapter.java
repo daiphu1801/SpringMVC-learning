@@ -7,11 +7,16 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CloudinaryImageStorageAdapter implements ImageStoragePort {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CloudinaryImageStorageAdapter.class);
+
     private final Cloudinary cloudinary;
 
     @Autowired
@@ -25,17 +30,20 @@ public class CloudinaryImageStorageAdapter implements ImageStoragePort {
         if (inputStream == null) {
             return null;
         }
-        try {
+        try (InputStream is = inputStream) {
             String cloudName = (String) cloudinary.config.cloudName;
-            if (cloudName == null || cloudName.trim().isEmpty() || cloudName.equals("your_cloud_name")) {
-                System.out.println("Warning: Cloudinary not configured. Using placeholder image.");
+            if (cloudName == null
+                    || cloudName.trim().isEmpty()
+                    || "your_cloudinary_cloud_name".equals(cloudName)
+                    || "your_cloud_name".equals(cloudName)) {
+                LOG.warn("Cloudinary not configured. Using placeholder image.");
                 return "/resources/images/placeholder-product.png";
             }
 
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
             byte[] data = new byte[16384];
-            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
                 buffer.write(data, 0, nRead);
             }
             byte[] bytes = buffer.toByteArray();
@@ -43,7 +51,7 @@ public class CloudinaryImageStorageAdapter implements ImageStoragePort {
             Map<?, ?> uploadResult = cloudinary.uploader().upload(bytes, ObjectUtils.emptyMap());
             return (String) uploadResult.get("secure_url");
         } catch (Exception e) {
-            System.err.println("Cloudinary upload failed, falling back to placeholder: " + e.getMessage());
+            LOG.error("Cloudinary upload failed, falling back to placeholder: {}", e.getMessage(), e);
             return "/resources/images/placeholder-product.png";
         }
     }
@@ -69,7 +77,7 @@ public class CloudinaryImageStorageAdapter implements ImageStoragePort {
                 cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
             }
         } catch (Exception e) {
-            System.err.println("Failed to delete image from Cloudinary: " + e.getMessage());
+            LOG.error("Failed to delete image from Cloudinary: {}", e.getMessage(), e);
         }
     }
 }

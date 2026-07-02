@@ -38,14 +38,15 @@
 - **Persistence Adapter (`.../[context]/infrastructure/persistence/mybatis`)**:
   - **Rule**: Implements the Output Port interface (e.g., `UserPersistenceAdapter implements UserPersistencePort`).
   - **Mapping Rule**: Database tables must be mapped to distinct database entities (e.g., `UserDbEntity`). Do not expose `UserDbEntity` outside of the infrastructure package. Use a dedicated mapper/converter (e.g., `UserDataAccessMapper`) to map Domain models to DB entities.
-- **Web Adapter (`.../[context]/infrastructure/web`)**:
+- Web/Presentation Adapter (`.../[context]/presentation` or `.../[context]/infrastructure/web`):
   - **Rule**: Contains Spring Web MVC Controllers (e.g., `UserController`).
+  - **CQRS Controller Separation Rule**: Controllers for CRUD-heavy business aggregates must be strictly split into `[EntityName]QueryController.java` (for GET-based reading and form display) and `[EntityName]CommandController.java` (for POST/PUT/DELETE operations).
   - **Execution Rule**: Controllers must only communicate with the Application Layer via Use Cases. They are prohibited from calling Persistence Ports, Mappers, or Repositories directly.
 
 ---
 
 ## Success & Exit Criteria
-The agent must verify that the new feature folder structure complies with the following layout:
+The agent must verify that the new feature folder structure complies with the following layout (with web components optionally placed in `presentation/` or `infrastructure/web/`):
 ```text
 src/main/java/com/examp/springmvc/[context]
 ├── domain
@@ -58,17 +59,11 @@ src/main/java/com/examp/springmvc/[context]
 │   └── usecase
 │       ├── Create[EntityName]UseCase.java
 │       └── ...
-└── infrastructure
-    ├── persistence
-    │   └── mybatis
-    │       ├── [EntityName]DbEntity.java
-    │       ├── [EntityName]Mapper.java
-    │       ├── [EntityName]PersistenceAdapter.java
-    │       └── [EntityName]DataAccessMapper.java
-    └── web
-        └── [EntityName]Controller.java
+└── presentation/ (or infrastructure/web/)
+    ├── [EntityName]QueryController.java
+    └── [EntityName]CommandController.java
 ```
 
 ## Error Recovery & Verification Steps
 - **Checking Dependency Leaks**: Scan import statements in `domain/` and `application/` folders. If any package starting with `org.springframework.web`, `org.apache.ibatis`, or `infrastructure` is found, refactor it out.
-- **Bypassed UseCase Check**: Verify that `UserController` has constructor injections **only** for `*UseCase` classes. If a direct Mapper/Repository injection is found, refactor by introducing a Use Case.
+- **Bypassed UseCase Check**: Verify that Controllers have constructor injections **only** for `*UseCase` classes. If a direct Mapper/Repository injection is found, refactor by introducing a Use Case.

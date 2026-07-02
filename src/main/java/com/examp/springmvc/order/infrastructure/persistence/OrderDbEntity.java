@@ -2,6 +2,8 @@ package com.examp.springmvc.order.infrastructure.persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDbEntity {
 
@@ -17,6 +19,7 @@ public class OrderDbEntity {
     private String paymentStatus;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private List<OrderItemDbEntity> items;
 
     public Long getId() {
         return id;
@@ -112,5 +115,13 @@ public class OrderDbEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<OrderItemDbEntity> getItems() {
+        return items == null ? null : new ArrayList<>(items);
+    }
+
+    public void setItems(List<OrderItemDbEntity> items) {
+        this.items = items == null ? null : new ArrayList<>(items);
     }
 }

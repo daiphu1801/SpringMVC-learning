@@ -1,6 +1,5 @@
 package com.examp.springmvc.catalog.presentation;
 
-import com.examp.springmvc.catalog.application.category.query.CategoryDTO;
 import com.examp.springmvc.catalog.application.category.query.FindAllCategoriesUseCase;
 import com.examp.springmvc.catalog.application.product.command.CreateProductCommand;
 import com.examp.springmvc.catalog.application.product.command.CreateProductUseCase;
@@ -9,15 +8,13 @@ import com.examp.springmvc.catalog.application.product.command.UpdateProductComm
 import com.examp.springmvc.catalog.application.product.command.UpdateProductUseCase;
 import com.examp.springmvc.catalog.application.product.query.FindAllProductsUseCase;
 import com.examp.springmvc.catalog.application.product.query.FindProductByIdUseCase;
-import com.examp.springmvc.catalog.application.product.query.ProductDTO;
 import com.examp.springmvc.catalog.domain.model.ProductStatus;
 import com.examp.springmvc.shared.presentation.ImageFileValidator;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.UUID;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/admin/products")
-public class ProductController {
+public class ProductCommandController {
     private final CreateProductUseCase createProductUseCase;
     private final UpdateProductUseCase updateProductUseCase;
     private final DeleteProductUseCase deleteProductUseCase;
@@ -34,7 +31,7 @@ public class ProductController {
     private final FindProductByIdUseCase findProductByIdUseCase;
     private final FindAllCategoriesUseCase findAllCategoriesUseCase;
 
-    public ProductController(
+    public ProductCommandController(
             CreateProductUseCase createProductUseCase,
             UpdateProductUseCase updateProductUseCase,
             DeleteProductUseCase deleteProductUseCase,
@@ -47,20 +44,6 @@ public class ProductController {
         this.findAllProductsUseCase = findAllProductsUseCase;
         this.findProductByIdUseCase = findProductByIdUseCase;
         this.findAllCategoriesUseCase = findAllCategoriesUseCase;
-    }
-
-    @GetMapping
-    public String listProducts(Model model) {
-        List<ProductDTO> products = findAllProductsUseCase.execute();
-        model.addAttribute("products", products);
-        return "catalog/product-list";
-    }
-
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
-        List<CategoryDTO> categories = findAllCategoriesUseCase.execute();
-        model.addAttribute("categories", categories);
-        return "catalog/product-form";
     }
 
     @PostMapping("/create")
@@ -79,7 +62,8 @@ public class ProductController {
             if (imageFile != null && !imageFile.isEmpty()) {
                 ImageFileValidator.validate(imageFile);
                 imageStream = imageFile.getInputStream();
-                imageName = imageFile.getOriginalFilename();
+                String ext = extractExtension(imageFile.getOriginalFilename());
+                imageName = UUID.randomUUID().toString() + (ext.isEmpty() ? "" : "." + ext);
             }
             CreateProductCommand command =
                     new CreateProductCommand(categoryId, sku, name, description, price, status, imageStream, imageName);
@@ -96,15 +80,6 @@ public class ProductController {
             model.addAttribute("status", status);
             return "catalog/product-form";
         }
-    }
-
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable("id") Long id, Model model) {
-        ProductDTO product = findProductByIdUseCase.execute(id);
-        List<CategoryDTO> categories = findAllCategoriesUseCase.execute();
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categories);
-        return "catalog/product-form";
     }
 
     @PostMapping("/edit/{id}")
@@ -124,7 +99,8 @@ public class ProductController {
             if (imageFile != null && !imageFile.isEmpty()) {
                 ImageFileValidator.validate(imageFile);
                 imageStream = imageFile.getInputStream();
-                imageName = imageFile.getOriginalFilename();
+                String ext = extractExtension(imageFile.getOriginalFilename());
+                imageName = UUID.randomUUID().toString() + (ext.isEmpty() ? "" : "." + ext);
             }
             UpdateProductCommand command = new UpdateProductCommand(
                     id, categoryId, sku, name, description, price, status, imageStream, imageName);
@@ -145,7 +121,19 @@ public class ProductController {
             return "redirect:/admin/products";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return listProducts(model);
+            model.addAttribute("products", findAllProductsUseCase.execute());
+            return "catalog/product-list";
         }
+    }
+
+    private String extractExtension(String filename) {
+        if (filename == null) {
+            return "";
+        }
+        int dotIndex = filename.lastIndexOf('.');
+        if (dotIndex < 0 || dotIndex == filename.length() - 1) {
+            return "";
+        }
+        return filename.substring(dotIndex + 1).toLowerCase();
     }
 }

@@ -115,4 +115,12 @@ class AuthControllerTest {
                 .andExpect(view().name("auth/register"))
                 .andExpect(model().attribute("error", "Username đã tồn tại"));
     }
+
+    @Test
+    @DisplayName("POST /logout - Should logout and redirect to login page")
+    void shouldLogoutAndRedirect() throws Exception {
+        mockMvc.perform(post("/logout")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/login"));
+
+        verify(logoutInputPort).execute();
+    }
 }

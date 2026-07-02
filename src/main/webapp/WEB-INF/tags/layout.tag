@@ -73,7 +73,7 @@
                                     <span class="user-fullname"><c:out value="${sessionScope.currentUser.fullName}"/></span>
                                     <span class="user-role-badge admin-role"><c:out value="${sessionScope.currentUser.role}"/></span>
                                 </div>
-                                <a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary btn-logout">
+                                <a href="#" class="btn btn-secondary btn-logout">
                                     Đăng xuất
                                 </a>
                             </div>
@@ -112,7 +112,7 @@
                                     <span class="user-fullname"><c:out value="${sessionScope.currentUser.fullName}"/></span>
                                     <span class="user-role-badge user-role"><c:out value="${sessionScope.currentUser.role}"/></span>
                                 </div>
-                                <a href="${pageContext.request.contextPath}/logout" class="btn btn-secondary btn-logout">
+                                <a href="#" class="btn btn-secondary btn-logout">
                                     Đăng xuất
                                 </a>
                             </div>
@@ -131,5 +131,8 @@
             <a href="${pageContext.request.contextPath}/architecture" class="footer-link">Tìm hiểu kiến trúc</a>
         </div>
     </div>
+    <form id="logoutForm" action="${pageContext.request.contextPath}/logout" method="post" style="display:none;">
+        <input type="hidden" name="csrfToken" value="${csrfToken}">
+    </form>
 </body>
 </html>
