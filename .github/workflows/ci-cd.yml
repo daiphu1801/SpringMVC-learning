@@ -8,12 +8,15 @@ on:
 
 permissions:
   contents: read
-  packages: write
-  issues: write
 
 jobs:
-  build-and-test:
+  build-test-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      issues: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,35 +28,36 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Verify Code Style (Spotless)
-        run: mvn spotless:check
-
-      - name: Verify Code Quality (Checkstyle)
-        run: mvn checkstyle:check
-
-      - name: Verify Bugs (SpotBugs)
-        run: mvn spotbugs:check
-
-      - name: Run Unit Tests
-        run: mvn test
-
-      - name: Package WAR file
-        run: mvn clean package -DskipTests
+      # Combined compilation, tests, and formatting checks to avoid target deletion
+      - name: Build, Test and Verify
+        run: |
+          mvn -B -ntp clean verify spotless:check checkstyle:check spotbugs:check
 
       - name: Upload WAR Artifact
         uses: actions/upload-artifact@v4
         with:
           name: SpringMVC-Demo-WAR
-          path: target/SpringMVC-Demo.war
+          path: target/*.war
+          if-no-files-found: error
           retention-days: 7
 
-  security-scan:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Downcase GitHub Repository Name
+        id: string
+        run: |
+          echo "repo_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
+      - name: Log in to GitHub Container Registry (GHCR)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build the Docker image once for local testing and scanning
       - name: Build local Docker Image
         run: |
           docker build -t springmvc-demo-test .
@@ -66,10 +70,11 @@ jobs:
             -e APP_USER_PASSWORD=your_database_password \
             gvenzl/oracle-free:slim
 
+      # Wait for Oracle using the custom user credentials against the default FREEPDB1 database
       - name: Wait for Oracle Database to be ready
         run: |
           echo "Waiting for Oracle to accept connections and user creation to complete..."
-          timeout 180s bash -c 'until docker exec oracle sqlplus -L your_database_username/your_database_password@localhost:1521/FREE >/dev/null 2>&1 <<EOF
+          timeout 180s bash -c 'until docker exec oracle sqlplus -L your_database_username/your_database_password@localhost:1521/FREEPDB1 >/dev/null 2>&1 <<EOF
           select 1 from dual;
           exit;
           EOF
@@ -77,16 +82,25 @@ jobs:
             echo "Waiting for Oracle database and custom user to be ready..."
             sleep 5
           done'
-          echo "Oracle Database and user are ready!"
+          echo "Oracle Database and custom user are ready!"
 
+      # Initialize database schema with failure handling configuration
       - name: Initialize Oracle Database Schema
         run: |
           echo "Initializing database schema..."
           # 1. Run DDL schema
-          docker exec -i oracle sqlplus your_database_username/your_database_password@localhost:1521/FREE < src/test/resources/test-schema.sql
+          {
+            echo "WHENEVER OSERROR EXIT FAILURE ROLLBACK"
+            echo "WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK"
+            cat src/test/resources/test-schema.sql
+            echo "EXIT SUCCESS"
+          } | docker exec -i oracle sqlplus -L -S your_database_username/your_database_password@localhost:1521/FREEPDB1
           
-          # 2. Insert admin, category, product, and commit
-          docker exec -i oracle sqlplus your_database_username/your_database_password@localhost:1521/FREE <<'EOF'
+          # 2. Insert admin, category, product data
+          docker exec -i oracle sqlplus -L -S your_database_username/your_database_password@localhost:1521/FREEPDB1 <<'SQL'
+          WHENEVER OSERROR EXIT FAILURE ROLLBACK
+          WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
+          
           INSERT INTO APP_USERS (ID, USERNAME, FULL_NAME, EMAIL, PHONE, STATUS, PASSWORD, ROLE)
           VALUES (APP_USER_SEQ.NEXTVAL, 'adminnn', 'Admin User', 'admin@example.com', '0123456789', 'ACTIVE', '$2a$12$TMgl6ebQ/Tvk8zLF48U0z.Yr0M3YZ5cklPuAMKg3BjR45krjYN7kW', 'ADMIN');
           
@@ -97,21 +111,36 @@ jobs:
           VALUES (APP_PRODUCT_SEQ.NEXTVAL, APP_CATEGORY_SEQ.CURRVAL, 'PROD-001', 'Smart Phone', 'High-end smartphone', 999.99, 'ACTIVE', 50);
           
           COMMIT;
-          EXIT;
-          EOF
+          EXIT SUCCESS;
+          SQL
           echo "Database schema initialized successfully."
 
+      # Start app container with environment variables overrides (using FREEPDB1)
       - name: Run Application in Docker container
         run: |
-          docker run -d --network=host --name app springmvc-demo-test
+          docker run -d --network=host --name app \
+            -e DB_URL="jdbc:oracle:thin:@//localhost:1521/FREEPDB1" \
+            -e DB_USERNAME="your_database_username" \
+            -e DB_PASSWORD="your_database_password" \
+            springmvc-demo-test
 
+      # Check application startup status strictly
       - name: Wait for application to start
         run: |
           echo "Waiting for app to start..."
-          timeout 60s bash -c 'until curl -s http://localhost:8080/login > /dev/null; do echo "Waiting for Tomcat..."; sleep 2; done'
-          echo "App is up and responding."
+          timeout 90s bash -c '
+            until curl --fail --silent --show-error http://localhost:8080/login >/dev/null;
+            do
+              echo "Waiting for application to respond..."
+              docker logs --tail 20 app || true
+              sleep 3
+            done
+          '
+          echo "Application is responding successfully."
 
+      # Authenticate, verify, and run OWASP ZAP Baseline Scan
       - name: Run OWASP ZAP Baseline Scan (Authenticated)
+        id: zap
         run: |
           touch report_html.html
           chmod a+w report_html.html
@@ -121,19 +150,33 @@ jobs:
           
           # 2. Extract CSRF token
           CSRF_TOKEN=$(grep -oE 'name="csrfToken" value="[^"]+"' login_page.html | head -1 | cut -d'"' -f4)
-          echo "Extracted CSRF Token: $CSRF_TOKEN"
+          if [ -z "$CSRF_TOKEN" ]; then
+            echo "Error: Cannot extract CSRF token"
+            exit 1
+          fi
+          echo "Successfully extracted CSRF Token"
           
           # 3. Perform POST login request to authenticate session
           curl -s -b cookies.txt -c cookies.txt -X POST \
             -d "username=adminnn&password=123456&csrfToken=$CSRF_TOKEN" \
             http://localhost:8080/login > /dev/null
           
-          # 4. Print cookies.txt for diagnostic purposes
-          cat cookies.txt
-          
-          # 5. Extract JSESSIONID from the authenticated cookies
+          # 4. Extract JSESSIONID and mask it in GitHub Actions logs
           JSESSIONID=$(grep JSESSIONID cookies.txt | tail -n 1 | awk '{print $7}')
-          echo "Extracted JSESSIONID: $JSESSIONID"
+          if [ -z "$JSESSIONID" ]; then
+            echo "Error: Failed to retrieve JSESSIONID session cookie"
+            exit 1
+          fi
+          echo "::add-mask::$JSESSIONID"
+          echo "Successfully retrieved JSESSIONID"
+          
+          # 5. Verify successful authentication on protected admin endpoint
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -b cookies.txt http://localhost:8080/users)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "Error: Authentication failed, /users returned HTTP $HTTP_STATUS"
+            exit 1
+          fi
+          echo "Authentication verification succeeded (HTTP 200 on /users)"
           
           # 6. Generate ZAP config file to inject Cookie header
           cat <<EOF > options.prop
@@ -145,17 +188,30 @@ jobs:
           replacer.full_list(0).replacement=JSESSIONID=$JSESSIONID
           EOF
           
-          # 7. Run ZAP scan using the config file
+          # 7. Run ZAP scan (set +e to prevent workflow failure if ZAP exits with warning code)
+          set +e
           docker run --rm -v ${{ github.workspace }}:/zap/wrk/:rw --network=host \
             -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
             -t http://localhost:8080/ -r report_html.html \
             -z "-configfile /zap/wrk/options.prop"
+          
+          ZAP_EXIT_CODE=$?
+          echo "zap_exit_code=$ZAP_EXIT_CODE" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Upload ZAP Security Report
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: zapreport
-          path: ${{ github.workspace }}/report_html.html
+          path: report_html.html
+          if-no-files-found: error
+
+      - name: Enforce ZAP result
+        if: always() && steps.zap.outputs.zap_exit_code != '0' && steps.zap.outputs.zap_exit_code != ''
+        run: |
+          echo "ZAP exited with code ${{ steps.zap.outputs.zap_exit_code }}"
+          exit ${{ steps.zap.outputs.zap_exit_code }}
 
       - name: Stop Docker containers
         if: always()
@@ -165,34 +221,10 @@ jobs:
           docker stop oracle || true
           docker rm oracle || true
 
-  deploy-docker:
-    needs: [build-and-test, security-scan]
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GitHub Container Registry (GHCR)
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Downcase GitHub Repository Name
-        id: string
-        run: |
-          echo "repo_name=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
-
+      # Build and Push Docker Image using buildx cache, only if all tests and scans pass
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
@@ -202,8 +234,3 @@ jobs:
             ghcr.io/${{ steps.string.outputs.repo_name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      # Render Deployment Trigger (Nếu bạn chọn Render, chỉ cần thêm deploy hook)
-      # - name: Trigger Render Deploy Hook
-      #   run: |
-      #     curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
