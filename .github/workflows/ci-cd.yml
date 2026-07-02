@@ -68,16 +68,16 @@ jobs:
 
       - name: Wait for Oracle Database to be ready
         run: |
-          echo "Waiting for Oracle to accept connections..."
-          timeout 120s bash -c 'until docker exec oracle sqlplus -L sys/your_database_password@localhost:1521/FREE as sysdba >/dev/null 2>&1 <<EOF
+          echo "Waiting for Oracle to accept connections and user creation to complete..."
+          timeout 180s bash -c 'until docker exec oracle sqlplus -L your_database_username/your_database_password@localhost:1521/FREE >/dev/null 2>&1 <<EOF
           select 1 from dual;
           exit;
           EOF
           do
-            echo "Waiting for Oracle to initialize..."
+            echo "Waiting for Oracle database and custom user to be ready..."
             sleep 5
           done'
-          echo "Oracle Database is ready!"
+          echo "Oracle Database and user are ready!"
 
       - name: Initialize Oracle Database Schema
         run: |
