@@ -2,7 +2,6 @@ package com.examp.springmvc.order.infrastructure.persistence;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDbEntity {
@@ -117,11 +116,13 @@ public class OrderDbEntity {
         this.updatedAt = updatedAt;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP")
     public List<OrderItemDbEntity> getItems() {
-        return items == null ? null : new ArrayList<>(items);
+        return items;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("EI_EXPOSE_REP2")
     public void setItems(List<OrderItemDbEntity> items) {
-        this.items = items == null ? null : new ArrayList<>(items);
+        this.items = items;
     }
 }

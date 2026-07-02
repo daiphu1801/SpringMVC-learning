@@ -15,17 +15,32 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
         // App version based on system startup time to force cache refresh on deployment
         servletContext.setAttribute("appVersion", String.valueOf(System.currentTimeMillis()));
 
+        // --- Load Config Properties Manually Before Spring Context Initializes ---
+        java.util.Properties props = new java.util.Properties();
+        try (java.io.InputStream is =
+                WebAppInitializer.class.getClassLoader().getResourceAsStream("application.properties")) {
+            if (is != null) {
+                props.load(is);
+            }
+        } catch (java.io.IOException e) {
+            // fallback
+        }
+        boolean isCookieSecure = Boolean.parseBoolean(props.getProperty("app.cookie.secure", "false"));
+        int sessionTimeoutMinutes = Integer.parseInt(props.getProperty("app.session.timeout-minutes", "30"));
+
         // --- Session Cookie Security ---
         // HttpOnly: prevents JavaScript (e.g. XSS) from reading the session cookie.
-        // Secure: must be set to true only in production behind HTTPS;
-        //         set false here to allow development on plain HTTP localhost.
+        // Secure: must be set to true only in production behind HTTPS.
         // SameSite=Lax: browsers only send the cookie for same-site requests and
         //               top-level GET navigations from other sites, blocking CSRF
         //               via cross-origin form POSTs without breaking normal links.
         SessionCookieConfig cookieConfig = servletContext.getSessionCookieConfig();
         cookieConfig.setHttpOnly(true);
-        cookieConfig.setSecure(false); // TODO: set true in production (HTTPS only)
+        cookieConfig.setSecure(isCookieSecure);
         cookieConfig.setAttribute("SameSite", "Lax");
+
+        // --- Session Timeout Config ---
+        servletContext.setSessionTimeout(sessionTimeoutMinutes);
 
         // Register SecurityHeadersFilter globally
         jakarta.servlet.FilterRegistration.Dynamic securityFilter =

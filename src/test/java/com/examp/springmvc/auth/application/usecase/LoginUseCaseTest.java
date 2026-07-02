@@ -89,6 +89,8 @@ class LoginUseCaseTest {
     @DisplayName("Should throw exception when user not found")
     void shouldThrowExceptionWhenUserNotFound() {
         when(userPersistencePort.findByUsername("unknown")).thenReturn(Optional.empty());
+        when(passwordHasher.check("password", "$2a$10$NX37r/W87.uA7Z.tVfRFO.8D6o4aYV7Ew5D09tJ7i64lXv8q6f7gW"))
+                .thenReturn(false);
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> loginUseCase.execute("unknown", "password"));
@@ -102,10 +104,11 @@ class LoginUseCaseTest {
         entity.setStatus("INACTIVE");
         User user = userDataAccessMapper.toDomain(entity);
         when(userPersistencePort.findByUsername("test_user")).thenReturn(Optional.of(user));
+        when(passwordHasher.check("password", "hashed_password")).thenReturn(true);
 
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> loginUseCase.execute("test_user", "password"));
-        assertEquals("Tài khoản đang bị khóa", exception.getMessage());
+        assertEquals("Tài khoản hoặc mật khẩu không chính xác", exception.getMessage());
     }
 
     @Test
@@ -119,5 +122,24 @@ class LoginUseCaseTest {
         IllegalArgumentException exception =
                 assertThrows(IllegalArgumentException.class, () -> loginUseCase.execute("test_user", "wrong_password"));
         assertEquals("Tài khoản hoặc mật khẩu không chính xác", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Should lock out user after 5 consecutive failed attempts")
+    void shouldLockoutUserAfterFiveFailures() {
+        UserDbEntity entity = testUserDbEntity();
+        User user = userDataAccessMapper.toDomain(entity);
+        when(userPersistencePort.findByUsername("test_user")).thenReturn(Optional.of(user));
+        when(passwordHasher.check("wrong_password", "hashed_password")).thenReturn(false);
+
+        // 5 failures
+        for (int i = 0; i < 5; i++) {
+            assertThrows(IllegalArgumentException.class, () -> loginUseCase.execute("test_user", "wrong_password"));
+        }
+
+        // 6th attempt should be blocked by lockout without querying or hashing
+        IllegalArgumentException exception =
+                assertThrows(IllegalArgumentException.class, () -> loginUseCase.execute("test_user", "wrong_password"));
+        org.junit.jupiter.api.Assertions.assertTrue(exception.getMessage().contains("Tài khoản đang bị khóa tạm thời"));
     }
 }

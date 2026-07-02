@@ -11,6 +11,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class SecurityInterceptor implements HandlerInterceptor {
 
+    @org.springframework.beans.factory.annotation.Value("${app.demo.fill.enabled:false}")
+    private boolean demoFillEnabled;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -30,11 +33,15 @@ public class SecurityInterceptor implements HandlerInterceptor {
             session.setAttribute("CSRF_TOKEN", csrfToken);
         }
         request.setAttribute("csrfToken", csrfToken);
+        request.setAttribute("demoFillEnabled", demoFillEnabled);
 
         // 3. Validate CSRF token for POST requests
         if ("POST".equalsIgnoreCase(request.getMethod())) {
             String requestToken = request.getParameter("csrfToken");
-            if (requestToken == null || !requestToken.equals(csrfToken)) {
+            if (requestToken == null
+                    || !java.security.MessageDigest.isEqual(
+                            requestToken.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                            csrfToken.getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid CSRF Token.");
                 return false;
             }

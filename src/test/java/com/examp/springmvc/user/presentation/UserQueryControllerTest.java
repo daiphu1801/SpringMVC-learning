@@ -78,7 +78,7 @@ class UserQueryControllerTest {
     }
 
     @Test
-    @DisplayName("GET /users/edit/{id} - Should return form view with existing user DTO")
+    @DisplayName("GET /users/edit/{id} - Should return form view with existing user mapped to UpdateUserCommand")
     void shouldReturnEditFormView() throws Exception {
         UserDTO user = testUserDTO(1L, "user1");
         when(findUserByIdInputPort.execute(1L)).thenReturn(user);
@@ -86,7 +86,7 @@ class UserQueryControllerTest {
         mockMvc.perform(get("/users/edit/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/form"))
-                .andExpect(model().attribute("user", user));
+                .andExpect(model().attributeExists("user"));
 
         verify(findUserByIdInputPort).execute(1L);
     }

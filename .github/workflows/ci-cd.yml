@@ -31,6 +31,9 @@ jobs:
       - name: Verify Code Quality (Checkstyle)
         run: mvn checkstyle:check
 
+      - name: Verify Bugs (SpotBugs)
+        run: mvn spotbugs:check
+
       - name: Run Unit Tests
         run: mvn test
 
@@ -55,21 +58,98 @@ jobs:
         run: |
           docker build -t springmvc-demo-test .
 
+      - name: Start Oracle Database
+        run: |
+          docker run -d --name oracle -p 1521:1521 \
+            -e ORACLE_PASSWORD=your_database_password \
+            -e APP_USER=your_database_username \
+            -e APP_USER_PASSWORD=your_database_password \
+            gvenzl/oracle-free:slim
+
+      - name: Wait for Oracle Database to be ready
+        run: |
+          echo "Waiting for Oracle to accept connections..."
+          timeout 120s bash -c 'until docker exec oracle sqlplus -L sys/your_database_password@localhost:1521/FREE as sysdba >/dev/null 2>&1 <<EOF
+          select 1 from dual;
+          exit;
+          EOF
+          do
+            echo "Waiting for Oracle to initialize..."
+            sleep 5
+          done'
+          echo "Oracle Database is ready!"
+
+      - name: Initialize Oracle Database Schema
+        run: |
+          echo "Initializing database schema..."
+          # 1. Run DDL schema
+          docker exec -i oracle sqlplus your_database_username/your_database_password@localhost:1521/FREE < src/test/resources/test-schema.sql
+          
+          # 2. Insert admin, category, product, and commit
+          docker exec -i oracle sqlplus your_database_username/your_database_password@localhost:1521/FREE <<'EOF'
+          INSERT INTO APP_USERS (ID, USERNAME, FULL_NAME, EMAIL, PHONE, STATUS, PASSWORD, ROLE)
+          VALUES (APP_USER_SEQ.NEXTVAL, 'adminnn', 'Admin User', 'admin@example.com', '0123456789', 'ACTIVE', '$2a$12$TMgl6ebQ/Tvk8zLF48U0z.Yr0M3YZ5cklPuAMKg3BjR45krjYN7kW', 'ADMIN');
+          
+          INSERT INTO APP_CATEGORIES (ID, NAME, CODE, DESCRIPTION)
+          VALUES (APP_CATEGORY_SEQ.NEXTVAL, 'Electronics', 'ELEC', 'Electronic devices');
+          
+          INSERT INTO APP_PRODUCTS (ID, CATEGORY_ID, SKU, NAME, DESCRIPTION, PRICE, STATUS, STOCK)
+          VALUES (APP_PRODUCT_SEQ.NEXTVAL, APP_CATEGORY_SEQ.CURRVAL, 'PROD-001', 'Smart Phone', 'High-end smartphone', 999.99, 'ACTIVE', 50);
+          
+          COMMIT;
+          EXIT;
+          EOF
+          echo "Database schema initialized successfully."
+
       - name: Run Application in Docker container
         run: |
-          docker run -d -p 8080:8080 --name app springmvc-demo-test
+          docker run -d --network=host --name app springmvc-demo-test
 
       - name: Wait for application to start
         run: |
           echo "Waiting for app to start..."
-          timeout 60s bash -c 'until curl -s http://localhost:8080/ > /dev/null; do echo "Waiting for Tomcat..."; sleep 2; done'
+          timeout 60s bash -c 'until curl -s http://localhost:8080/login > /dev/null; do echo "Waiting for Tomcat..."; sleep 2; done'
           echo "App is up and responding."
 
-      - name: Run OWASP ZAP Baseline Scan
+      - name: Run OWASP ZAP Baseline Scan (Authenticated)
         run: |
           touch report_html.html
           chmod a+w report_html.html
-          docker run --rm -v ${{ github.workspace }}:/zap/wrk/:rw --network=host -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py -t http://localhost:8080/ -r report_html.html || true
+          
+          # 1. Fetch login page to get initial cookies and CSRF token
+          curl -s -c cookies.txt http://localhost:8080/login > login_page.html
+          
+          # 2. Extract CSRF token
+          CSRF_TOKEN=$(grep -oE 'name="csrfToken" value="[^"]+"' login_page.html | head -1 | cut -d'"' -f4)
+          echo "Extracted CSRF Token: $CSRF_TOKEN"
+          
+          # 3. Perform POST login request to authenticate session
+          curl -s -b cookies.txt -c cookies.txt -X POST \
+            -d "username=adminnn&password=123456&csrfToken=$CSRF_TOKEN" \
+            http://localhost:8080/login > /dev/null
+          
+          # 4. Print cookies.txt for diagnostic purposes
+          cat cookies.txt
+          
+          # 5. Extract JSESSIONID from the authenticated cookies
+          JSESSIONID=$(grep JSESSIONID cookies.txt | tail -n 1 | awk '{print $7}')
+          echo "Extracted JSESSIONID: $JSESSIONID"
+          
+          # 6. Generate ZAP config file to inject Cookie header
+          cat <<EOF > options.prop
+          replacer.full_list(0).description=auth
+          replacer.full_list(0).enabled=true
+          replacer.full_list(0).matchtype=REQ_HEADER
+          replacer.full_list(0).matchstr=Cookie
+          replacer.full_list(0).regex=false
+          replacer.full_list(0).replacement=JSESSIONID=$JSESSIONID
+          EOF
+          
+          # 7. Run ZAP scan using the config file
+          docker run --rm -v ${{ github.workspace }}:/zap/wrk/:rw --network=host \
+            -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+            -t http://localhost:8080/ -r report_html.html \
+            -z "-configfile /zap/wrk/options.prop"
 
       - name: Upload ZAP Security Report
         uses: actions/upload-artifact@v4
@@ -77,11 +157,13 @@ jobs:
           name: zapreport
           path: ${{ github.workspace }}/report_html.html
 
-      - name: Stop Docker container
+      - name: Stop Docker containers
         if: always()
         run: |
           docker stop app || true
           docker rm app || true
+          docker stop oracle || true
+          docker rm oracle || true
 
   deploy-docker:
     needs: [build-and-test, security-scan]

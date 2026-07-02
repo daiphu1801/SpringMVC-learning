@@ -1,0 +1,13 @@
+target/
+.git/
+.github/
+.idea/
+.gemini/
+*.iml
+*.log
+*.war
+.classpath
+.project
+.settings/
+.settings
+bin/

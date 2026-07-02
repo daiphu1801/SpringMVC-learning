@@ -25,8 +25,8 @@
     <spring.version>6.1.5</spring.version>
 
     <!-- Testing -->
-    <junit.jupiter.version>6.0.0</junit.jupiter.version>
-    <mockito.version>5.23.0</mockito.version>
+    <junit.jupiter.version>5.10.2</junit.jupiter.version>
+    <mockito.version>5.11.0</mockito.version>
     <assertj.version>3.27.6</assertj.version>
     <hamcrest.version>3.0</hamcrest.version>
 
@@ -49,6 +49,25 @@
     <spotless-maven-plugin.version>3.7.0</spotless-maven-plugin.version>
     <spotbugs-maven-plugin.version>4.10.2.0</spotbugs-maven-plugin.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>${junit.jupiter.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-bom</artifactId>
+        <version>${mockito.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
 
@@ -129,11 +148,11 @@
 
 
 
-    <!-- jbcrypt for password hashing -->
+    <!-- Spring Security Crypto for secure password hashing -->
     <dependency>
-      <groupId>org.mindrot</groupId>
-      <artifactId>jbcrypt</artifactId>
-      <version>0.4</version>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <version>6.2.2</version>
     </dependency>
 
     <!-- Spring Context Support (JavaMailSender) -->
@@ -162,7 +181,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>${junit.jupiter.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -174,7 +192,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
-      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -220,25 +237,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- H2 Database for integration testing -->
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>6.0.0</version>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>2.2.224</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.diffblue.cover</groupId>
-      <artifactId>cover-annotations</artifactId>
-      <version>1.9.0</version>
-      <scope>provided</scope>
     </dependency>
 
   </dependencies>
@@ -361,7 +365,7 @@
                 <include>README.md</include>
                 <include>.gitignore</include>
                 <include>.githooks/*</include>
-                <include>scripts/*.sh</include>
+                <include>src/scripts/*.sh</include>
               </includes>
               <trimTrailingWhitespace/>
               <endWithNewline/>

@@ -1,7 +1,9 @@
 package com.examp.springmvc.user.presentation;
 
+import com.examp.springmvc.user.application.usermanagement.command.UpdateUserCommand;
 import com.examp.springmvc.user.application.usermanagement.query.FindAllUsersInputPort;
 import com.examp.springmvc.user.application.usermanagement.query.FindUserByIdInputPort;
+import com.examp.springmvc.user.application.usermanagement.query.UserDTO;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +40,17 @@ public class UserQueryController {
 
     @GetMapping("/edit/{id}")
     public String showEditForm(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("user", findUserByIdInputPort.execute(id));
+        UserDTO dto = findUserByIdInputPort.execute(id);
+        UpdateUserCommand command = new UpdateUserCommand(
+                dto.getId(),
+                dto.getUsername(),
+                dto.getFullName(),
+                dto.getEmail(),
+                dto.getPhone(),
+                dto.getStatus(),
+                null,
+                dto.getRole());
+        model.addAttribute("user", command);
         return "user/form";
     }
 }

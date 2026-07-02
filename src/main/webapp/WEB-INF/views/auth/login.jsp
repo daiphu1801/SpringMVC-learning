@@ -39,13 +39,15 @@
                    placeholder="Nhập mật khẩu" required>
         </div>
 
-        <div class="demo-account-box">
-            <div class="demo-account-title">🔑 Tài khoản mẫu</div>
-            <div>Quản trị viên: <strong>adminnn</strong> / <strong>123456</strong></div>
-            <button type="button" id="btn-demo-fill" class="btn-demo-fill">
-                ⚡ Điền nhanh
-            </button>
-        </div>
+        <c:if test="${demoFillEnabled}">
+            <div class="demo-account-box">
+                <div class="demo-account-title">🔑 Tài khoản mẫu</div>
+                <div>Quản trị viên: <strong>adminnn</strong> / <strong>123456</strong></div>
+                <button type="button" id="btn-demo-fill" class="btn-demo-fill">
+                    ⚡ Điền nhanh
+                </button>
+            </div>
+        </c:if>
 
         <button type="submit" class="btn btn-full">Đăng nhập</button>
         

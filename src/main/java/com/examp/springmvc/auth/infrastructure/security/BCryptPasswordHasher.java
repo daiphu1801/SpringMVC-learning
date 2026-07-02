@@ -1,7 +1,7 @@
 package com.examp.springmvc.auth.infrastructure.security;
 
 import com.examp.springmvc.auth.domain.PasswordHasher;
-import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,7 +12,7 @@ public class BCryptPasswordHasher implements PasswordHasher {
         if (rawPassword == null) {
             throw new IllegalArgumentException("Mật khẩu không được null");
         }
-        return BCrypt.hashpw(rawPassword, BCrypt.gensalt());
+        return BCrypt.hashpw(rawPassword, BCrypt.gensalt(12));
     }
 
     @Override
