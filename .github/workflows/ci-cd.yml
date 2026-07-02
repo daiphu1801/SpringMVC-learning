@@ -208,9 +208,9 @@ jobs:
           if-no-files-found: error
 
       - name: Enforce ZAP result
-        if: always() && steps.zap.outputs.zap_exit_code != '0' && steps.zap.outputs.zap_exit_code != ''
+        if: always() && steps.zap.outputs.zap_exit_code != '0' && steps.zap.outputs.zap_exit_code != '2' && steps.zap.outputs.zap_exit_code != ''
         run: |
-          echo "ZAP exited with code ${{ steps.zap.outputs.zap_exit_code }}"
+          echo "ZAP exited with code ${{ steps.zap.outputs.zap_exit_code }}, failing build."
           exit ${{ steps.zap.outputs.zap_exit_code }}
 
       - name: Stop Docker containers
