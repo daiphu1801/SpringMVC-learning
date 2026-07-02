@@ -57,8 +57,7 @@ public class UserCommandController {
             // Temporary disabled during security testing to prevent account corruption
             LOG.info("Bypassed updating user with ID {} (Disabled for security testing)", id);
             redirectAttributes.addFlashAttribute(
-                    "success",
-                    "Tính năng cập nhật thông tin đã tạm thời được vô hiệu hóa để phục vụ thử nghiệm.");
+                    "success", "Tính năng cập nhật thông tin đã tạm thời được vô hiệu hóa để phục vụ thử nghiệm.");
             return "redirect:/users";
         } catch (Exception e) {
             LOG.error("Error updating user with ID {}: ", id, e);
@@ -74,8 +73,7 @@ public class UserCommandController {
             // Temporary disabled during security testing to prevent account loss
             LOG.info("Bypassed deleting user with ID {} (Disabled for security testing)", id);
             redirectAttributes.addFlashAttribute(
-                    "success",
-                    "Tính năng xóa tài khoản đã tạm thời được vô hiệu hóa để phục vụ thử nghiệm.");
+                    "success", "Tính năng xóa tài khoản đã tạm thời được vô hiệu hóa để phục vụ thử nghiệm.");
         } catch (Exception e) {
             LOG.error("Error deleting user with ID {}: ", id, e);
             redirectAttributes.addFlashAttribute("error", "Không thể xóa người dùng: " + e.getMessage());

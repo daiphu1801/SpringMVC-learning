@@ -2,15 +2,14 @@ package com.examp.springmvc.user.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.examp.springmvc.user.application.usermanagement.command.CreateUserCommand;
 import com.examp.springmvc.user.application.usermanagement.command.CreateUserInputPort;
-import com.examp.springmvc.user.application.usermanagement.command.DeleteUserCommand;
 import com.examp.springmvc.user.application.usermanagement.command.DeleteUserInputPort;
-import com.examp.springmvc.user.application.usermanagement.command.UpdateUserCommand;
 import com.examp.springmvc.user.application.usermanagement.command.UpdateUserInputPort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,7 @@ class UserCommandControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/users"));
 
-        verify(updateUserInputPort).execute(any(UpdateUserCommand.class));
+        verifyNoInteractions(updateUserInputPort);
     }
 
     @Test
@@ -83,6 +82,6 @@ class UserCommandControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/users"));
 
-        verify(deleteUserInputPort).execute(any(DeleteUserCommand.class));
+        verifyNoInteractions(deleteUserInputPort);
     }
 }
