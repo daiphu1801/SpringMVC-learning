@@ -368,18 +368,69 @@
 .stat-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 20px;
+    border-radius: 16px;
+    padding: 22px 24px;
     box-shadow: var(--shadow-sm);
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    transition: all var(--transition-speed) ease;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--border-color);
+}
+.stat-card.accent-blue::after {
+    background: var(--primary);
+}
+.stat-card.accent-amber::after {
+    background: #D97706;
+}
+.stat-card.accent-green::after {
+    background: #059669;
 }
 .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
     border-color: var(--primary-light);
+}
+.stat-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.stat-card-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-body);
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+}
+.stat-card:hover .stat-card-icon-wrapper {
+    transform: scale(1.1);
+}
+.stat-card.accent-blue .stat-card-icon-wrapper {
+    background: rgba(79, 70, 229, 0.08);
+    color: var(--primary);
+}
+.stat-card.accent-amber .stat-card-icon-wrapper {
+    background: rgba(217, 119, 6, 0.08);
+    color: #D97706;
+}
+.stat-card.accent-green .stat-card-icon-wrapper {
+    background: rgba(5, 150, 105, 0.08);
+    color: #059669;
 }
 .stat-card-title {
     font-size: 0.85rem;
@@ -393,6 +444,27 @@
     font-weight: 700;
     color: var(--text-main);
 }
+
+.active-threads-table th {
+    padding: 12px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color);
+}
+.active-threads-table td {
+    padding: 14px 16px;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+}
+.active-threads-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.active-threads-table tbody tr:hover {
+    background: rgba(79, 70, 229, 0.02);
+}
+
 
 /* Beautiful task items with left border accents based on status */
 .task-item {

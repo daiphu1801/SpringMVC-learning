@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
             "com.examp.springmvc.catalog.infrastructure",
             "com.examp.springmvc.order.application",
             "com.examp.springmvc.order.infrastructure",
+            "com.examp.springmvc.shared.application",
             "com.examp.springmvc.shared.infrastructure.task"
         })
 public class RootConfig {}

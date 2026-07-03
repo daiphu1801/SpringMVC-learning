@@ -60,9 +60,17 @@ class ImportExportUseCasesTest {
     @BeforeEach
     void setUp() {
         importUsersUseCase = new ImportUsersUseCase(
-                excelTaskRepository, userPersistencePort, passwordHasher, sameThreadExecutor, transactionManager);
+                excelTaskRepository,
+                userPersistencePort,
+                passwordHasher,
+                sameThreadExecutor,
+                transactionManager,
+                new com.examp.springmvc.user.infrastructure.excel.ApachePoiUserExcelParser());
 
-        exportUsersUseCase = new ExportUsersUseCase(excelTaskRepository, userQueryPort);
+        exportUsersUseCase = new ExportUsersUseCase(
+                excelTaskRepository,
+                userQueryPort,
+                new com.examp.springmvc.user.infrastructure.excel.ApachePoiUserExcelExporter());
     }
 
     @Test

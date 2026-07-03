@@ -5,11 +5,13 @@ import com.examp.springmvc.shared.domain.task.ExcelTask;
 import com.examp.springmvc.shared.domain.task.ExcelTaskRepository;
 import com.examp.springmvc.shared.domain.task.ExcelTaskStatus;
 import com.examp.springmvc.shared.domain.task.ExcelTaskType;
+import com.examp.springmvc.shared.infrastructure.task.ExcelThreadTracker;
 import com.examp.springmvc.user.domain.model.Email;
 import com.examp.springmvc.user.domain.model.Password;
 import com.examp.springmvc.user.domain.model.User;
 import com.examp.springmvc.user.domain.model.UserRole;
 import com.examp.springmvc.user.domain.model.UserStatus;
+import com.examp.springmvc.user.domain.ports.output.UserExcelParserPort;
 import com.examp.springmvc.user.domain.ports.output.UserPersistencePort;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.InputStream;
@@ -17,16 +19,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,6 +43,7 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
     private final PasswordHasher passwordHasher;
     private final Executor excelDbWriterExecutor;
     private final PlatformTransactionManager transactionManager;
+    private final UserExcelParserPort userExcelParserPort;
 
     @SuppressFBWarnings("EI_EXPOSE_REP2")
     public ImportUsersUseCase(
@@ -53,12 +51,14 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
             UserPersistencePort userPersistencePort,
             PasswordHasher passwordHasher,
             @Qualifier("excelDbWriterExecutor") Executor excelDbWriterExecutor,
-            PlatformTransactionManager transactionManager) {
+            PlatformTransactionManager transactionManager,
+            UserExcelParserPort userExcelParserPort) {
         this.excelTaskRepository = excelTaskRepository;
         this.userPersistencePort = userPersistencePort;
         this.passwordHasher = passwordHasher;
         this.excelDbWriterExecutor = excelDbWriterExecutor;
         this.transactionManager = transactionManager;
+        this.userExcelParserPort = userExcelParserPort;
     }
 
     @Override
@@ -90,11 +90,10 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
         AtomicInteger failedCount = new AtomicInteger(0);
         List<CompletableFuture<Void>> futures = new ArrayList<>();
 
-        try (InputStream is = command.getInputStream();
-                Workbook workbook = WorkbookFactory.create(is)) {
-
-            Sheet sheet = workbook.getSheetAt(0);
-            int totalRows = sheet.getLastRowNum();
+        ExcelThreadTracker.setStatus("Đang đọc & phân tích file (Task ID: " + taskId + ")");
+        try (InputStream is = command.getInputStream()) {
+            List<UserImportRow> allRows = userExcelParserPort.parse(is);
+            int totalRows = allRows.size();
             if (totalRows < 1) {
                 throw new IllegalArgumentException("File Excel không có dữ liệu (trừ dòng tiêu đề)");
             }
@@ -105,16 +104,11 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
             List<UserImportRow> batchRows = new ArrayList<>();
             int batchNumber = 1;
 
-            for (int r = 1; r <= totalRows; r++) {
-                Row row = sheet.getRow(r);
-                if (row == null || isRowEmpty(row)) {
-                    continue;
-                }
-
-                UserImportRow importRow = parseRow(row, r);
+            for (int i = 0; i < totalRows; i++) {
+                UserImportRow importRow = allRows.get(i);
                 batchRows.add(importRow);
 
-                if (batchRows.size() >= BATCH_SIZE || r == totalRows) {
+                if (batchRows.size() >= BATCH_SIZE || i == totalRows - 1) {
                     List<UserImportRow> currentBatch = new ArrayList<>(batchRows);
                     batchRows.clear();
 
@@ -162,6 +156,8 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
             errors.add("Lỗi hệ thống bất ngờ: " + e.getMessage());
             finalTask.setErrorSummary(String.join("\n", errors));
             excelTaskRepository.save(finalTask);
+        } finally {
+            ExcelThreadTracker.clearStatus();
         }
     }
 
@@ -181,103 +177,126 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
         int batchSuccess = 0;
         int batchFailed = 0;
 
-        TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        ExcelThreadTracker.setStatus(
+                String.format("Ghi DB lô %d (dòng %d-%d) (Task: %s)", batchNum, startRow, endRow, taskId));
         try {
-            transactionTemplate.execute(status -> {
+            TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+            try {
+                transactionTemplate.execute(status -> {
+                    for (UserImportRow importRow : batch) {
+                        if (importRow.hasErrors()) {
+                            throw new RuntimeException("Trigger single-row fallback because row validation failed");
+                        }
+                        saveUser(importRow);
+                    }
+                    return null;
+                });
+                batchSuccess = batch.size();
+                successCount.addAndGet(batchSuccess);
+
+                LOG.info(
+                        "Import batch completed: taskId={}, thread={}, batch={}, rows={}-{}, success={}, failed={}",
+                        taskId,
+                        Thread.currentThread().getName(),
+                        batchNum,
+                        startRow,
+                        endRow,
+                        batchSuccess,
+                        batchFailed);
+
+            } catch (Exception e) {
+                // Khi có lỗi, fallback thực hiện lưu từng dòng để ghi nhận lỗi chi tiết
+                LOG.warn(
+                        "Batch failed. Falling back to single row processing for taskId={}, batch={}",
+                        taskId,
+                        batchNum);
                 for (UserImportRow importRow : batch) {
                     if (importRow.hasErrors()) {
-                        throw new RuntimeException("Trigger single-row fallback because row validation failed");
+                        batchFailed++;
+                        failedCount.incrementAndGet();
+                        errors.add(String.format("Row %d: %s", importRow.getRowNum(), importRow.getErrorMessage()));
+                        LOG.error(
+                                "ERROR taskId={} thread={} row={} email={} reason={}",
+                                taskId,
+                                Thread.currentThread().getName(),
+                                importRow.getRowNum(),
+                                importRow.getEmail(),
+                                importRow.getErrorMessage());
+                        continue;
                     }
-                    saveUser(importRow);
-                }
-                return null;
-            });
-            batchSuccess = batch.size();
-            successCount.addAndGet(batchSuccess);
 
-            LOG.info(
-                    "Import batch completed: taskId={}, thread={}, batch={}, rows={}-{}, success={}, failed={}",
-                    taskId,
-                    Thread.currentThread().getName(),
-                    batchNum,
-                    startRow,
-                    endRow,
-                    batchSuccess,
-                    batchFailed);
-
-        } catch (Exception e) {
-            // Khi có lỗi, fallback thực hiện lưu từng dòng để ghi nhận lỗi chi tiết
-            LOG.warn("Batch failed. Falling back to single row processing for taskId={}, batch={}", taskId, batchNum);
-            for (UserImportRow importRow : batch) {
-                if (importRow.hasErrors()) {
-                    batchFailed++;
-                    failedCount.incrementAndGet();
-                    errors.add(String.format("Row %d: %s", importRow.getRowNum(), importRow.getErrorMessage()));
-                    LOG.error(
-                            "ERROR taskId={} thread={} row={} email={} reason={}",
-                            taskId,
-                            Thread.currentThread().getName(),
-                            importRow.getRowNum(),
-                            importRow.getEmail(),
-                            importRow.getErrorMessage());
-                    continue;
+                    try {
+                        transactionTemplate.execute(status -> {
+                            saveUser(importRow);
+                            return null;
+                        });
+                        batchSuccess++;
+                        successCount.incrementAndGet();
+                    } catch (Exception rowEx) {
+                        batchFailed++;
+                        failedCount.incrementAndGet();
+                        String reason = getErrorMessage(rowEx);
+                        errors.add(String.format("Row %d: %s", importRow.getRowNum(), reason));
+                        LOG.error(
+                                "ERROR taskId={} thread={} row={} email={} reason={}",
+                                taskId,
+                                Thread.currentThread().getName(),
+                                importRow.getRowNum(),
+                                importRow.getEmail(),
+                                reason);
+                    }
                 }
-
-                try {
-                    transactionTemplate.execute(status -> {
-                        saveUser(importRow);
-                        return null;
-                    });
-                    batchSuccess++;
-                    successCount.incrementAndGet();
-                } catch (Exception rowEx) {
-                    batchFailed++;
-                    failedCount.incrementAndGet();
-                    String reason = getErrorMessage(rowEx);
-                    errors.add(String.format("Row %d: %s", importRow.getRowNum(), reason));
-                    LOG.error(
-                            "ERROR taskId={} thread={} row={} email={} reason={}",
-                            taskId,
-                            Thread.currentThread().getName(),
-                            importRow.getRowNum(),
-                            importRow.getEmail(),
-                            reason);
-                }
+                LOG.info(
+                        "Import batch completed (with fallback): taskId={}, thread={}, batch={}, success={}, failed={}",
+                        taskId,
+                        Thread.currentThread().getName(),
+                        batchNum,
+                        batchSuccess,
+                        batchFailed);
             }
-            LOG.info(
-                    "Import batch completed (with fallback): taskId={}, thread={}, batch={}, success={}, failed={}",
-                    taskId,
-                    Thread.currentThread().getName(),
-                    batchNum,
-                    batchSuccess,
-                    batchFailed);
+        } finally {
+            ExcelThreadTracker.clearStatus();
         }
     }
 
     private void saveUser(UserImportRow row) {
-        // Kiểm tra trùng username sớm
-        if (userPersistencePort.findByUsername(row.getUsername()).isPresent()) {
-            throw new IllegalArgumentException("Username đã tồn tại");
-        }
+        Optional<User> existingUserOpt = userPersistencePort.findByUsername(row.getUsername());
 
         Email email = new Email(row.getEmail());
-        Password password = Password.fromRaw(row.getPassword(), passwordHasher);
         UserRole role = UserRole.valueOf(row.getRole());
         UserStatus status = UserStatus.valueOf(row.getStatus());
 
-        User user = new User(
-                null,
-                row.getUsername(),
-                row.getFullName(),
-                email,
-                row.getPhone(),
-                status,
-                password,
-                role,
-                LocalDateTime.now(),
-                LocalDateTime.now());
-        user.validate();
-        userPersistencePort.save(user);
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            // Cập nhật thông tin profile
+            existingUser.updateProfile(row.getFullName(), row.getPhone(), email);
+            existingUser.changeRole(role);
+            existingUser.changeStatus(status);
+
+            // Cập nhật mật khẩu nếu trong file Excel có cung cấp
+            if (row.getPassword() != null && !row.getPassword().trim().isEmpty()) {
+                Password password = Password.fromRaw(row.getPassword(), passwordHasher);
+                existingUser.changePassword(password);
+            }
+
+            existingUser.validate();
+            userPersistencePort.save(existingUser);
+        } else {
+            Password password = Password.fromRaw(row.getPassword(), passwordHasher);
+            User user = new User(
+                    null,
+                    row.getUsername(),
+                    row.getFullName(),
+                    email,
+                    row.getPhone(),
+                    status,
+                    password,
+                    role,
+                    LocalDateTime.now(),
+                    LocalDateTime.now());
+            user.validate();
+            userPersistencePort.save(user);
+        }
     }
 
     private void updateTaskProgress(
@@ -305,96 +324,6 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
         });
     }
 
-    private UserImportRow parseRow(Row row, int rowNum) {
-        String username = getCellValueAsString(row.getCell(0));
-        String fullName = getCellValueAsString(row.getCell(1));
-        String email = getCellValueAsString(row.getCell(2));
-        String phone = getCellValueAsString(row.getCell(3));
-        String password = getCellValueAsString(row.getCell(4));
-        String role = getCellValueAsString(row.getCell(5));
-        String status = getCellValueAsString(row.getCell(6));
-
-        UserImportRow importRow = new UserImportRow(rowNum, username, fullName, email, phone, password, role, status);
-
-        if (username.isEmpty()) {
-            importRow.addError("Username không được để trống");
-        }
-        if (fullName.isEmpty()) {
-            importRow.addError("Họ tên không được để trống");
-        }
-        if (email.isEmpty()) {
-            importRow.addError("Email không được để trống");
-        } else if (!email.contains("@")) {
-            importRow.addError("Định dạng email không hợp lệ");
-        }
-        if (password.isEmpty()) {
-            importRow.addError("Mật khẩu không được để trống");
-        }
-
-        if (role.isEmpty()) {
-            importRow.setRole("USER");
-        } else {
-            try {
-                UserRole.valueOf(role.toUpperCase());
-                importRow.setRole(role.toUpperCase());
-            } catch (Exception e) {
-                importRow.addError("Vai trò không hợp lệ (Chỉ chấp nhận: USER, ADMIN)");
-            }
-        }
-
-        if (status.isEmpty()) {
-            importRow.setStatus("ACTIVE");
-        } else {
-            try {
-                UserStatus.valueOf(status.toUpperCase());
-                importRow.setStatus(status.toUpperCase());
-            } catch (Exception e) {
-                importRow.addError("Trạng thái không hợp lệ (Chỉ chấp nhận: ACTIVE, INACTIVE)");
-            }
-        }
-
-        return importRow;
-    }
-
-    private String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return "";
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                }
-                double numericValue = cell.getNumericCellValue();
-                if (numericValue == (long) numericValue) {
-                    return String.valueOf((long) numericValue);
-                }
-                return String.valueOf(numericValue);
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                try {
-                    return cell.getStringCellValue().trim();
-                } catch (Exception e) {
-                    return String.valueOf(cell.getNumericCellValue());
-                }
-            default:
-                return "";
-        }
-    }
-
-    private boolean isRowEmpty(Row row) {
-        for (int c = 0; c < row.getLastCellNum(); c++) {
-            Cell cell = row.getCell(c);
-            if (cell != null && cell.getCellType() != org.apache.poi.ss.usermodel.CellType.BLANK) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     private String getErrorMessage(Exception e) {
         if (e.getMessage() != null && e.getMessage().contains("Username đã tồn tại")) {
             return "Username đã tồn tại";
@@ -410,88 +339,5 @@ public class ImportUsersUseCase implements ImportUsersInputPort {
             return msg;
         }
         return e.getMessage() != null ? e.getMessage() : e.toString();
-    }
-
-    private static class UserImportRow {
-        private final int rowNum;
-        private final String username;
-        private final String fullName;
-        private final String email;
-        private final String phone;
-        private final String password;
-        private String role;
-        private String status;
-        private final List<String> rowErrors = new ArrayList<>();
-
-        UserImportRow(
-                int rowNum,
-                String username,
-                String fullName,
-                String email,
-                String phone,
-                String password,
-                String role,
-                String status) {
-            this.rowNum = rowNum;
-            this.username = username;
-            this.fullName = fullName;
-            this.email = email;
-            this.phone = phone;
-            this.password = password;
-            this.role = role;
-            this.status = status;
-        }
-
-        public int getRowNum() {
-            return rowNum;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public String getFullName() {
-            return fullName;
-        }
-
-        public String getEmail() {
-            return email;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public String getRole() {
-            return role;
-        }
-
-        public void setRole(String role) {
-            this.role = role;
-        }
-
-        public String getStatus() {
-            return status;
-        }
-
-        public void setStatus(String status) {
-            this.status = status;
-        }
-
-        public void addError(String err) {
-            rowErrors.add(err);
-        }
-
-        public boolean hasErrors() {
-            return !rowErrors.isEmpty();
-        }
-
-        public String getErrorMessage() {
-            return String.join(", ", rowErrors);
-        }
     }
 }

@@ -23,7 +23,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "excelExecutor")
-    public TaskExecutor excelExecutor() {
+    public ThreadPoolTaskExecutor excelExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(2); // Tối đa 2 file Excel import đồng thời
         executor.setMaxPoolSize(4);
@@ -34,7 +34,7 @@ public class AsyncConfig {
     }
 
     @Bean(name = "excelDbWriterExecutor")
-    public TaskExecutor excelDbWriterExecutor() {
+    public ThreadPoolTaskExecutor excelDbWriterExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5); // Số lượng luồng ghi DB song song
         executor.setMaxPoolSize(10);

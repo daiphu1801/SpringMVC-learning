@@ -4,15 +4,13 @@ import com.examp.springmvc.shared.domain.task.ExcelTask;
 import com.examp.springmvc.shared.domain.task.ExcelTaskRepository;
 import com.examp.springmvc.shared.domain.task.ExcelTaskStatus;
 import com.examp.springmvc.shared.domain.task.ExcelTaskType;
+import com.examp.springmvc.shared.infrastructure.task.ExcelThreadTracker;
+import com.examp.springmvc.user.domain.ports.output.UserExcelExporterPort;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
@@ -25,10 +23,15 @@ public class ExportUsersUseCase implements ExportUsersInputPort {
 
     private final ExcelTaskRepository excelTaskRepository;
     private final UserQueryPort userQueryPort;
+    private final UserExcelExporterPort userExcelExporterPort;
 
-    public ExportUsersUseCase(ExcelTaskRepository excelTaskRepository, UserQueryPort userQueryPort) {
+    public ExportUsersUseCase(
+            ExcelTaskRepository excelTaskRepository,
+            UserQueryPort userQueryPort,
+            UserExcelExporterPort userExcelExporterPort) {
         this.excelTaskRepository = excelTaskRepository;
         this.userQueryPort = userQueryPort;
+        this.userExcelExporterPort = userExcelExporterPort;
     }
 
     @Override
@@ -67,52 +70,24 @@ public class ExportUsersUseCase implements ExportUsersInputPort {
 
         File file = new File(exportDir, "users_export_" + taskId + ".xlsx");
 
-        // Dùng SXSSFWorkbook với memory window 100 để tránh tràn bộ nhớ (OOM)
-        try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
-            Sheet sheet = workbook.createSheet("Users");
-
-            // Viết Header
-            Row headerRow = sheet.createRow(0);
-            String[] headers = {"Username", "Họ Tên", "Email", "Số Điện Thoại", "Trạng Thái", "Vai Trò"};
-            for (int i = 0; i < headers.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(headers[i]);
-            }
-
+        ExcelThreadTracker.setStatus("Xuất file: Đang truy vấn dữ liệu (Task ID: " + taskId + ")");
+        try {
             List<UserDTO> users = userQueryPort.findAll();
             int totalRows = users.size();
             task.setTotalRows(totalRows);
             excelTaskRepository.save(task);
 
             LOG.info("Writing {} users to Excel file", totalRows);
-
-            for (int i = 0; i < totalRows; i++) {
-                UserDTO user = users.get(i);
-                Row row = sheet.createRow(i + 1);
-
-                row.createCell(0).setCellValue(user.getUsername());
-                row.createCell(1).setCellValue(user.getFullName());
-                row.createCell(2).setCellValue(user.getEmail());
-                row.createCell(3).setCellValue(user.getPhone() != null ? user.getPhone() : "");
-                row.createCell(4).setCellValue(user.getStatus());
-                row.createCell(5).setCellValue(user.getRole());
-
-                // Cập nhật tiến độ sau mỗi 200 dòng
-                if ((i + 1) % 200 == 0 || (i + 1) == totalRows) {
-                    int progress = Math.min(99, ((i + 1) * 100) / totalRows);
-                    task.setProgress(progress);
-                    task.setSuccessRows(i + 1);
-                    excelTaskRepository.save(task);
-
-                    // Thêm chút sleep giả lập xử lý ngầm mượt mà
-                    Thread.sleep(10);
-                }
-            }
+            ExcelThreadTracker.setStatus("Xuất file: Đang tạo tệp Excel (Task ID: " + taskId + ")");
 
             try (FileOutputStream fos = new FileOutputStream(file)) {
-                workbook.write(fos);
+                userExcelExporterPort.export(users, fos, successRows -> {
+                    int progress = Math.min(99, (successRows * 100) / totalRows);
+                    task.setProgress(progress);
+                    task.setSuccessRows(successRows);
+                    excelTaskRepository.save(task);
+                });
             }
-            workbook.dispose();
 
             task.setProgress(100);
             task.setSuccessRows(totalRows);
@@ -127,6 +102,8 @@ public class ExportUsersUseCase implements ExportUsersInputPort {
             task.setStatus(ExcelTaskStatus.FAILED);
             task.setErrorSummary("Lỗi xuất file: " + e.getMessage());
             excelTaskRepository.save(task);
+        } finally {
+            ExcelThreadTracker.clearStatus();
         }
     }
 }

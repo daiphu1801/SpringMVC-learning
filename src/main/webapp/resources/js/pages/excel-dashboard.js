@@ -92,7 +92,42 @@ document.addEventListener("DOMContentLoaded", function() {
                 if (writerStatusText) writerStatusText.textContent = "Đang ghi...";
             } else {
                 if (writerPulse) writerPulse.classList.remove("active");
-                if (writerStatusText) writerStatusText.textContent = "Đang rảnh";
+            }
+
+            // Active Threads list
+            const activeThreads = data.activeThreads || [];
+            const tbody = document.getElementById("active-threads-body");
+            if (tbody) {
+                if (activeThreads.length === 0) {
+                    tbody.innerHTML = `<tr>
+                        <td colspan="3" class="text-center text-muted" style="padding: 15px;">Tất cả các luồng đang rảnh rỗi (Idle).</td>
+                    </tr>`;
+                } else {
+                    tbody.innerHTML = "";
+                    activeThreads.forEach(thread => {
+                        const tr = document.createElement("tr");
+
+                        // 1. Thread Name
+                        const tdName = document.createElement("td");
+                        tdName.style.fontWeight = "600";
+                        tdName.textContent = thread.threadName;
+
+                        // 2. Status Badge
+                        const tdStatus = document.createElement("td");
+                        tdStatus.innerHTML = `<span class="badge-task badge-processing" style="display: inline-flex; align-items: center; gap: 6px;">
+                            <span class="pulse-indicator active" style="background: #10b981; box-shadow: 0 0 8px #10b981;"></span> Đang chạy
+                        </span>`;
+
+                        // 3. Current Action
+                        const tdAction = document.createElement("td");
+                        tdAction.textContent = thread.action;
+
+                        tr.appendChild(tdName);
+                        tr.appendChild(tdStatus);
+                        tr.appendChild(tdAction);
+                        tbody.appendChild(tr);
+                    });
+                }
             }
         })
         .catch(err => {

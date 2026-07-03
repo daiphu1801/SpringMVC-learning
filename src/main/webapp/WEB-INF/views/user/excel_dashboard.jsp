@@ -18,17 +18,32 @@
     <p class="text-muted mb-4">Theo dõi trực quan tiến độ nhập/xuất dữ liệu người dùng thời gian thực.</p>
 
     <div class="grid-3-col mb-4">
-        <div class="stat-card">
-            <span class="stat-card-title">Tổng tác vụ</span>
-            <span class="stat-card-value" id="stat-total-tasks">0</span>
+        <div class="stat-card accent-blue">
+            <div class="stat-card-content">
+                <span class="stat-card-title">Tổng tác vụ</span>
+                <span class="stat-card-value" id="stat-total-tasks">0</span>
+            </div>
+            <div class="stat-card-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
         </div>
-        <div class="stat-card">
-            <span class="stat-card-title">Đang hoạt động</span>
-            <span class="stat-card-value text-primary" id="stat-active-tasks">0</span>
+        <div class="stat-card accent-amber">
+            <div class="stat-card-content">
+                <span class="stat-card-title">Đang hoạt động</span>
+                <span class="stat-card-value text-primary" id="stat-active-tasks">0</span>
+            </div>
+            <div class="stat-card-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </div>
         </div>
-        <div class="stat-card">
-            <span class="stat-card-title">Hoàn thành</span>
-            <span class="stat-card-value text-success" id="stat-completed-tasks">0</span>
+        <div class="stat-card accent-green">
+            <div class="stat-card-content">
+                <span class="stat-card-title">Hoàn thành</span>
+                <span class="stat-card-value text-success" id="stat-completed-tasks">0</span>
+            </div>
+            <div class="stat-card-icon-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
         </div>
     </div>
 
@@ -96,6 +111,34 @@
                     <span class="pool-metric-value text-success" id="writer-completed-tasks">0</span>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <h2 class="mb-3" style="font-size: 1.2rem; font-weight: 600; color: var(--text-main); margin-top: 25px;">
+        Chi tiết hoạt động của các Luồng (Active Threads)
+    </h2>
+    <div class="pool-card mb-4" style="width: 100%; max-width: 100%;">
+        <div class="pool-card-header">
+            <span class="pool-card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l-7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                Hoạt động chi tiết các luồng xử lý thời gian thực
+            </span>
+        </div>
+        <div style="padding: 15px; overflow-x: auto;">
+            <table class="active-threads-table" style="width: 100%; border-collapse: collapse; margin: 0;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                        <th style="width: 25%;">Tên Luồng (Thread)</th>
+                        <th style="width: 20%;">Trạng Thái</th>
+                        <th style="width: 55%;">Công việc đang thực hiện</th>
+                    </tr>
+                </thead>
+                <tbody id="active-threads-body">
+                    <tr>
+                        <td colspan="3" class="text-center text-muted" style="padding: 15px;">Tất cả các luồng đang rảnh rỗi (Idle).</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 

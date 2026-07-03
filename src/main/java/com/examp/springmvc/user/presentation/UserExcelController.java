@@ -1,23 +1,24 @@
 package com.examp.springmvc.user.presentation;
 
+import com.examp.springmvc.shared.application.task.GetExcelDashboardInputPort;
+import com.examp.springmvc.shared.domain.task.ExcelDashboardDTO;
 import com.examp.springmvc.shared.domain.task.ExcelTask;
 import com.examp.springmvc.shared.domain.task.ExcelTaskRepository;
+import com.examp.springmvc.shared.domain.task.ThreadPoolMetrics;
 import com.examp.springmvc.user.application.usermanagement.command.ImportUsersCommand;
 import com.examp.springmvc.user.application.usermanagement.command.ImportUsersInputPort;
 import com.examp.springmvc.user.application.usermanagement.query.ExportUsersCommand;
 import com.examp.springmvc.user.application.usermanagement.query.ExportUsersInputPort;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,22 +35,18 @@ public class UserExcelController {
 
     private final ImportUsersInputPort importUsersInputPort;
     private final ExportUsersInputPort exportUsersInputPort;
+    private final GetExcelDashboardInputPort getExcelDashboardInputPort;
     private final ExcelTaskRepository excelTaskRepository;
-    private final ThreadPoolTaskExecutor excelExecutor;
-    private final ThreadPoolTaskExecutor excelDbWriterExecutor;
 
-    @SuppressFBWarnings("EI_EXPOSE_REP2")
     public UserExcelController(
             ImportUsersInputPort importUsersInputPort,
             ExportUsersInputPort exportUsersInputPort,
-            ExcelTaskRepository excelTaskRepository,
-            @Qualifier("excelExecutor") ThreadPoolTaskExecutor excelExecutor,
-            @Qualifier("excelDbWriterExecutor") ThreadPoolTaskExecutor excelDbWriterExecutor) {
+            GetExcelDashboardInputPort getExcelDashboardInputPort,
+            ExcelTaskRepository excelTaskRepository) {
         this.importUsersInputPort = importUsersInputPort;
         this.exportUsersInputPort = exportUsersInputPort;
+        this.getExcelDashboardInputPort = getExcelDashboardInputPort;
         this.excelTaskRepository = excelTaskRepository;
-        this.excelExecutor = excelExecutor;
-        this.excelDbWriterExecutor = excelDbWriterExecutor;
     }
 
     @GetMapping("/dashboard")
@@ -97,41 +94,47 @@ public class UserExcelController {
 
     @GetMapping("/metrics")
     public void getThreadPoolMetrics(HttpServletResponse response) throws IOException {
-        int readerActive = excelExecutor.getActiveCount();
-        int readerQueue = excelExecutor.getThreadPoolExecutor().getQueue().size();
-        int readerPool = excelExecutor.getThreadPoolExecutor().getPoolSize();
-        int readerMax = excelExecutor.getMaxPoolSize();
-        long readerCompleted = excelExecutor.getThreadPoolExecutor().getCompletedTaskCount();
+        ExcelDashboardDTO dashboard = getExcelDashboardInputPort.execute();
 
-        int writerActive = excelDbWriterExecutor.getActiveCount();
-        int writerQueue =
-                excelDbWriterExecutor.getThreadPoolExecutor().getQueue().size();
-        int writerPool = excelDbWriterExecutor.getThreadPoolExecutor().getPoolSize();
-        int writerMax = excelDbWriterExecutor.getMaxPoolSize();
-        long writerCompleted = excelDbWriterExecutor.getThreadPoolExecutor().getCompletedTaskCount();
+        ThreadPoolMetrics reader = dashboard.getReaderPool();
+        ThreadPoolMetrics writer = dashboard.getWriterPool();
+
+        StringBuilder threadsJson = new StringBuilder("[");
+        int index = 0;
+        for (Map.Entry<String, String> entry : dashboard.getActiveThreads().entrySet()) {
+            threadsJson.append(String.format(
+                    "{\"threadName\":\"%s\",\"action\":\"%s\"}",
+                    entry.getKey(), entry.getValue().replace("\"", "\\\"")));
+            if (++index < dashboard.getActiveThreads().size()) {
+                threadsJson.append(",");
+            }
+        }
+        threadsJson.append("]");
 
         String json = String.format(
                 "{\"readerPool\":{\"activeCount\":%d,\"queueSize\":%d,\"poolSize\":%d,"
                         + "\"maxPoolSize\":%d,\"completedTaskCount\":%d},"
                         + "\"writerPool\":{\"activeCount\":%d,\"queueSize\":%d,\"poolSize\":%d,"
-                        + "\"maxPoolSize\":%d,\"completedTaskCount\":%d}}",
-                readerActive,
-                readerQueue,
-                readerPool,
-                readerMax,
-                readerCompleted,
-                writerActive,
-                writerQueue,
-                writerPool,
-                writerMax,
-                writerCompleted);
+                        + "\"maxPoolSize\":%d,\"completedTaskCount\":%d},"
+                        + "\"activeThreads\":%s}",
+                reader.getActiveCount(),
+                reader.getQueueSize(),
+                reader.getPoolSize(),
+                reader.getMaxPoolSize(),
+                reader.getCompletedTaskCount(),
+                writer.getActiveCount(),
+                writer.getQueueSize(),
+                writer.getPoolSize(),
+                writer.getMaxPoolSize(),
+                writer.getCompletedTaskCount(),
+                threadsJson.toString());
         writeJson(response, json);
     }
 
     @GetMapping("/tasks")
     public void getRecentTasks(HttpServletResponse response) throws IOException {
-        List<ExcelTask> tasks = excelTaskRepository.findRecentTasks(5);
-        writeJson(response, toJson(tasks));
+        ExcelDashboardDTO dashboard = getExcelDashboardInputPort.execute();
+        writeJson(response, toJson(dashboard.getRecentTasks()));
     }
 
     @GetMapping("/tasks/{id}")
