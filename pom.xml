@@ -42,6 +42,7 @@
     <oracle-jdbc.version>23.26.2.0.0</oracle-jdbc.version>
     <cloudinary.version>1.36.0</cloudinary.version>
     <angus-mail.version>2.0.3</angus-mail.version>
+    <poi.version>5.2.5</poi.version>
 
     <!--Check conventing code-->
     <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
@@ -167,6 +168,18 @@
       <groupId>org.eclipse.angus</groupId>
       <artifactId>angus-mail</artifactId>
       <version>${angus-mail.version}</version>
+    </dependency>
+
+    <!-- Apache POI for Excel processing -->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${poi.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>${poi.version}</version>
     </dependency>
 
     <!-- ===================== -->

@@ -25,7 +25,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 @MapperScan({
     "com.examp.springmvc.user.infrastructure.mapper",
     "com.examp.springmvc.catalog.infrastructure.mapper",
-    "com.examp.springmvc.order.infrastructure.mapper"
+    "com.examp.springmvc.order.infrastructure.mapper",
+    "com.examp.springmvc.shared.infrastructure.task"
 })
 public class MyBatisConfig {
 

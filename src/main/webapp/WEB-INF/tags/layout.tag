@@ -61,6 +61,7 @@
                                 <a href="${pageContext.request.contextPath}/admin/categories" class="nav-link">Quản lý Danh mục</a>
                                 <a href="${pageContext.request.contextPath}/admin/orders" class="nav-link">Quản lý Đơn hàng</a>
                                 <a href="${pageContext.request.contextPath}/users" class="nav-link">Quản lý User</a>
+                                <a href="${pageContext.request.contextPath}/users/excel/dashboard" class="nav-link">Tiến trình Excel</a>
                                 
                                 <span class="nav-separator"></span>
                                 

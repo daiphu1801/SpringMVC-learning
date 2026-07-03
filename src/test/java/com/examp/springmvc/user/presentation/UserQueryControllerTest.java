@@ -55,17 +55,19 @@ class UserQueryControllerTest {
     }
 
     @Test
-    @DisplayName("GET /users - Should return list view with users")
+    @DisplayName("GET /users - Should return list view with paged users")
     void shouldReturnListView() throws Exception {
         List<UserDTO> users = List.of(testUserDTO(1L, "user1"), testUserDTO(2L, "user2"));
-        when(findAllUsersInputPort.execute()).thenReturn(users);
+        com.examp.springmvc.shared.domain.dto.PagedResult<UserDTO> pagedResult =
+                new com.examp.springmvc.shared.domain.dto.PagedResult<>(users, 1, 10, 2);
+        when(findAllUsersInputPort.execute(1, 10)).thenReturn(pagedResult);
 
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("user/list"))
-                .andExpect(model().attribute("users", users));
+                .andExpect(model().attributeExists("pagedResult"));
 
-        verify(findAllUsersInputPort).execute();
+        verify(findAllUsersInputPort).execute(1, 10);
     }
 
     @Test

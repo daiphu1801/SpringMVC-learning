@@ -42,17 +42,19 @@ class UserQueryUseCasesTest {
     }
 
     @Test
-    @DisplayName("Should return all users")
+    @DisplayName("Should return paged users")
     void shouldReturnAllUsers() {
         List<UserDTO> dtos = List.of(testUserDTO(1L, "user1"), testUserDTO(2L, "user2"));
-        when(userQueryPort.findAll()).thenReturn(dtos);
+        com.examp.springmvc.shared.domain.dto.PagedResult<UserDTO> paged =
+                new com.examp.springmvc.shared.domain.dto.PagedResult<>(dtos, 1, 10, 2);
+        when(userQueryPort.findPaged(1, 10)).thenReturn(paged);
 
-        List<UserDTO> result = findAllUsersUseCase.execute();
+        com.examp.springmvc.shared.domain.dto.PagedResult<UserDTO> result = findAllUsersUseCase.execute(1, 10);
 
         assertNotNull(result);
-        assertEquals(2, result.size());
-        assertEquals("user1", result.get(0).getUsername());
-        verify(userQueryPort).findAll();
+        assertEquals(2, result.getItems().size());
+        assertEquals("user1", result.getItems().get(0).getUsername());
+        verify(userQueryPort).findPaged(1, 10);
     }
 
     @Test

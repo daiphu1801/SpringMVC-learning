@@ -1,5 +1,6 @@
 package com.examp.springmvc.user.infrastructure.persistence;
 
+import com.examp.springmvc.shared.domain.dto.PagedResult;
 import com.examp.springmvc.user.application.usermanagement.query.UserDTO;
 import com.examp.springmvc.user.application.usermanagement.query.UserQueryPort;
 import com.examp.springmvc.user.infrastructure.mapper.UserQueryMapper;
@@ -21,6 +22,15 @@ public class UserQueryAdapter implements UserQueryPort {
     public List<UserDTO> findAll() {
         List<UserDbEntity> entities = userQueryMapper.findAll();
         return entities.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public PagedResult<UserDTO> findPaged(int page, int size) {
+        int offset = (page - 1) * size;
+        List<UserDbEntity> entities = userQueryMapper.findPaged(offset, size);
+        List<UserDTO> dtoList = entities.stream().map(this::toDTO).collect(Collectors.toList());
+        long totalItems = userQueryMapper.count();
+        return new PagedResult<>(dtoList, page, size, totalItems);
     }
 
     @Override

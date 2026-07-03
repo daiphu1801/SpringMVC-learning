@@ -19,7 +19,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @MapperScan({
     "com.examp.springmvc.user.infrastructure.mapper",
     "com.examp.springmvc.catalog.infrastructure.mapper",
-    "com.examp.springmvc.order.infrastructure.mapper"
+    "com.examp.springmvc.order.infrastructure.mapper",
+    "com.examp.springmvc.shared.infrastructure.task"
 })
 public class MyBatisIntegrationTestConfig {
 

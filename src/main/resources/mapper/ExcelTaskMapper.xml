@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.examp.springmvc.shared.infrastructure.task.ExcelTaskMapper">
+
+    <resultMap id="excelTaskResultMap" type="com.examp.springmvc.shared.domain.task.ExcelTask">
+        <id property="id" column="ID"/>
+        <result property="type" column="TYPE" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="status" column="STATUS" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="progress" column="PROGRESS"/>
+        <result property="totalRows" column="TOTAL_ROWS"/>
+        <result property="successRows" column="SUCCESS_ROWS"/>
+        <result property="failedRows" column="FAILED_ROWS"/>
+        <result property="errorSummary" column="ERROR_SUMMARY" jdbcType="CLOB"/>
+        <result property="resultUrl" column="RESULT_URL"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+    </resultMap>
+
+    <sql id="excelTaskColumns">
+        ID,
+        TYPE,
+        STATUS,
+        PROGRESS,
+        TOTAL_ROWS,
+        SUCCESS_ROWS,
+        FAILED_ROWS,
+        ERROR_SUMMARY,
+        RESULT_URL,
+        CREATED_AT,
+        UPDATED_AT
+    </sql>
+
+    <insert id="insert" parameterType="com.examp.springmvc.shared.domain.task.ExcelTask">
+        INSERT INTO APP_EXCEL_TASKS (
+            ID, TYPE, STATUS, PROGRESS, TOTAL_ROWS,
+            SUCCESS_ROWS, FAILED_ROWS, ERROR_SUMMARY, RESULT_URL,
+            CREATED_AT, UPDATED_AT
+        ) VALUES (
+            #{id, jdbcType=VARCHAR},
+            #{type, jdbcType=VARCHAR, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{status, jdbcType=VARCHAR, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{progress, jdbcType=NUMERIC},
+            #{totalRows, jdbcType=NUMERIC},
+            #{successRows, jdbcType=NUMERIC},
+            #{failedRows, jdbcType=NUMERIC},
+            #{errorSummary, jdbcType=CLOB},
+            #{resultUrl, jdbcType=VARCHAR},
+            SYSTIMESTAMP,
+            SYSTIMESTAMP
+        )
+    </insert>
+
+    <update id="update" parameterType="com.examp.springmvc.shared.domain.task.ExcelTask">
+        UPDATE APP_EXCEL_TASKS
+        SET
+            STATUS = #{status, jdbcType=VARCHAR, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            PROGRESS = #{progress, jdbcType=NUMERIC},
+            TOTAL_ROWS = #{totalRows, jdbcType=NUMERIC},
+            SUCCESS_ROWS = #{successRows, jdbcType=NUMERIC},
+            FAILED_ROWS = #{failedRows, jdbcType=NUMERIC},
+            ERROR_SUMMARY = #{errorSummary, jdbcType=CLOB},
+            RESULT_URL = #{resultUrl, jdbcType=VARCHAR},
+            UPDATED_AT = SYSTIMESTAMP
+        WHERE ID = #{id, jdbcType=VARCHAR}
+    </update>
+
+    <select id="findById" parameterType="string" resultMap="excelTaskResultMap">
+        SELECT <include refid="excelTaskColumns"/>
+        FROM APP_EXCEL_TASKS
+        WHERE ID = #{id, jdbcType=VARCHAR}
+    </select>
+
+    <select id="findRecentTasks" resultMap="excelTaskResultMap">
+        SELECT * FROM (
+            SELECT <include refid="excelTaskColumns"/>
+            FROM APP_EXCEL_TASKS
+            ORDER BY CREATED_AT DESC
+        )
+        WHERE ROWNUM &lt;= #{limit, jdbcType=NUMERIC}
+    </select>
+
+</mapper>

@@ -14,6 +14,8 @@ import com.examp.springmvc.order.infrastructure.mapper.OrderItemMapper;
 import com.examp.springmvc.order.infrastructure.mapper.OrderMapper;
 import com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity;
 import com.examp.springmvc.order.infrastructure.persistence.OrderItemDbEntity;
+import com.examp.springmvc.shared.domain.task.ExcelTask;
+import com.examp.springmvc.shared.infrastructure.task.ExcelTaskMapper;
 import com.examp.springmvc.user.infrastructure.mapper.UserCommandMapper;
 import com.examp.springmvc.user.infrastructure.mapper.UserQueryMapper;
 import com.examp.springmvc.user.infrastructure.persistence.UserDbEntity;
@@ -49,6 +51,9 @@ public class MapperIntegrationTest {
 
     @Autowired
     private OrderItemMapper orderItemMapper;
+
+    @Autowired
+    private ExcelTaskMapper excelTaskMapper;
 
     @Test
     public void testUserMappers() {
@@ -209,5 +214,50 @@ public class MapperIntegrationTest {
 
         assertNull(orderMapper.findById(order.getId()));
         assertTrue(orderItemMapper.findByOrderId(order.getId()).isEmpty());
+    }
+
+    @Test
+    public void testExcelTaskMapper() {
+        String taskId = java.util.UUID.randomUUID().toString();
+        ExcelTask task = new ExcelTask(
+                taskId,
+                com.examp.springmvc.shared.domain.task.ExcelTaskType.IMPORT,
+                com.examp.springmvc.shared.domain.task.ExcelTaskStatus.PROCESSING,
+                100,
+                0,
+                0,
+                0,
+                "Testing errors",
+                null,
+                java.time.LocalDateTime.now(),
+                java.time.LocalDateTime.now());
+
+        excelTaskMapper.insert(task);
+
+        ExcelTask found = excelTaskMapper.findById(taskId);
+        assertNotNull(found);
+        assertEquals(com.examp.springmvc.shared.domain.task.ExcelTaskType.IMPORT, found.getType());
+        assertEquals(com.examp.springmvc.shared.domain.task.ExcelTaskStatus.PROCESSING, found.getStatus());
+        assertEquals(100, found.getProgress());
+        assertEquals("Testing errors", found.getErrorSummary());
+
+        found.setProgress(50);
+        found.setStatus(com.examp.springmvc.shared.domain.task.ExcelTaskStatus.COMPLETED);
+        found.setSuccessRows(45);
+        found.setFailedRows(55);
+        found.setResultUrl("/test/download/url");
+        excelTaskMapper.update(found);
+
+        ExcelTask updated = excelTaskMapper.findById(taskId);
+        assertNotNull(updated);
+        assertEquals(50, updated.getProgress());
+        assertEquals(com.examp.springmvc.shared.domain.task.ExcelTaskStatus.COMPLETED, updated.getStatus());
+        assertEquals(45, updated.getSuccessRows());
+        assertEquals(55, updated.getFailedRows());
+        assertEquals("/test/download/url", updated.getResultUrl());
+
+        List<ExcelTask> recent = excelTaskMapper.findRecentTasks(5);
+        assertFalse(recent.isEmpty());
+        assertTrue(recent.stream().anyMatch(t -> t.getId().equals(taskId)));
     }
 }

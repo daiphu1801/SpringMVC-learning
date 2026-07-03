@@ -109,3 +109,498 @@
         flex-direction: column;
     }
 }
+
+/* Excel Dashboard & UI Components */
+.excel-actions-wrapper {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border: 1.5px solid var(--primary);
+    color: var(--primary);
+    padding: 10.5px 24px;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    box-sizing: border-box;
+}
+.btn-secondary:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+}
+
+.excel-dashboard {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: var(--shadow-sm);
+}
+.excel-dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+.excel-dashboard-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.task-item {
+    background: rgba(159, 161, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all var(--transition-speed) ease;
+}
+.task-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.task-info {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.task-stats {
+    font-size: 0.85rem;
+    color: var(--text-main);
+    margin-top: 4px;
+}
+.task-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+/* Badges */
+.badge-task {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.badge-pending {
+    background: #fef3c7;
+    color: #d97706;
+}
+.badge-processing {
+    background: #dbeafe;
+    color: #2563eb;
+    animation: badge-pulse 1.5s infinite ease-in-out;
+}
+.badge-completed {
+    background: #d1fae5;
+    color: #059669;
+}
+.badge-warning {
+    background: #ffedd5;
+    color: #ea580c;
+}
+.badge-failed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+@keyframes badge-pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Progress bar */
+.task-progress-wrapper {
+    width: 100%;
+    margin-top: 5px;
+}
+.task-progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+.task-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+.task-progress-text {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+/* Modal styles */
+.excel-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+}
+.excel-modal.active {
+    display: flex;
+}
+.excel-modal-content {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    position: relative;
+    animation: modal-fade-in 0.3s ease;
+}
+.excel-modal-content.large {
+    max-width: 700px;
+}
+.excel-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+}
+.excel-modal-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: var(--text-main);
+}
+.excel-modal-close {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-muted);
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+}
+.excel-modal-close:hover {
+    color: var(--text-main);
+}
+.excel-form-group {
+    margin-bottom: 20px;
+}
+.excel-form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+.excel-file-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px dashed var(--primary);
+    border-radius: 8px;
+    background: rgba(159, 161, 255, 0.02);
+    cursor: pointer;
+}
+.excel-error-log {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: 'Courier New', Courier, monospace;
+    padding: 15px;
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    text-align: left;
+}
+
+@keyframes modal-fade-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* Excel Dashboard Premium styling */
+.grid-3-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+@media (max-width: 768px) {
+    .grid-3-col {
+        grid-template-columns: 1fr;
+    }
+}
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all var(--transition-speed) ease;
+}
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+.stat-card-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+}
+.stat-card-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+/* Beautiful task items with left border accents based on status */
+.task-item {
+    border-left: 5px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.task-item.status-pending {
+    border-left-color: #FBBF24; /* Amber */
+}
+.task-item.status-processing {
+    border-left-color: #3B82F6; /* Blue */
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+}
+.task-item.status-completed {
+    border-left-color: #10B981; /* Emerald */
+}
+.task-item.status-completed_with_errors {
+    border-left-color: #F97316; /* Orange */
+}
+.task-item.status-failed {
+    border-left-color: #EF4444; /* Red */
+}
+
+/* Task details grid layout */
+.task-details-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border-color);
+}
+@media (max-width: 600px) {
+    .task-details-grid {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Pagination Styling */
+.pagination-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+.pagination-info strong {
+    color: var(--text-main);
+    font-weight: 600;
+}
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+}
+.page-link:hover:not(.disabled):not(.active) {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: rgba(159, 161, 255, 0.05);
+    transform: translateY(-1px);
+}
+.page-link.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: default;
+}
+.page-link.disabled {
+    color: var(--text-muted);
+    border-color: var(--border-color);
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-body);
+}
+@media (max-width: 600px) {
+    .pagination-wrapper {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Thread Pool Metrics Styles */
+.pool-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 25px;
+}
+@media (max-width: 768px) {
+    .pool-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.pool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-speed) ease;
+    position: relative;
+    overflow: hidden;
+}
+.pool-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light);
+}
+.pool-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+.pool-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.pool-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+.pool-metric-item {
+    background: var(--bg-body);
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.pool-metric-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+.pool-metric-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+.pulse-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+    display: inline-block;
+    vertical-align: middle;
+}
+.pulse-indicator.active {
+    background-color: #10B981;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: pulse-green 1.5s infinite;
+}
+@keyframes pulse-green {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}

@@ -10,11 +10,19 @@
 <jsp:body>
 <div class="container">
     <h1>Danh sách người dùng</h1>
-
     <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
-        <div class="btn-container mb-3">
+        <div class="btn-container mb-3 d-flex align-center gap-3">
             <a href="${pageContext.request.contextPath}/users/create" class="btn">
                 Thêm người dùng
+            </a>
+            <button type="button" class="btn-secondary" id="btn-open-import">
+                Import Excel
+            </button>
+            <button type="button" class="btn-secondary" id="btn-trigger-export">
+                Export Excel
+            </button>
+            <a href="${pageContext.request.contextPath}/users/excel/dashboard" class="btn-secondary" id="btn-view-dashboard" style="text-decoration: none;">
+                Lịch sử &amp; Tiến trình Excel
             </a>
         </div>
     </c:if>
@@ -35,7 +43,7 @@
 
             <tbody>
 
-            <c:forEach var="user" items="${users}">
+            <c:forEach var="user" items="${pagedResult.items}">
                 <tr>
                     <td>
                         <c:out value="${user.id}"/>
@@ -90,7 +98,7 @@
                 </tr>
             </c:forEach>
 
-            <c:if test="${empty users}">
+            <c:if test="${empty pagedResult.items}">
                 <tr>
                     <td colspan="7" class="text-center text-muted">
                         Chưa có dữ liệu người dùng
@@ -100,6 +108,76 @@
 
             </tbody>
         </table>
+    </div>
+
+    <!-- Phân trang (Pagination) -->
+    <c:if test="${not empty pagedResult.items}">
+        <div class="pagination-wrapper">
+            <div class="pagination-info">
+                Hiển thị từ <strong><c:out value="${(pagedResult.page - 1) * pagedResult.size + 1}"/></strong> 
+                đến <strong><c:out value="${(pagedResult.page - 1) * pagedResult.size + pagedResult.items.size()}"/></strong> 
+                trên tổng số <strong><c:out value="${pagedResult.totalItems}"/></strong> người dùng
+            </div>
+            <div class="pagination-controls">
+                <!-- Nút Về Đầu -->
+                <c:choose>
+                    <c:when test="${pagedResult.hasPrevious}">
+                        <a href="?page=1&amp;size=<c:out value='${pagedResult.size}'/>" class="page-link" title="Trang đầu">&laquo;</a>
+                        <a href="?page=<c:out value='${pagedResult.page - 1}'/>&amp;size=<c:out value='${pagedResult.size}'/>" class="page-link" title="Trang trước">&lsaquo;</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="page-link disabled">&laquo;</span>
+                        <span class="page-link disabled">&lsaquo;</span>
+                    </c:otherwise>
+                </c:choose>
+
+                <!-- Hiển thị các số trang xung quanh trang hiện tại -->
+                <c:set var="beginPage" value="${pagedResult.page - 2 < 1 ? 1 : pagedResult.page - 2}"/>
+                <c:set var="endPage" value="${pagedResult.page + 2 > pagedResult.totalPages ? pagedResult.totalPages : pagedResult.page + 2}"/>
+                <c:forEach var="i" begin="${beginPage}" end="${endPage}">
+                    <c:choose>
+                        <c:when test="${i == pagedResult.page}">
+                            <span class="page-link active"><c:out value="${i}"/></span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="?page=<c:out value='${i}'/>&amp;size=<c:out value='${pagedResult.size}'/>" class="page-link"><c:out value="${i}"/></a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+
+                <!-- Nút Về Cuối -->
+                <c:choose>
+                    <c:when test="${pagedResult.hasNext}">
+                        <a href="?page=<c:out value='${pagedResult.page + 1}'/>&amp;size=<c:out value='${pagedResult.size}'/>" class="page-link" title="Trang sau">&rsaquo;</a>
+                        <a href="?page=<c:out value='${pagedResult.totalPages}'/>&amp;size=<c:out value='${pagedResult.size}'/>" class="page-link" title="Trang cuối">&raquo;</a>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="page-link disabled">&rsaquo;</span>
+                        <span class="page-link disabled">&raquo;</span>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+        </div>
+    </c:if>
+
+    <!-- Modal Import Excel -->
+    <div class="excel-modal" id="modal-import-excel">
+        <div class="excel-modal-content">
+            <div class="excel-modal-header">
+                <h3>Nhập Dữ Liệu Người Dùng Từ Excel</h3>
+                <button type="button" class="excel-modal-close" id="btn-close-import-modal">&times;</button>
+            </div>
+            <form id="form-import-excel" enctype="multipart/form-data">
+                <input type="hidden" name="csrfToken" id="csrfToken-field" value="${csrfToken}">
+                <div class="excel-form-group">
+                    <label for="excel-file">Chọn tệp Excel (.xlsx)</label>
+                    <input type="file" id="excel-file" name="file" accept=".xlsx" class="excel-file-input" required>
+                </div>
+                <div class="btn-container justify-content-end">
+                    <button type="submit" class="btn">Bắt Đầu Import</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </jsp:body>

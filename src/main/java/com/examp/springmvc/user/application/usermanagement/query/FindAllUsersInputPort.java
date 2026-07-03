@@ -1,8 +1,8 @@
 package com.examp.springmvc.user.application.usermanagement.query;
 
-import java.util.List;
+import com.examp.springmvc.shared.domain.dto.PagedResult;
 
 public interface FindAllUsersInputPort {
 
-    List<UserDTO> execute();
+    PagedResult<UserDTO> execute(int page, int size);
 }

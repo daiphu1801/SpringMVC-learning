@@ -1,6 +1,6 @@
 package com.examp.springmvc.user.application.usermanagement.query;
 
-import java.util.List;
+import com.examp.springmvc.shared.domain.dto.PagedResult;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +15,7 @@ public class FindAllUsersUseCase implements FindAllUsersInputPort {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDTO> execute() {
-        return userQueryPort.findAll();
+    public PagedResult<UserDTO> execute(int page, int size) {
+        return userQueryPort.findPaged(page, size);
     }
 }

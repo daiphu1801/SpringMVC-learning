@@ -34,6 +34,17 @@
         ORDER BY ID DESC
     </select>
 
+    <select id="findPaged" resultMap="userResultMap">
+        SELECT <include refid="userColumns"/>
+        FROM APP_USERS
+        ORDER BY ID DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT COUNT(*) FROM APP_USERS
+    </select>
+
     <select id="findById" parameterType="long" resultMap="userResultMap">
         SELECT <include refid="userColumns"/>
         FROM APP_USERS
