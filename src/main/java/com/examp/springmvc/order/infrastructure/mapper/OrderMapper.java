@@ -17,4 +17,6 @@ public interface OrderMapper {
     List<OrderDbEntity> findAll();
 
     void deleteById(Long id);
+
+    void callCreateOrderProcedure(java.util.Map<String, Object> params);
 }

@@ -59,6 +59,45 @@ public class OrderPersistenceAdapter implements OrderPersistencePort {
     }
 
     @Override
+    public Order saveViaProcedure(Order order, String itemsCsv) {
+        List<DomainEvent> events = new ArrayList<>(order.getDomainEvents());
+
+        java.util.Map<String, Object> params = new java.util.HashMap<>();
+        params.put("userId", order.getUserId());
+        params.put("receiverName", order.getShippingAddress().getReceiverName());
+        params.put("receiverPhone", order.getShippingAddress().getReceiverPhone());
+        params.put("shippingAddress", order.getShippingAddress().getFullAddress());
+        params.put("note", order.getNote());
+        params.put("paymentMethod", order.getPaymentMethod().name());
+        params.put("itemsCsv", itemsCsv);
+
+        params.put("outOrderId", null);
+        params.put("outStatusCode", null);
+        params.put("outMessage", null);
+
+        orderMapper.callCreateOrderProcedure(params);
+
+        String statusCode = (String) params.get("outStatusCode");
+        String message = (String) params.get("outMessage");
+
+        if (!"SUCCESS".equals(statusCode)) {
+            throw new IllegalArgumentException(
+                    message != null ? message : "Lỗi không xác định khi tạo đơn hàng qua Procedure");
+        }
+
+        Number generatedId = (Number) params.get("outOrderId");
+        order.setId(generatedId.longValue());
+
+        // Publish events
+        order.clearDomainEvents();
+        for (DomainEvent event : events) {
+            eventPublisher.publishEvent(event);
+        }
+
+        return order;
+    }
+
+    @Override
     public Optional<Order> findById(Long id) {
         OrderDbEntity entity = orderMapper.findById(id);
         if (entity == null) {

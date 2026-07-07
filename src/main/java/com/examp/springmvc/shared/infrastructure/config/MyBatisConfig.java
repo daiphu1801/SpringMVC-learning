@@ -5,11 +5,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import javax.sql.DataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
+import org.flywaydb.core.Flyway;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
@@ -74,7 +76,18 @@ public class MyBatisConfig {
         return new HikariDataSource(config);
     }
 
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .locations("classpath:db/migration")
+                .load();
+    }
+
     @Bean
+    @DependsOn("flyway")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
 
         SqlSessionFactoryBean factoryBean = new SqlSessionFactoryBean();

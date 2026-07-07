@@ -111,4 +111,19 @@
         DELETE FROM APP_ORDERS WHERE ID = #{id}
     </delete>
 
+    <select id="callCreateOrderProcedure" statementType="CALLABLE" parameterType="map">
+        {call PROC_CREATE_ORDER(
+            #{userId, mode=IN, jdbcType=DECIMAL},
+            #{receiverName, mode=IN, jdbcType=VARCHAR},
+            #{receiverPhone, mode=IN, jdbcType=VARCHAR},
+            #{shippingAddress, mode=IN, jdbcType=VARCHAR},
+            #{note, mode=IN, jdbcType=VARCHAR},
+            #{paymentMethod, mode=IN, jdbcType=VARCHAR},
+            #{itemsCsv, mode=IN, jdbcType=VARCHAR},
+            #{outOrderId, mode=OUT, jdbcType=DECIMAL},
+            #{outStatusCode, mode=OUT, jdbcType=VARCHAR},
+            #{outMessage, mode=OUT, jdbcType=VARCHAR}
+        )}
+    </select>
+
 </mapper>

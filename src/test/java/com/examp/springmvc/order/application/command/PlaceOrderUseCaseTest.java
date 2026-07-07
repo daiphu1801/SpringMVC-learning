@@ -49,7 +49,8 @@ class PlaceOrderUseCaseTest {
                 100);
 
         when(productPersistencePort.findByIds(List.of(productId))).thenReturn(List.of(mockProduct));
-        when(orderPersistencePort.save(any(Order.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderPersistencePort.saveViaProcedure(any(Order.class), any(String.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         PlaceOrderCommand.OrderItemRequest itemReq = new PlaceOrderCommand.OrderItemRequest(productId, 2);
         PlaceOrderCommand command = new PlaceOrderCommand(
@@ -73,8 +74,7 @@ class PlaceOrderUseCaseTest {
         assertThat(mockProduct.getStock()).isEqualTo(98); // 100 - 2
 
         ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
-        verify(orderPersistencePort).save(orderCaptor.capture());
-        verify(productPersistencePort).save(mockProduct);
+        verify(orderPersistencePort).saveViaProcedure(orderCaptor.capture(), any(String.class));
 
         Order savedOrder = orderCaptor.getValue();
         assertThat(savedOrder.getUserId()).isEqualTo(userId);

@@ -8,6 +8,8 @@ public interface OrderPersistencePort {
 
     Order save(Order order);
 
+    Order saveViaProcedure(Order order, String itemsCsv);
+
     Optional<Order> findById(Long id);
 
     List<Order> findByUserId(Long userId);

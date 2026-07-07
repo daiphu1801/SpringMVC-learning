@@ -44,6 +44,9 @@ public class PlaceOrderUseCase {
                 products.stream().collect(Collectors.toMap(Product::getId, Function.identity()));
 
         List<OrderItem> orderItems = new ArrayList<>();
+        String itemsCsv = command.getItems().stream()
+                .map(item -> item.getProductId() + ":" + item.getQuantity())
+                .collect(Collectors.joining(","));
 
         for (PlaceOrderCommand.OrderItemRequest req : command.getItems()) {
             Product product = productMap.get(req.getProductId());
@@ -56,17 +59,12 @@ public class PlaceOrderUseCase {
                         "Sản phẩm không hoạt động hoặc không khả dụng: " + product.getName());
             }
 
-            // Deduct stock (throws IllegalArgumentException if not enough stock)
+            // Deduct stock in memory for validation
             product.decreaseStock(req.getQuantity());
 
             OrderItem item = new OrderItem(
                     null, product.getId(), product.getName(), product.getSku(), product.getPrice(), req.getQuantity());
             orderItems.add(item);
-        }
-
-        // Save updated product stock
-        for (Product product : products) {
-            productPersistencePort.save(product);
         }
 
         ShippingAddress shippingAddress = ShippingAddress.of(
@@ -80,6 +78,6 @@ public class PlaceOrderUseCase {
         Order order = Order.place(
                 command.getUserId(), orderItems, shippingAddress, command.getNote(), command.getPaymentMethod());
 
-        return orderPersistencePort.save(order);
+        return orderPersistencePort.saveViaProcedure(order, itemsCsv);
     }
 }
