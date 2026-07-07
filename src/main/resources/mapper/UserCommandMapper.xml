@@ -40,8 +40,7 @@
             PHONE = #{phone, jdbcType=VARCHAR},
             STATUS = #{status, jdbcType=VARCHAR},
             PASSWORD = #{password, jdbcType=VARCHAR},
-            ROLE = #{role, jdbcType=VARCHAR},
-            UPDATED_AT = SYSTIMESTAMP
+            ROLE = #{role, jdbcType=VARCHAR}
         WHERE ID = #{id, jdbcType=NUMERIC}
     </update>
 

@@ -59,8 +59,7 @@
             SUCCESS_ROWS = #{successRows, jdbcType=NUMERIC},
             FAILED_ROWS = #{failedRows, jdbcType=NUMERIC},
             ERROR_SUMMARY = #{errorSummary, jdbcType=CLOB},
-            RESULT_URL = #{resultUrl, jdbcType=VARCHAR},
-            UPDATED_AT = SYSTIMESTAMP
+            RESULT_URL = #{resultUrl, jdbcType=VARCHAR}
         WHERE ID = #{id, jdbcType=VARCHAR}
     </update>
 

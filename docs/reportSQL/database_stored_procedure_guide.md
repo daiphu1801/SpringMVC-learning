@@ -4,7 +4,34 @@ Báo cáo này phân tích vai trò của Stored Procedure trong các dự án p
 
 ---
 
-## 1. Đánh Giá: Khi Nào Nên Dùng Stored Procedure?
+## 1. Lý Thuyết Cơ Bản Về Stored Procedure
+
+### 1.1. Định nghĩa Stored Procedure
+**Stored Procedure (Thủ tục lưu trữ)** là một tập hợp các câu lệnh SQL và PL/SQL được biên dịch sẵn và lưu trữ tập trung trên Database Server. Nó hoạt động như một hàm nghiệp vụ độc lập, có thể nhận tham số truyền vào và trả về các kết quả khác nhau.
+
+### 1.2. Phân biệt Stored Procedure và Function trong Oracle
+Dù cả hai đều là các chương trình PL/SQL lưu trữ (stored subprograms), chúng có các khác biệt cốt lõi sau:
+
+| Tiêu chí | Stored Procedure (Thủ tục) | Function (Hàm) |
+| :--- | :--- | :--- |
+| **Giá trị trả về** | Không bắt buộc trả về giá trị trực tiếp (sử dụng các tham số `OUT` để xuất nhiều kết quả). | **Bắt buộc** trả về **duy nhất** một giá trị thông qua mệnh đề `RETURN`. |
+| **Sử dụng trong SQL** | **Không thể** gọi trực tiếp từ câu lệnh SQL (`SELECT`, `WHERE`, `GROUP BY`, v.v.). | **Có thể** gọi trực tiếp trong câu lệnh SQL (ví dụ: `SELECT GET_PRODUCT_PRICE(id) FROM dual`). |
+| **Quản lý Giao dịch** | Cho phép sử dụng các câu lệnh quản lý transaction như `COMMIT` và `ROLLBACK`. | Hạn chế thực hiện `COMMIT`, `ROLLBACK` hoặc các câu lệnh DML nếu hàm được gọi từ câu lệnh `SELECT`. |
+| **Mục đích chính** | Dùng để thực thi chuỗi hành động nghiệp vụ phức tạp tác động lớn đến dữ liệu (như đặt hàng, khóa sổ). | Dùng để tính toán giá trị, biến đổi dữ liệu (như tính thuế, format chuỗi). |
+
+### 1.3. Các chế độ Tham số (Parameter Modes)
+Oracle hỗ trợ 3 chế độ truyền tham số vào/ra cho Procedure:
+1.  **`IN` (Mặc định):** Tham số truyền vào từ ứng dụng. Giá trị này ở trạng thái chỉ đọc (Read-only) trong suốt quá trình chạy procedure.
+2.  **`OUT`:** Tham số đầu ra dùng để trả kết quả về cho ứng dụng gọi. Giá trị ban đầu của nó bên trong procedure luôn là `NULL`.
+3.  **`IN OUT`:** Tham số hai chiều. Procedure nhận giá trị đầu vào từ ứng dụng, có thể thay đổi/xử lý giá trị đó, và trả về giá trị mới sau khi hoàn thành.
+
+### 1.4. Quản lý Giao dịch & Xử lý Ngoại lệ (Exceptions)
+*   **Transaction:** Bên trong Procedure, ta có quyền quyết định khi nào hoàn tất transaction bằng `COMMIT` hoặc hủy bỏ bằng `ROLLBACK`.
+*   **Exception Handling:** PL/SQL cung cấp cấu trúc `EXCEPTION` để bắt các lỗi phát sinh trong thời gian chạy (Runtime Error). Khối `EXCEPTION WHEN OTHERS THEN` đóng vai trò như một khối `try-catch` tổng quát, giúp gọi `ROLLBACK` kịp thời khi có bất kỳ dòng lệnh nào gặp sự cố, giữ cho hệ thống không bị lưu dữ liệu dở dang (lỗi Atomicity).
+
+---
+
+## 2. Đánh Giá: Khi Nào Nên Dùng Stored Procedure?
 
 Trong các hệ thống Enterprise, việc quyết định đưa logic nghiệp vụ vào Code ứng dụng (Java/Spring) hay vào Database (Stored Procedure/PL-SQL) luôn là bài toán cân não:
 
@@ -24,7 +51,7 @@ Trong các hệ thống Enterprise, việc quyết định đưa logic nghiệp 
 
 ---
 
-## 2. Thiết Kế Thủ Tục Cốt Lõi: Đặt Hàng & Trừ Kho (`PROC_CREATE_ORDER`)
+## 3. Thiết Kế Thủ Tục Cốt Lõi: Đặt Hàng & Trừ Kho (`PROC_CREATE_ORDER`)
 
 Đối với cấu trúc bảng hiện tại của bạn (`APP_ORDERS`, `APP_ORDER_ITEMS`, `APP_PRODUCTS`), nghiệp vụ quan trọng nhất cần dùng Stored Procedure là **Đặt hàng và Trừ kho**. 
 
@@ -151,15 +178,15 @@ END;
 
 ---
 
-## 3. Cách Triển Khai và Quản Lý Mã Nguồn Trong Dự Án Thật
+## 4. Cách Triển Khai và Quản Lý Mã Nguồn Trong Dự Án Thật
 
 Trong các dự án phần mềm thực tế, Stored Procedure **không bao giờ** được tạo tay trực tiếp bằng DBeaver trên database máy chủ Production. Thay vào đó, chúng được quản lý như sau:
 
-### 3.1. Quản lý bằng Database Migration (Flyway / Liquibase)
+### 4.1. Quản lý bằng Database Migration (Flyway / Liquibase)
 *   **Flyway**: Đặt file procedure trong thư mục `src/main/resources/db/migration/` với định dạng tên `V2__create_proc_create_order.sql`. Khi ứng dụng Spring Boot khởi động, Flyway sẽ tự động chạy file này để biên dịch procedure vào DB.
 *   **Chú ý**: Khi chạy các script chứa dấu chấm phẩy và dấu gạch chéo `/` trong Flyway, cần cấu hình Flyway Parser bỏ qua delimiter mặc định để tránh lỗi cú pháp.
 
-### 3.2. Cấu hình gọi Stored Procedure từ Spring Boot + MyBatis
+### 4.2. Cấu hình gọi Stored Procedure từ Spring Boot + MyBatis
 
 Trong dự án sử dụng MyBatis (như cấu hình `MyBatisConfig.java` hiện tại của bạn), bạn gọi Stored Procedure bằng cách thiết lập **Mapper XML** sử dụng thuộc tính `statementType="CALLABLE"`.
 

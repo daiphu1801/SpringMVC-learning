@@ -48,8 +48,7 @@
             PRICE = #{price, jdbcType=NUMERIC},
             STATUS = #{status, jdbcType=VARCHAR},
             IMAGE_URL = #{imageUrl, jdbcType=VARCHAR},
-            STOCK = #{stock, jdbcType=NUMERIC},
-            UPDATED_AT = SYSTIMESTAMP
+            STOCK = #{stock, jdbcType=NUMERIC}
         WHERE ID = #{id, jdbcType=NUMERIC}
     </update>
 

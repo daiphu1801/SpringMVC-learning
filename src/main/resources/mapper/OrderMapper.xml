@@ -65,8 +65,7 @@
     <update id="update" parameterType="com.examp.springmvc.order.infrastructure.persistence.OrderDbEntity">
         UPDATE APP_ORDERS SET
             STATUS         = #{status},
-            PAYMENT_STATUS = #{paymentStatus},
-            UPDATED_AT     = SYSTIMESTAMP
+            PAYMENT_STATUS = #{paymentStatus}
         WHERE ID = #{id}
     </update>
 

@@ -36,8 +36,7 @@
         SET
             NAME = #{name, jdbcType=VARCHAR},
             CODE = #{code, jdbcType=VARCHAR},
-            DESCRIPTION = #{description, jdbcType=VARCHAR},
-            UPDATED_AT = SYSTIMESTAMP
+            DESCRIPTION = #{description, jdbcType=VARCHAR}
         WHERE ID = #{id, jdbcType=NUMERIC}
     </update>
 
