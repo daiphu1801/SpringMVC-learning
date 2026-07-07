@@ -84,36 +84,6 @@ jobs:
           done'
           echo "Oracle Database and custom user are ready!"
 
-      # Initialize database schema with failure handling configuration
-      - name: Initialize Oracle Database Schema
-        run: |
-          echo "Initializing database schema..."
-          # 1. Run DDL schema
-          {
-            echo "WHENEVER OSERROR EXIT FAILURE ROLLBACK"
-            echo "WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK"
-            cat src/test/resources/test-schema.sql
-            echo "EXIT SUCCESS"
-          } | docker exec -i oracle sqlplus -L -S your_database_username/your_database_password@localhost:1521/FREEPDB1
-          
-          # 2. Insert admin, category, product data
-          docker exec -i oracle sqlplus -L -S your_database_username/your_database_password@localhost:1521/FREEPDB1 <<'SQL'
-          WHENEVER OSERROR EXIT FAILURE ROLLBACK
-          WHENEVER SQLERROR EXIT SQL.SQLCODE ROLLBACK
-          
-          INSERT INTO APP_USERS (ID, USERNAME, FULL_NAME, EMAIL, PHONE, STATUS, PASSWORD, ROLE)
-          VALUES (APP_USER_SEQ.NEXTVAL, 'adminnn', 'Admin User', 'admin@example.com', '0123456789', 'ACTIVE', '$2a$12$TMgl6ebQ/Tvk8zLF48U0z.Yr0M3YZ5cklPuAMKg3BjR45krjYN7kW', 'ADMIN');
-          
-          INSERT INTO APP_CATEGORIES (ID, NAME, CODE, DESCRIPTION)
-          VALUES (APP_CATEGORY_SEQ.NEXTVAL, 'Electronics', 'ELEC', 'Electronic devices');
-          
-          INSERT INTO APP_PRODUCTS (ID, CATEGORY_ID, SKU, NAME, DESCRIPTION, PRICE, STATUS, STOCK)
-          VALUES (APP_PRODUCT_SEQ.NEXTVAL, APP_CATEGORY_SEQ.CURRVAL, 'PROD-001', 'Smart Phone', 'High-end smartphone', 999.99, 'ACTIVE', 50);
-          
-          COMMIT;
-          EXIT SUCCESS;
-          SQL
-          echo "Database schema initialized successfully."
 
       # Start app container with environment variables overrides (using FREEPDB1)
       - name: Run Application in Docker container
