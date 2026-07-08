@@ -32,7 +32,7 @@ graph TD
             BC["Database Buffer Cache"]
             SP["Shared Pool"]
             RLB["Redo Log Buffer"]
-        end
+        en
         subgraph Processes ["Background Processes"]
             DBWn["DBWn (Database Writer)"]
             LGWR["LGWR (Log Writer)"]
